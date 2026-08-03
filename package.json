@@ -1,0 +1,10 @@
+{
+  "name": "auremont-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "cd auremont-frontend && npm run build",
+    "dev": "cd auremont-frontend && npm run dev",
+    "start": "cd auremont-frontend && npm run start"
+  }
+}
