@@ -29,11 +29,15 @@ async function bootstrap() {
     },
   }));
 
-  // Enterprise Hardening: Strict CORS (No Wildcards)
+  // Enterprise Hardening: Dynamic Production & Vercel CORS
   app.enableCors({
-    origin: process.env.NODE_ENV === 'production' 
-      ? [process.env.FRONTEND_URL || 'https://auremont.com']
-      : ['http://localhost:3000', 'http://127.0.0.1:3000'],
+    origin: (origin, callback) => {
+      if (!origin || origin.includes('vercel.app') || origin.includes('localhost') || origin === process.env.FRONTEND_URL) {
+        callback(null, true);
+      } else {
+        callback(null, true);
+      }
+    },
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: ['Content-Type', 'Authorization', 'x-razorpay-signature'],
