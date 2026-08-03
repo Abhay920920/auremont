@@ -1,4 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Role } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -13,6 +14,36 @@ async function main() {
       name: 'Almonds',
       slug: 'almonds',
       description: 'Premium California Almonds',
+    },
+  });
+
+  const catRaw = await prisma.category.upsert({
+    where: { slug: 'raw' },
+    update: {},
+    create: {
+      name: 'Raw Editions',
+      slug: 'raw',
+      description: 'Unprocessed Extra Large California Almonds',
+    },
+  });
+
+  const catRoasted = await prisma.category.upsert({
+    where: { slug: 'roasted' },
+    update: {},
+    create: {
+      name: 'Roasted Editions',
+      slug: 'roasted',
+      description: 'Artisanal Slow-Roasted Almonds',
+    },
+  });
+
+  const catGift = await prisma.category.upsert({
+    where: { slug: 'gift' },
+    update: {},
+    create: {
+      name: 'Gifting & Corporate',
+      slug: 'gift',
+      description: 'Handcrafted Mahogany Wooden Boxes & Velvet Packaging',
     },
   });
 
@@ -36,64 +67,85 @@ async function main() {
   });
 
   // 3. Create Products
-  const prod1 = await prisma.product.upsert({
+  await prisma.product.upsert({
     where: { sku: 'ALM-EV-250' },
     update: {},
     create: {
-      categoryId: catAlmonds.id,
+      categoryId: catRaw.id,
       collectionId: collEveryday.id,
-      name: 'California Almonds 250g',
-      slug: 'california-almonds-250g',
+      name: 'California Reserve Raw Almonds 250g',
+      slug: 'california-reserve-raw',
       sku: 'ALM-EV-250',
-      shortDescription: 'Premium hand selected California almonds. Rich in nutrients, high in protein and fiber. No preservatives. 100% natural.',
+      shortDescription: '100% natural, unpasteurized California raw almonds. High protein, extra crunch.',
       weightGrams: 250,
-      price: 599.00,
+      price: 999.00,
+      salePrice: 799.00,
       stockQty: 1000,
       thumbnailUrl: '/images/california-almonds-250g.png',
       isFeatured: true,
-      nutritionJson: { protein: '21g', fiber: '12g', fats: '49g' }
+      nutritionJson: { protein: '21g', fiber: '12g', fats: '49g', energy: '579 kcal' }
     },
   });
 
-  const prod2 = await prisma.product.upsert({
+  await prisma.product.upsert({
     where: { sku: 'ALM-SIG-500' },
     update: {},
     create: {
-      categoryId: catAlmonds.id,
+      categoryId: catRoasted.id,
       collectionId: collSignature.id,
-      name: 'Signature Roasted Almonds 500g',
-      slug: 'signature-roasted-almonds-500g',
+      name: 'Slow-Roasted Sea Salt Almonds 500g',
+      slug: 'roasted-sea-salt-almonds',
       sku: 'ALM-SIG-500',
-      shortDescription: 'Perfectly roasted California almonds packed in a premium glass jar.',
+      shortDescription: 'Masterfully roasted California almonds with artisanal sea salt in a thick UV-protected glass jar.',
       weightGrams: 500,
-      price: 1299.00,
+      price: 1499.00,
+      salePrice: 1299.00,
       stockQty: 500,
       thumbnailUrl: '/images/roasted-almonds-jar.png',
       isFeatured: true,
-      nutritionJson: { protein: '21g', fiber: '12g', fats: '49g' }
+      nutritionJson: { protein: '21g', fiber: '12g', fats: '49g', energy: '585 kcal' }
     },
   });
 
-  const prod3 = await prisma.product.upsert({
+  await prisma.product.upsert({
     where: { sku: 'ALM-HER-1000' },
     update: {},
     create: {
-      categoryId: catAlmonds.id,
+      categoryId: catGift.id,
       collectionId: collHeritage.id,
-      name: 'Heritage Royal Almonds 1kg',
-      slug: 'heritage-royal-almonds-1kg',
+      name: 'Heritage Royal Almonds Wooden Box 1kg',
+      slug: 'royal-almonds-wooden-box',
       sku: 'ALM-HER-1000',
-      shortDescription: 'The finest reserve of large size almonds in our signature wooden box.',
+      shortDescription: 'The finest reserve of extra large California almonds in our velvet-lined handcrafted mahogany box.',
       weightGrams: 1000,
       price: 2999.00,
+      salePrice: 2499.00,
       stockQty: 100,
       thumbnailUrl: '/images/royal-almonds-wooden-box.png',
       isFeatured: true,
-      nutritionJson: { protein: '21g', fiber: '12g', fats: '49g' }
+      nutritionJson: { protein: '21g', fiber: '12g', fats: '49g', energy: '579 kcal' }
     },
   });
 
-  console.log('Seed completed successfully!');
+  // 4. Create Admin Account
+  const hashedPassword = await bcrypt.hash('Admin@12345', 10);
+  await prisma.user.upsert({
+    where: { email: 'admin@auremont.com' },
+    update: {
+      passwordHash: hashedPassword,
+      role: Role.admin,
+    },
+    create: {
+      firstName: 'Auremont',
+      lastName: 'Concierge',
+      email: 'admin@auremont.com',
+      passwordHash: hashedPassword,
+      role: Role.admin,
+      emailVerified: true,
+    },
+  });
+
+  console.log('Seed completed successfully! Admin user created: admin@auremont.com');
 }
 
 main()
