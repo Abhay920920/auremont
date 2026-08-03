@@ -1,15 +1,16 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, UserX, UserCheck, Mail, MapPin, Package, RefreshCw, LogOut } from "lucide-react";
 import { format } from "date-fns";
 
 import api from "@/lib/axios";
 
-export default function CustomerProfilePage({ params }: { params: Promise<{ id: string }> }) {
-  const unwrappedParams = use(params);
-  const id = unwrappedParams.id;
+export default function CustomerProfilePage() {
+  const rawParams = useParams();
+  const id = rawParams?.id as string;
   const [customer, setCustomer] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 

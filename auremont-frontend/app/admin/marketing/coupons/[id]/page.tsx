@@ -1,13 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import api from "@/lib/axios";
 import Link from "next/link";
 import { ArrowLeft, Save } from "lucide-react";
 
-export default function AdminEditCouponPage({ params }: { params: { id: string } }) {
+export default function AdminEditCouponPage() {
   const router = useRouter();
+  const rawParams = useParams();
+  const id = rawParams?.id as string;
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -25,7 +28,8 @@ export default function AdminEditCouponPage({ params }: { params: { id: string }
   });
 
   useEffect(() => {
-    api.get(`/coupons/${params.id}`).then(res => {
+    if (!id) return;
+    api.get(`/coupons/${id}`).then(res => {
       const data = res.data;
       setForm({
         code: data.code,
@@ -42,12 +46,12 @@ export default function AdminEditCouponPage({ params }: { params: { id: string }
       console.error(err);
       setError("Failed to load coupon details.");
     }).finally(() => setLoading(false));
-  }, [params.id]);
+  }, [id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
-    const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined;
-    setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
+    const target = e.target as HTMLInputElement;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    setForm({ ...form, [e.target.name]: value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -56,100 +60,101 @@ export default function AdminEditCouponPage({ params }: { params: { id: string }
     setError("");
 
     try {
-      const payload = {
+      await api.patch(`/coupons/${id}`, {
         ...form,
         value: Number(form.value),
         minimumOrder: form.minimumOrder ? Number(form.minimumOrder) : undefined,
         maxDiscount: form.maxDiscount ? Number(form.maxDiscount) : undefined,
         usageLimit: form.usageLimit ? Number(form.usageLimit) : undefined,
-        startDate: new Date(form.startDate).toISOString(),
-        endDate: new Date(form.endDate).toISOString(),
-      };
-      
-      await api.patch(`/coupons/${params.id}`, payload);
-      router.push('/admin/marketing/coupons');
+      });
+      router.push("/admin/marketing/coupons");
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to update coupon");
+      setError(err.response?.data?.message || "Failed to update coupon.");
+    } finally {
       setSaving(false);
     }
   };
 
-  if (loading) return <div className="text-secondaryText p-8">Loading coupon details...</div>;
+  if (loading) {
+    return (
+      <div className="py-20 text-center text-secondaryText font-serif">
+        <div className="w-8 h-8 border-2 border-luxuryGold border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+        Loading Privilege Code...
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-4xl space-y-6">
-      <div className="flex items-center gap-4 mb-6">
-        <Link href="/admin/marketing/coupons" className="p-2 rounded-xl bg-surface border border-divider hover:bg-secondaryBg transition-colors">
-          <ArrowLeft className="w-5 h-5 text-primaryText" />
+    <div className="max-w-2xl mx-auto space-y-8">
+      <div className="flex items-center justify-between">
+        <Link href="/admin/marketing/coupons" className="flex items-center gap-2 text-xs uppercase tracking-widest text-secondaryText hover:text-luxuryGold transition-colors">
+          <ArrowLeft size={16} /> Back to Privilege Codes
         </Link>
-        <h1 className="text-3xl font-serif text-luxuryGold">Edit Coupon</h1>
+        <h1 className="text-3xl font-serif text-primaryText">Edit Privilege Code</h1>
       </div>
 
-      {error && <div className="p-4 bg-error/10 border border-error/20 text-error rounded-xl">{error}</div>}
+      {error && (
+        <div className="p-4 bg-error/10 border border-error/20 text-error rounded-xl text-sm">
+          {error}
+        </div>
+      )}
 
-      <form onSubmit={handleSubmit} className="space-y-8">
-        <div className="bg-secondaryBg border border-divider rounded-2xl p-8 space-y-6">
-          <h2 className="text-xl font-medium text-primaryText border-b border-divider pb-4 mb-6">Coupon Details</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-sm uppercase tracking-widest text-secondaryText">Coupon Code *</label>
-              <input type="text" name="code" value={form.code} onChange={handleChange} required className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors text-primaryText uppercase" />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm uppercase tracking-widest text-secondaryText">Discount Type *</label>
-              <select name="type" value={form.type} onChange={handleChange} className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors text-primaryText appearance-none">
-                <option value="percentage">Percentage (%)</option>
-                <option value="flat">Flat Amount ($)</option>
-              </select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm uppercase tracking-widest text-secondaryText">Discount Value *</label>
-              <input type="number" step="0.01" name="value" value={form.value} onChange={handleChange} required className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors text-primaryText" />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm uppercase tracking-widest text-secondaryText">Usage Limit (Optional)</label>
-              <input type="number" name="usageLimit" value={form.usageLimit} onChange={handleChange} className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors text-primaryText" />
-            </div>
+      <form onSubmit={handleSubmit} className="space-y-6 bg-secondaryBg/40 border border-divider p-8 rounded-2xl">
+        <div className="space-y-2">
+          <label className="text-xs uppercase tracking-widest text-secondaryText">Coupon Code</label>
+          <input type="text" name="code" value={form.code} onChange={handleChange} required className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors text-primaryText uppercase" />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label className="text-xs uppercase tracking-widest text-secondaryText">Discount Type</label>
+            <select name="type" value={form.type} onChange={handleChange} className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors text-primaryText">
+              <option value="percentage">Percentage (%)</option>
+              <option value="fixed">Fixed Amount (₹)</option>
+            </select>
+          </div>
+          <div className="space-y-2">
+            <label className="text-xs uppercase tracking-widest text-secondaryText">Discount Value</label>
+            <input type="number" step="0.01" name="value" value={form.value} onChange={handleChange} required className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors text-primaryText" />
           </div>
         </div>
 
-        <div className="bg-secondaryBg border border-divider rounded-2xl p-8 space-y-6">
-          <h2 className="text-xl font-medium text-primaryText border-b border-divider pb-4 mb-6">Requirements & Validity</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-sm uppercase tracking-widest text-secondaryText">Minimum Order Amount ($)</label>
-              <input type="number" step="0.01" name="minimumOrder" value={form.minimumOrder} onChange={handleChange} className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors text-primaryText" />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm uppercase tracking-widest text-secondaryText">Max Discount Amount ($)</label>
-              <input type="number" step="0.01" name="maxDiscount" value={form.maxDiscount} onChange={handleChange} className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors text-primaryText" />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm uppercase tracking-widest text-secondaryText">Start Date *</label>
-              <input type="datetime-local" name="startDate" value={form.startDate} onChange={handleChange} required className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors text-primaryText" />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm uppercase tracking-widest text-secondaryText">End Date *</label>
-              <input type="datetime-local" name="endDate" value={form.endDate} onChange={handleChange} required className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors text-primaryText" />
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label className="text-xs uppercase tracking-widest text-secondaryText">Minimum Order (₹)</label>
+            <input type="number" step="0.01" name="minimumOrder" value={form.minimumOrder} onChange={handleChange} className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors text-primaryText" />
+          </div>
+          <div className="space-y-2">
+            <label className="text-xs uppercase tracking-widest text-secondaryText">Max Discount Cap (₹)</label>
+            <input type="number" step="0.01" name="maxDiscount" value={form.maxDiscount} onChange={handleChange} className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors text-primaryText" />
           </div>
         </div>
 
-        <div className="bg-secondaryBg border border-divider rounded-2xl p-8 space-y-6">
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input type="checkbox" name="status" checked={form.status} onChange={handleChange} className="w-5 h-5 accent-luxuryGold bg-transparent" />
-            <span className="text-primaryText font-medium">Coupon is Active</span>
-          </label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label className="text-xs uppercase tracking-widest text-secondaryText">Start Date</label>
+            <input type="datetime-local" name="startDate" value={form.startDate} onChange={handleChange} required className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors text-primaryText" />
+          </div>
+          <div className="space-y-2">
+            <label className="text-xs uppercase tracking-widest text-secondaryText">End Date</label>
+            <input type="datetime-local" name="endDate" value={form.endDate} onChange={handleChange} required className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors text-primaryText" />
+          </div>
         </div>
 
-        <div className="flex justify-end pt-4">
-          <button type="submit" disabled={saving} className="bg-luxuryGold text-background px-8 py-4 rounded-xl font-medium shadow hover:bg-goldHover transition-colors flex items-center gap-2">
-            <Save className="w-5 h-5" />
-            {saving ? 'Updating...' : 'Update Coupon'}
-          </button>
+        <div className="space-y-2">
+          <label className="text-xs uppercase tracking-widest text-secondaryText">Usage Limit</label>
+          <input type="number" name="usageLimit" value={form.usageLimit} onChange={handleChange} className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors text-primaryText" />
         </div>
+
+        <label className="flex items-center gap-3 cursor-pointer pt-2">
+          <input type="checkbox" name="status" checked={form.status} onChange={handleChange} className="w-4 h-4 accent-luxuryGold" />
+          <span className="text-sm text-primaryText font-medium">Active Privilege Code</span>
+        </label>
+
+        <button type="submit" disabled={saving} className="w-full bg-luxuryGold text-background py-4 rounded-xl font-medium uppercase tracking-widest shadow-lg hover:bg-goldHover transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
+          <Save size={18} />
+          {saving ? "Saving Changes..." : "Update Privilege Code"}
+        </button>
       </form>
     </div>
   );

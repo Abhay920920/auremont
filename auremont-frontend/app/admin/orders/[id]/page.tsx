@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, Package, Truck, Printer, Info, CreditCard, Box } from "lucide-react";
 import { format } from "date-fns";
@@ -8,9 +9,9 @@ import api from "@/lib/axios";
 
 const STEPS = ["placed", "confirmed", "packed", "shipped", "delivered"];
 
-export default function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const unwrappedParams = use(params);
-  const id = unwrappedParams.id;
+export default function OrderDetailPage() {
+  const rawParams = useParams();
+  const id = rawParams?.id as string;
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
