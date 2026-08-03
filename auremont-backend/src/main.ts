@@ -5,7 +5,7 @@ import { AllExceptionsFilter } from './all-exceptions.filter';
 
 import * as cookieParser from 'cookie-parser';
 import * as compression from 'compression';
-import helmet from 'helmet';
+const helmet = require('helmet');
 
 // v2 — forced recompile
 async function bootstrap() {
@@ -50,7 +50,8 @@ async function bootstrap() {
   
   app.useGlobalFilters(new AllExceptionsFilter());
 
-  await app.listen(3001, '0.0.0.0');
-  console.log('Backend listening on port 3001');
+  const port = process.env.PORT || 3001;
+  await app.listen(port, '0.0.0.0');
+  console.log(`Backend listening on port ${port}`);
 }
 bootstrap();
