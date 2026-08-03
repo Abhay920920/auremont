@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import api from "@/lib/axios";
 
-export default function ResetPassword() {
+function ResetPasswordForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -49,7 +49,7 @@ export default function ResetPassword() {
   if (!email || !token) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center bg-secondaryBg px-6">
-        <div className="card w-full max-w-md space-y-6 text-center">
+        <div className="card w-full max-w-md space-y-6 text-center border border-divider p-8 rounded-2xl">
           <h1 className="font-serif text-3xl text-error">Invalid Link</h1>
           <p className="text-secondaryText text-sm">
             This password reset link is invalid or missing parameters.
@@ -61,11 +61,11 @@ export default function ResetPassword() {
 
   return (
     <div className="min-h-[70vh] flex items-center justify-center bg-secondaryBg px-6">
-      <div className="card w-full max-w-md space-y-6">
+      <div className="card w-full max-w-md space-y-6 border border-divider p-8 rounded-2xl">
         <h1 className="font-serif text-3xl text-center">Create New Password</h1>
         
         {msg && (
-          <div className={`p-3 rounded text-sm text-center ${success ? 'bg-green-500/10 text-green-500' : 'bg-error/10 text-error'}`}>
+          <div className={`p-3 rounded-xl text-sm text-center ${success ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-error/10 text-error border border-error/20'}`}>
             {msg}
           </div>
         )}
@@ -79,7 +79,7 @@ export default function ResetPassword() {
                 required
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full h-11 px-4 rounded-input bg-background border border-divider outline-none focus:border-luxuryGold"
+                className="w-full h-11 px-4 rounded-xl bg-background border border-divider outline-none focus:border-luxuryGold text-primaryText"
               />
             </div>
             <div className="space-y-2">
@@ -89,19 +89,31 @@ export default function ResetPassword() {
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full h-11 px-4 rounded-input bg-background border border-divider outline-none focus:border-luxuryGold"
+                className="w-full h-11 px-4 rounded-xl bg-background border border-divider outline-none focus:border-luxuryGold text-primaryText"
               />
             </div>
-            <button type="submit" disabled={loading} className="btn-primary w-full py-3">
+            <button type="submit" disabled={loading} className="w-full bg-luxuryGold text-background py-3 rounded-xl font-medium uppercase tracking-widest hover:bg-goldHover transition-colors disabled:opacity-50">
               {loading ? "Resetting..." : "Reset Password"}
             </button>
           </form>
         ) : (
-          <button onClick={() => router.push('/login')} className="btn-primary w-full py-3">
+          <button onClick={() => router.push('/login')} className="w-full bg-luxuryGold text-background py-3 rounded-xl font-medium uppercase tracking-widest hover:bg-goldHover transition-colors">
             Go to Login
           </button>
         )}
       </div>
     </div>
+  );
+}
+
+export default function ResetPassword() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-[70vh] flex items-center justify-center bg-secondaryBg px-6">
+        <div className="w-8 h-8 border-2 border-luxuryGold border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }
