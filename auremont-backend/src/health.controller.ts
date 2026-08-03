@@ -1,14 +1,26 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
 
-@Controller('health')
+@Controller()
 export class HealthController {
   @Get()
+  @HttpCode(HttpStatus.OK)
+  getRoot() {
+    return {
+      name: 'Auremont Luxury API',
+      status: 'online',
+      timestamp: new Date().toISOString(),
+      version: '1.0.0',
+    };
+  }
+
+  @Get('health')
+  @HttpCode(HttpStatus.OK)
   getHealth() {
     return {
       status: 'ok',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
-      version: process.env.npm_package_version || '0.1.0',
+      version: '1.0.0',
     };
   }
 }
