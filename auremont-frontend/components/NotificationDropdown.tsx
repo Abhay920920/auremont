@@ -29,14 +29,15 @@ export default function NotificationDropdown() {
     const fetchNotifications = async () => {
       try {
         const res = await api.get('/notifications/me');
-        setNotifications(res.data);
+        if (Array.isArray(res.data)) {
+          setNotifications(res.data);
+        }
       } catch (err) {
-        console.error("Failed to fetch notifications");
+        // Fail gracefully without triggering console.error overlay
       }
     };
 
     fetchNotifications();
-    // Poll every 60 seconds
     const interval = setInterval(fetchNotifications, 60000);
     return () => clearInterval(interval);
   }, [user, token]);
@@ -46,9 +47,7 @@ export default function NotificationDropdown() {
   const handleOpen = () => {
     setIsOpen(!isOpen);
     if (!isOpen && unreadCount > 0) {
-      // Mark as read in DB
-      api.patch('/notifications/me/read').catch(console.error);
-      // Optimistically update UI
+      api.patch('/notifications/me/read').catch(() => {});
       setNotifications(notifications.map(n => ({ ...n, isRead: true })));
     }
   };
@@ -60,6 +59,7 @@ export default function NotificationDropdown() {
       <button 
         onClick={handleOpen}
         className="relative p-2 text-secondaryText hover:text-luxuryGold transition-colors"
+        aria-label="View notifications"
       >
         <Bell className="w-5 h-5" />
         {unreadCount > 0 && (
