@@ -4,6 +4,8 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import api from "@/lib/axios";
 
+export const dynamic = 'force-dynamic';
+
 function ResetPasswordForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -14,8 +16,10 @@ function ResetPasswordForm() {
   const [msg, setMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const e = searchParams.get("email");
     const t = searchParams.get("token");
     if (e) setEmail(e);
@@ -45,6 +49,14 @@ function ResetPasswordForm() {
       setLoading(false);
     }
   };
+
+  if (!mounted) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center bg-secondaryBg px-6">
+        <div className="w-8 h-8 border-2 border-luxuryGold border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!email || !token) {
     return (
