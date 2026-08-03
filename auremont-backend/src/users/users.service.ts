@@ -8,11 +8,24 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.prisma.user.findUnique({ where: { email } });
+    if (!email) return null;
+    return this.prisma.user.findFirst({
+      where: {
+        email: {
+          equals: email.trim(),
+          mode: 'insensitive'
+        }
+      }
+    });
   }
 
   async create(data: any): Promise<User> {
-    return this.prisma.user.create({ data });
+    return this.prisma.user.create({
+      data: {
+        ...data,
+        email: data.email ? data.email.trim().toLowerCase() : data.email
+      }
+    });
   }
 
   async getProfile(userId: string) {
@@ -66,13 +79,12 @@ export class UsersService {
 
   async getAddresses(userId: string) {
     return this.prisma.address.findMany({
-      where: { userId, orders: { none: {} } }, // Do not fetch addresses saved as snapshots for orders
+      where: { userId, orders: { none: {} } },
       orderBy: { isDefault: 'desc' },
     });
   }
 
   async addAddress(userId: string, data: any) {
-    // If this is the first address, make it default
     const count = await this.prisma.address.count({ where: { userId, orders: { none: {} } } });
     const isDefault = count === 0 || data.isDefault;
 
@@ -130,7 +142,6 @@ export class UsersService {
 
     await this.prisma.address.delete({ where: { id: addressId } });
 
-    // If it was default, pick another one to be default
     if (address.isDefault) {
       const nextAddress = await this.prisma.address.findFirst({ where: { userId, orders: { none: {} } } });
       if (nextAddress) {
@@ -143,8 +154,6 @@ export class UsersService {
 
     return { message: 'Address deleted' };
   }
-
-  // --- ADMIN ---
 
   async getAllUsers() {
     return this.prisma.user.findMany({
@@ -162,6 +171,7 @@ export class UsersService {
       }
     });
   }
+
   async getUserDetailAdmin(id: string) {
     const user = await this.prisma.user.findUnique({
       where: { id },
@@ -181,7 +191,6 @@ export class UsersService {
 
     if (!user) throw new NotFoundException('User not found');
     
-    // Calculate metrics
     const totalOrders = user.orders.length;
     const lifetimeValue = user.orders
       .filter(o => o.paymentStatus === 'paid')
