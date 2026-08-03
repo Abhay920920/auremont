@@ -4,6 +4,7 @@ import { useCartStore } from "@/store/cartStore";
 import { useAuthStore } from "@/store/authStore";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 import api from "@/lib/axios";
 import { Lock, ShieldCheck, CreditCard } from "lucide-react";
