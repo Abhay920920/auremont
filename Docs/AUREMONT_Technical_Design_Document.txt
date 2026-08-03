@@ -1,0 +1,207 @@
+AUREMONT TECHNICAL DESIGN DOCUMENT (TDD)
+
+Version: 1.0 Product: AUREMONT Premium Luxury E-commerce Platform
+
+================================================== 1. PURPOSE
+==================================================
+
+This document defines the technical architecture, technology stack,
+system components, integrations, data flow, deployment strategy,
+security, scalability, and development standards for the AUREMONT web
+application.
+
+================================================== 2. HIGH LEVEL
+ARCHITECTURE ==================================================
+
+Client (Web/Mobile Browser) | v Next.js Frontend | HTTPS / REST APIs |
+Node.js Backend (NestJS) | ———————————————— | | | | | Auth Products
+Orders Payments Notifications | | | | ——————————- | PostgreSQL Database
+| —————————– | | Redis AWS S3 Storage | CloudFront CDN
+
+================================================== 3. TECHNOLOGY STACK
+==================================================
+
+Frontend - Next.js - React - TypeScript - Tailwind CSS - Framer Motion -
+React Query - Axios - React Hook Form - Zod Validation
+
+Backend - Node.js - NestJS - TypeScript - Prisma ORM - JWT
+Authentication
+
+Database - PostgreSQL
+
+Caching - Redis
+
+Storage - AWS S3 - CloudFront CDN
+
+Infrastructure - Docker - Nginx - GitHub Actions - Vercel (Frontend) -
+AWS EC2/ECS (Backend)
+
+Monitoring - Sentry - Prometheus - Grafana
+
+Analytics - Google Analytics 4 - Google Tag Manager
+
+================================================== 4. SYSTEM MODULES
+==================================================
+
+-   Authentication
+-   User Management
+-   Product Catalog
+-   Categories
+-   Collections
+-   Cart
+-   Checkout
+-   Orders
+-   Payments
+-   Inventory
+-   Reviews
+-   Blog
+-   Contact
+-   CMS
+-   Notifications
+-   Admin Dashboard
+-   Analytics
+
+================================================== 5. THIRD-PARTY
+INTEGRATIONS ==================================================
+
+Authentication - Google OAuth
+
+Payments - Razorpay - Stripe
+
+Email - SendGrid / Amazon SES
+
+SMS / WhatsApp - Twilio / MSG91
+
+Maps - Google Maps
+
+Analytics - Google Analytics 4 - Google Tag Manager
+
+Image Delivery - AWS CloudFront
+
+Storage - AWS S3
+
+================================================== 6. DATA FLOW
+==================================================
+
+User Journey
+
+Browser -> Frontend -> Backend API -> Business Logic -> PostgreSQL ->
+API Response -> UI Update
+
+Order Flow
+
+Product -> Add to Cart -> Checkout -> Payment Gateway -> Payment Success
+-> Order Created -> Inventory Updated -> Email Confirmation -> Dashboard
+
+================================================== 7. DATABASE ENTITIES
+==================================================
+
+Users Addresses Products Categories Collections Inventory Cart Cart
+Items Orders Order Items Payments Coupons Reviews Blogs Contact Messages
+Wishlist Audit Logs
+
+================================================== 8. API LAYERS
+==================================================
+
+Authentication API User API Product API Category API Collection API Cart
+API Checkout API Order API Payment API Review API Wishlist API Blog API
+Admin API
+
+================================================== 9. SECURITY
+==================================================
+
+-   HTTPS
+-   JWT Authentication
+-   Refresh Tokens
+-   Password Hashing (bcrypt)
+-   CSRF Protection
+-   Rate Limiting
+-   Input Validation
+-   SQL Injection Protection
+-   XSS Protection
+-   Secure Cookies
+-   Role-Based Access Control (RBAC)
+
+================================================== 10. PERFORMANCE
+==================================================
+
+-   Lazy Loading
+-   Image Optimization
+-   CDN
+-   Redis Caching
+-   Pagination
+-   Compression (Gzip/Brotli)
+-   Database Indexing
+-   API Response Caching
+
+================================================== 11. SCALABILITY
+==================================================
+
+-   Stateless Backend
+-   Horizontal Scaling
+-   Load Balancer
+-   Auto Scaling
+-   CDN for Static Assets
+-   Queue Workers for Emails/Webhooks
+-   Redis Cache Layer
+
+================================================== 12. DEPLOYMENT
+==================================================
+
+Frontend -> Vercel Backend -> AWS EC2/ECS Database -> PostgreSQL Managed
+Service Storage -> AWS S3 CDN -> CloudFront
+
+CI/CD GitHub -> Build -> Test -> Deploy
+
+================================================== 13. LOGGING &
+MONITORING ==================================================
+
+-   Application Logs
+-   API Logs
+-   Error Tracking
+-   Performance Metrics
+-   Health Checks
+-   Uptime Monitoring
+
+================================================== 14. BACKUP & RECOVERY
+==================================================
+
+-   Daily Database Backups
+-   S3 Versioning
+-   Point-in-Time Recovery
+-   Disaster Recovery Plan
+
+================================================== 15. CODING STANDARDS
+==================================================
+
+-   TypeScript Strict Mode
+-   ESLint
+-   Prettier
+-   Conventional Commits
+-   Unit Tests
+-   Integration Tests
+-   Code Reviews
+
+================================================== 16. FUTURE
+ARCHITECTURE ==================================================
+
+-   Microservices
+-   GraphQL Gateway
+-   Event Bus (Kafka)
+-   Recommendation Engine
+-   AI Search
+-   Loyalty Service
+-   Subscription Service
+-   Multi-region Deployment
+
+================================================== 17. SUCCESS CRITERIA
+==================================================
+
+-   API latency < 200ms
+-   Page load < 2 seconds
+-   99.9% uptime
+-   Secure payment processing
+-   Scalable architecture
+-   Maintainable codebase
+-   High availability
+-   Production-ready deployment

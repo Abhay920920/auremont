@@ -1,0 +1,152 @@
+Product Requirements Document (PRD)
+
+AUREMONT – Premium Luxury Almond E-commerce Website
+
+Version: 1.0
+
+Author: Product Manager
+
+Product Type: Luxury Direct-to-Consumer (D2C) E-commerce Platform
+
+Platform: Responsive Web (Desktop + Mobile)
+
+Brand: AUREMONT
+
+------------------------------------------------------------------------
+
+1. Executive Summary
+
+AUREMONT is a premium luxury dry fruit brand specializing in
+high-quality California almonds. The website aims to provide a premium
+shopping experience that reflects elegance, trust, exclusivity, and
+craftsmanship.
+
+Unlike traditional grocery websites, AUREMONT focuses on luxury branding
+similar to Apple, Rolex, or premium perfume brands where storytelling
+and experience are equally important as purchasing.
+
+The platform should deliver: - Luxury visual identity - Fast shopping
+experience - Mobile-first responsiveness - Secure checkout - Premium
+customer experience - Easy product discovery - High conversion rate
+
+------------------------------------------------------------------------
+
+2. Product Vision
+
+To become India’s most trusted premium dry fruit brand by delivering a
+luxury online shopping experience that makes buying almonds feel as
+premium as purchasing luxury fashion or fine jewelry.
+
+------------------------------------------------------------------------
+
+3. Business Goals
+
+Primary Goals: - Increase online sales - Increase repeat customers -
+Build premium brand identity - Improve customer retention - Create
+direct customer relationship - Reduce dependency on marketplaces
+
+Secondary Goals: - SEO visibility - Email subscriber growth - Wishlist
+engagement - Customer reviews - Referral purchases
+
+------------------------------------------------------------------------
+
+4. Target Users
+
+-   Health-conscious professionals
+-   Luxury buyers
+-   Fitness enthusiasts
+-   Corporate gifting customers
+
+------------------------------------------------------------------------
+
+5. Core Features
+
+-   Luxury Homepage
+-   Shop & Collections
+-   Product Detail Pages
+-   Shopping Cart
+-   Secure Checkout
+-   User Authentication
+-   My Account Dashboard
+-   Contact Page
+-   Admin Dashboard
+-   Responsive Mobile Experience
+
+------------------------------------------------------------------------
+
+6. Functional Requirements
+
+Authentication: - Register - Login - Forgot Password - Google Login
+
+Products: - Search - Filter - Sort - Categories - Inventory
+
+Cart: - Add / Remove Items - Update Quantity - Persistent Cart
+
+Orders: - Place Orders - Track Orders - Cancel Orders - Download Invoice
+
+Admin: - Manage Products - Orders - Customers - Inventory - Coupons -
+Blog
+
+------------------------------------------------------------------------
+
+7. Non-Functional Requirements
+
+-   Page Load < 2 seconds
+-   99.9% Uptime
+-   HTTPS Security
+-   Responsive Design
+-   SEO Optimized
+-   Accessible UI
+-   CDN Support
+-   Image Optimization
+
+------------------------------------------------------------------------
+
+8. Technology Stack
+
+Frontend: - Next.js - React - TypeScript - Tailwind CSS - Framer Motion
+
+Backend: - Node.js - NestJS / Express
+
+Database: - PostgreSQL - Redis
+
+Cloud: - AWS S3 - CloudFront
+
+Authentication: - JWT - Google OAuth
+
+Payments: - Razorpay - Stripe - UPI - Cards
+
+------------------------------------------------------------------------
+
+9. Success Metrics
+
+-   Conversion Rate > 4%
+-   Cart Abandonment < 55%
+-   Average Order Value > ₹1,500
+-   Repeat Purchase Rate > 30%
+-   Page Load Time < 2 sec
+-   Lighthouse Score > 95
+-   Customer Satisfaction > 4.8/5
+
+------------------------------------------------------------------------
+
+10. Future Enhancements
+
+-   AI Product Recommendations
+-   Loyalty Program
+-   Referral Program
+-   Gift Cards
+-   Corporate Orders
+-   Subscription Model
+-   International Shipping
+-   Multi-language Support
+-   AI Chatbot
+
+------------------------------------------------------------------------
+
+Product Vision Statement
+
+AUREMONT is more than an online store—it is a premium digital luxury
+experience for healthy living. Every interaction, from the homepage to
+checkout and delivery, should communicate elegance, authenticity,
+quality, and trust.

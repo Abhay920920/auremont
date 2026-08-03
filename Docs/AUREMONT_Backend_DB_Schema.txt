@@ -1,0 +1,131 @@
+AUREMONT BACKEND DATABASE SCHEMA
+
+Version: 1.0
+
+================================================== 1. USERS
+================================================== id UUID PK first_name
+VARCHAR(100) last_name VARCHAR(100) email VARCHAR(255) UNIQUE phone
+VARCHAR(20) password_hash VARCHAR(255) google_id VARCHAR(255) NULL role
+ENUM(‘customer’,‘admin’) status ENUM(‘active’,‘inactive’,‘blocked’)
+email_verified BOOLEAN created_at TIMESTAMP updated_at TIMESTAMP
+
+================================================== 2. ADDRESSES
+================================================== id UUID PK user_id
+UUID FK -> users.id full_name VARCHAR(150) phone VARCHAR(20)
+address_line1 VARCHAR(255) address_line2 VARCHAR(255) city VARCHAR(100)
+state VARCHAR(100) postal_code VARCHAR(20) country VARCHAR(100)
+is_default BOOLEAN created_at TIMESTAMP
+
+================================================== 3. CATEGORIES
+================================================== id UUID PK name
+VARCHAR(100) slug VARCHAR(120) description TEXT image_url TEXT status
+BOOLEAN created_at TIMESTAMP
+
+================================================== 4. COLLECTIONS
+================================================== id UUID PK name
+VARCHAR(120) slug VARCHAR(120) description TEXT banner_url TEXT status
+BOOLEAN created_at TIMESTAMP
+
+================================================== 5. PRODUCTS
+================================================== id UUID PK
+category_id UUID FK -> categories.id collection_id UUID FK ->
+collections.id name VARCHAR(200) slug VARCHAR(200) sku VARCHAR(80)
+UNIQUE short_description TEXT description TEXT weight_grams INT price
+DECIMAL(10,2) sale_price DECIMAL(10,2) stock_qty INT nutrition_json JSON
+thumbnail_url TEXT is_featured BOOLEAN status BOOLEAN created_at
+TIMESTAMP updated_at TIMESTAMP
+
+================================================== 6. PRODUCT_IMAGES
+================================================== id UUID PK product_id
+UUID FK -> products.id image_url TEXT sort_order INT is_primary BOOLEAN
+
+================================================== 7. PRODUCT_ATTRIBUTES
+================================================== id UUID PK product_id
+UUID FK attribute_name VARCHAR(100) attribute_value VARCHAR(255)
+
+================================================== 8. WISHLISTS
+================================================== id UUID PK user_id
+UUID FK product_id UUID FK created_at TIMESTAMP
+
+================================================== 9. CARTS
+================================================== id UUID PK user_id
+UUID FK status ENUM(‘active’,‘ordered’) created_at TIMESTAMP updated_at
+TIMESTAMP
+
+================================================== 10. CART_ITEMS
+================================================== id UUID PK cart_id
+UUID FK product_id UUID FK quantity INT unit_price DECIMAL(10,2)
+subtotal DECIMAL(10,2)
+
+================================================== 11. COUPONS
+================================================== id UUID PK code
+VARCHAR(50) type ENUM(‘flat’,‘percentage’) value DECIMAL(10,2)
+minimum_order DECIMAL(10,2) max_discount DECIMAL(10,2) start_date
+TIMESTAMP end_date TIMESTAMP usage_limit INT status BOOLEAN
+
+================================================== 12. ORDERS
+================================================== id UUID PK
+order_number VARCHAR(50) user_id UUID FK address_id UUID FK coupon_id
+UUID FK NULL subtotal DECIMAL(10,2) discount DECIMAL(10,2) shipping
+DECIMAL(10,2) tax DECIMAL(10,2) total DECIMAL(10,2) payment_status
+ENUM(‘pending’,‘paid’,‘failed’,‘refunded’) order_status
+ENUM(‘placed’,‘confirmed’,‘packed’,‘shipped’,‘delivered’,‘cancelled’)
+created_at TIMESTAMP updated_at TIMESTAMP
+
+================================================== 13. ORDER_ITEMS
+================================================== id UUID PK order_id
+UUID FK product_id UUID FK quantity INT price DECIMAL(10,2) subtotal
+DECIMAL(10,2)
+
+================================================== 14. PAYMENTS
+================================================== id UUID PK order_id
+UUID FK provider ENUM(‘razorpay’,‘stripe’) transaction_id VARCHAR(255)
+amount DECIMAL(10,2) currency VARCHAR(10) status VARCHAR(50)
+payment_method VARCHAR(50) paid_at TIMESTAMP
+
+================================================== 15. REVIEWS
+================================================== id UUID PK product_id
+UUID FK user_id UUID FK rating SMALLINT title VARCHAR(150) review TEXT
+status ENUM(‘pending’,‘approved’,‘rejected’) created_at TIMESTAMP
+
+================================================== 16. BLOGS
+================================================== id UUID PK title
+VARCHAR(255) slug VARCHAR(255) content TEXT cover_image TEXT published
+BOOLEAN published_at TIMESTAMP
+
+================================================== 17. CONTACT_MESSAGES
+================================================== id UUID PK name
+VARCHAR(150) email VARCHAR(255) subject VARCHAR(255) message TEXT status
+ENUM(‘new’,‘resolved’) created_at TIMESTAMP
+
+================================================== 18. INVENTORY_LOGS
+================================================== id UUID PK product_id
+UUID FK change_qty INT reason VARCHAR(255) reference_id UUID created_at
+TIMESTAMP
+
+================================================== 19. NOTIFICATIONS
+================================================== id UUID PK user_id
+UUID FK type VARCHAR(50) title VARCHAR(255) message TEXT is_read BOOLEAN
+created_at TIMESTAMP
+
+================================================== 20. AUDIT_LOGS
+================================================== id UUID PK user_id
+UUID FK action VARCHAR(255) entity VARCHAR(100) entity_id UUID
+ip_address VARCHAR(64) created_at TIMESTAMP
+
+================================================== RELATIONSHIPS
+================================================== users 1:N addresses
+users 1:N carts users 1:N orders users 1:N reviews users 1:N wishlists
+users 1:N notifications
+
+categories 1:N products collections 1:N products
+
+products 1:N product_images products 1:N product_attributes products 1:N
+reviews products 1:N inventory_logs
+
+carts 1:N cart_items
+
+orders 1:N order_items orders 1:1 payments
+
+products N:M carts (via cart_items) products N:M orders (via
+order_items) products N:M users (via wishlists)

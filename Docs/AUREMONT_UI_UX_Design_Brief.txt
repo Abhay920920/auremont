@@ -1,0 +1,191 @@
+AUREMONT UI/UX DESIGN BRIEF
+
+Version: 1.0 Product: AUREMONT Luxury Almond E-commerce Website
+
+================================================== 1. DESIGN VISION
+==================================================
+
+Create a premium luxury e-commerce experience inspired by high-end
+brands such as Apple, Rolex, Louis Vuitton, and premium perfume brands.
+Every interaction should communicate elegance, trust, exclusivity,
+craftsmanship, and quality.
+
+Core Design Principles - Minimal yet luxurious - Product-first
+experience - Rich photography - Elegant typography - Smooth
+micro-interactions - High readability - Mobile-first responsive design
+
+================================================== 2. DESIGN MOOD
+==================================================
+
+Brand Personality - Premium - Sophisticated - Warm - Natural -
+Timeless - Trustworthy - Exclusive
+
+Keywords Luxury Elegant Minimal Premium Modern Organic Refined High-end
+
+================================================== 3. COLOR PALETTE
+==================================================
+
+Primary Background #0B0B0B
+
+Secondary Background #151515
+
+Surface Cards #1E1E1E
+
+Luxury Gold #D4AF37
+
+Gold Hover #E5C15A
+
+Gold Dark #A57C1B
+
+Primary Text #FFFFFF
+
+Secondary Text #BDBDBD
+
+Muted Text #8C8C8C
+
+Border #2A2A2A
+
+Divider #303030
+
+Success #4CAF50
+
+Warning #FFC107
+
+Error #F44336
+
+================================================== 4. TYPOGRAPHY
+==================================================
+
+Display & Heading Font Cormorant Garamond (or Playfair Display)
+
+Body Font Inter
+
+Fallback Georgia (Serif) Arial / Helvetica (Sans-serif)
+
+Type Scale
+
+Hero Title: 64px H1: 48px H2: 36px H3: 28px H4: 22px Body Large: 18px
+Body: 16px Small: 14px Caption: 12px
+
+Font Weights 300 Light 400 Regular 500 Medium 600 SemiBold 700 Bold
+
+================================================== 5. SPACING SYSTEM
+==================================================
+
+Base Unit = 8px
+
+4px 8px 12px 16px 24px 32px 40px 48px 64px 80px 96px 120px
+
+Section Spacing Desktop: 96px Tablet: 72px Mobile: 48px
+
+Container Width 1440px
+
+Content Width 1200px
+
+Grid 12 Columns Desktop 8 Columns Tablet 4 Columns Mobile
+
+================================================== 6. BORDER RADIUS
+==================================================
+
+Buttons: 8px Inputs: 8px Cards: 16px Product Cards: 18px Modal: 20px
+Images: 16px
+
+================================================== 7. SHADOWS
+==================================================
+
+Minimal soft shadows Use subtle elevation only. Gold glow reserved for
+hover/focus states.
+
+================================================== 8. COMPONENT STYLE
+==================================================
+
+Buttons - Filled Gold (Primary CTA) - Outline Gold (Secondary CTA) -
+Rounded corners - Height 48px desktop / 44px mobile
+
+Cards - Dark background - Thin gold border on hover - Large imagery -
+Spacious padding
+
+Navigation - Transparent over hero - Sticky after scroll - Minimal
+icons - Gold logo
+
+Forms - Dark inputs - Gold focus state - Clear validation - Large touch
+targets
+
+Product Cards - Large product image - Product name - Price - CTA
+button - Hover lift animation
+
+Badges - Premium - Best Seller - Natural - New
+
+Icons - Thin line style - Gold accent - Consistent 24px sizing
+
+================================================== 9. IMAGERY
+==================================================
+
+High-resolution product photography Dark premium backgrounds Natural
+almonds Luxury packaging Warm studio lighting Minimal props Shallow
+depth of field
+
+================================================== 10. MOTION DESIGN
+==================================================
+
+Hover Duration: 200ms Page Transition: 300ms Button Animation: Scale
+1.02 Card Hover: Lift + Shadow Fade-in on scroll Smooth easing
+throughout
+
+================================================== 11. ACCESSIBILITY
+==================================================
+
+WCAG AA contrast Keyboard navigation Visible focus indicators Alt text
+for images Minimum touch target 44px Responsive typography
+
+================================================== 12. RESPONSIVE DESIGN
+==================================================
+
+Desktop: 1440px+ Laptop: 1024px Tablet: 768px Mobile: 390px
+
+Navigation Desktop: Top navigation Mobile: Hamburger menu
+
+================================================== 13. DESIGN TOKENS
+==================================================
+
+Spacing Base: 8px Radius Base: 8px Animation: 200ms Container: 1200px
+Grid: 12 columns Icon Size: 24px Button Height: 48px
+
+================================================== 14. UI PRINCIPLES
+==================================================
+
+-   Showcase products before text
+-   Keep layouts clean
+-   Use whitespace generously
+-   Limit accent color to gold
+-   Ensure consistent spacing
+-   Prioritize readability
+-   Maintain premium visual hierarchy
+-   Keep interactions predictable
+
+================================================== 15. DELIVERABLES
+==================================================
+
+-   Design System
+-   Color Tokens
+-   Typography Scale
+-   Component Library
+-   Responsive Layouts
+-   Desktop Screens
+-   Mobile Screens
+-   Icons
+-   Interaction States
+-   Prototype
+-   Developer Handoff
+
+================================================== 16. SUCCESS CRITERIA
+==================================================
+
+-   Premium luxury appearance
+-   Consistent branding
+-   Fast and intuitive navigation
+-   Responsive across devices
+-   Accessible interface
+-   High visual polish
+-   Strong conversion-focused UX
+-   Delightful shopping experience

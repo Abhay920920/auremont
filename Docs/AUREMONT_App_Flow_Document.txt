@@ -1,0 +1,199 @@
+AUREMONT App Flow Document
+
+Version: 1.0 Product: AUREMONT Luxury Almond E-commerce Platform
+Platform: Responsive Web (Desktop + Mobile)
+
+================================================== 1. APP FLOW OVERVIEW
+==================================================
+
+Landing Page ↓ Browse Collections ↓ Product Listing ↓ Product Details
+├── Add to Cart → Cart → Checkout └── Buy Now → Checkout ↓ Shipping
+Address ↓ Payment ↓ Order Success ↓ Order Tracking ↓ Repeat Purchase
+
+================================================== 2. COMPLETE
+NAVIGATION MAP ==================================================
+
+Home ├── Shop │ ├── Category │ ├── Product Details │ ├── Reviews │ ├──
+Nutrition Facts │ └── Related Products ├── Collections ├── Our Story ├──
+Blog ├── Contact ├── Cart │ └── Checkout ├── Login ├── Register ├──
+Forgot Password └── My Account ├── Dashboard ├── Orders ├── Wishlist ├──
+Addresses ├── Account Details └── Logout
+
+================================================== 3. FIRST TIME USER
+FLOW ==================================================
+
+Website Opens → Landing Page → Browse Homepage → View Collections →
+Product Details → Add to Cart → Login/Register → Checkout → Payment →
+Order Confirmation → Dashboard
+
+================================================== 4. RETURNING USER
+FLOW ==================================================
+
+Homepage → Login → Dashboard → Order Again → Checkout → Payment
+
+================================================== 5. GUEST CHECKOUT
+FLOW ==================================================
+
+Homepage → Product → Add to Cart → Checkout → Guest Checkout → Shipping
+Details → Payment → Success
+
+================================================== 6. AUTHENTICATION
+==================================================
+
+Register → Enter Name → Enter Email → Create Password → Email
+Verification → Dashboard
+
+Login → Email → Password → Dashboard
+
+Forgot Password → Enter Email → Reset Link → Create New Password → Login
+
+================================================== 7. HOMEPAGE SECTIONS
+==================================================
+
+• Header • Hero Banner • Featured Product • Benefits • Collections •
+Brand Story • Testimonials • Newsletter • Footer
+
+User Actions: - Shop Now - Search - Browse Collections - Open Product -
+View Story - Subscribe - Open Cart - Login
+
+================================================== 8. SHOP FLOW
+==================================================
+
+Shop → Search → Filter → Sort → Product Details
+
+Filters: - Category - Price - Weight - Availability - Popularity -
+Newest
+
+================================================== 9. PRODUCT DETAILS
+==================================================
+
+Product Images Image Gallery Zoom Description Nutrition Facts Reviews
+Quantity Selector Add to Cart Buy Now Related Products
+
+User Actions: - Increase Quantity - Decrease Quantity - Wishlist - Share
+Product - Read Reviews
+
+================================================== 10. CART FLOW
+==================================================
+
+Cart → Update Quantity → Remove Item → Apply Coupon → Checkout
+
+================================================== 11. CHECKOUT FLOW
+==================================================
+
+Checkout → Shipping Address → Delivery Method → Payment Method → Review
+Order → Place Order → Order Confirmation
+
+Payment Methods: - UPI - Credit Card - Debit Card - Net Banking -
+Wallet - Razorpay - Stripe
+
+================================================== 12. ORDER SUCCESS
+==================================================
+
+Order Success → Download Invoice → Track Order → Continue Shopping →
+Dashboard
+
+================================================== 13. MY ACCOUNT
+==================================================
+
+Dashboard - Orders - Wishlist - Addresses - Profile - Change Password -
+Logout
+
+================================================== 14. ORDERS
+==================================================
+
+Orders → Order Details → Track Order → Download Invoice → Reorder
+
+================================================== 15. WISHLIST
+==================================================
+
+Wishlist → View Product → Move to Cart → Remove → Buy Now
+
+================================================== 16. ADDRESS
+MANAGEMENT ==================================================
+
+Addresses → Add → Edit → Delete → Set Default
+
+================================================== 17. CONTACT
+==================================================
+
+Contact → Fill Form → Submit → Success Message
+
+================================================== 18. SEARCH
+==================================================
+
+Search → Enter Keyword → Results → Product Details
+
+================================================== 19. COLLECTIONS
+==================================================
+
+Collections → Everyday Collection → Signature Collection → Heritage
+Collection → Product Details
+
+================================================== 20. BLOG
+==================================================
+
+Blog → Article List → Article Details → Related Articles → Share
+
+================================================== 21. GLOBAL NAVIGATION
+==================================================
+
+Header: Logo Home Shop Collections Our Story Blog Contact Search Account
+Cart
+
+Footer: About Privacy Terms Shipping Returns Contact Newsletter Social
+Links
+
+================================================== 22. MOBILE NAVIGATION
+==================================================
+
+Hamburger Menu - Home - Shop - Collections - Our Story - Blog -
+Contact - Login - Wishlist - Cart
+
+================================================== 23. ERROR FLOWS
+==================================================
+
+Login Error → Wrong Password → Error Message → Forgot Password
+
+Payment Failure → Retry Payment → Success
+
+Out of Stock → Notify Me
+
+Network Error → Retry
+
+================================================== 24. ADMIN FLOW
+==================================================
+
+Admin Login → Dashboard → Products → Categories → Inventory → Orders →
+Customers → Coupons → Reviews → Blogs → Analytics → Settings
+
+================================================== 25. SCREEN ACTIONS
+==================================================
+
+Landing Page → Browse / Search / Shop Shop → Search / Filter / Sort
+Product → Add to Cart / Buy Now / Wishlist Cart → Update Qty / Remove /
+Checkout Checkout → Address / Payment / Place Order Dashboard → Orders /
+Wishlist / Profile Orders → Track / Download Invoice / Reorder Wishlist
+→ Add to Cart Contact → Submit Query
+
+================================================== 26. END-TO-END USER
+JOURNEY ==================================================
+
+Landing Page → Collections → Product → Product Details → Quantity
+Selection → Add to Cart → Cart Review → Login or Guest Checkout →
+Shipping → Payment → Order Confirmation → Order Tracking → Product
+Delivery → Product Review → Repeat Purchase
+
+================================================== 27. FUTURE FLOWS
+==================================================
+
+-   Subscription Delivery
+-   Gift Box Customization
+-   Corporate Orders
+-   Loyalty Program
+-   Referral Rewards
+-   AI Recommendations
+-   Personalized Offers
+-   Recently Viewed
+-   International Shipping
+-   Multi-language Support

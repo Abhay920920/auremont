@@ -1,0 +1,82 @@
+name: Auremont DevSecOps Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  NODE_VERSION: '18.x'
+
+jobs:
+  security-audit:
+    name: Dependency & Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: |
+            auremont-frontend/package-lock.json
+            auremont-backend/package-lock.json
+
+      - name: Audit Backend
+        working-directory: ./auremont-backend
+        run: npm audit --audit-level=high
+
+      - name: Audit Frontend
+        working-directory: ./auremont-frontend
+        run: npm audit --audit-level=high
+
+  static-analysis:
+    name: CodeQL Static Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: javascript, typescript
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+  docker-build:
+    name: Build & Container Scan
+    needs: [security-audit, static-analysis]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Build Backend Image
+        run: docker build -t auremont/backend:latest ./auremont-backend
+        
+      - name: Build Frontend Image
+        run: docker build -t auremont/frontend:latest ./auremont-frontend
+
+      - name: Trivy Container Vulnerability Scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'auremont/backend:latest'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+  deploy-prod:
+    name: Deploy to Production
+    needs: docker-build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Secure Deployment Trigger
+        run: echo "Triggering deployment to Production Cloud Environment..."
+        # Actual deployment steps (e.g., SSH into VPS, docker-compose pull && up -d, or push to ECR/ECS) go here,
+        # securely passing secrets via GitHub Secrets.
