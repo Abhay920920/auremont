@@ -59,14 +59,30 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   async logout(@GetUser() user: any, @Res({ passthrough: true }) res: Response) {
     await this.authService.logout(user.id);
-    res.clearCookie('refresh_token');
+    res.clearCookie('refresh_token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    });
     return { message: 'Logged out successfully' };
   }
 
   @Post('register')
   @Throttle({ default: { limit: 5, ttl: 60000 } })
-  async register(@Body() body: any) {
-    return this.authService.register(body);
+  async register(@Body() body: any, @Res({ passthrough: true }) res: Response) {
+    const result = await this.authService.register(body);
+    
+    res.cookie('refresh_token', result.tokens.refresh_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return {
+      access_token: result.tokens.access_token,
+      user: result.user,
+    };
   }
 
   @Get('me')

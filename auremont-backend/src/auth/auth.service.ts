@@ -85,7 +85,7 @@ export class AuthService {
   async register(data: any) {
     const existingUser = await this.usersService.findByEmail(data.email);
     if (existingUser) {
-      throw new ConflictException('User already exists');
+      throw new ConflictException('User with this email already exists');
     }
     const hashedPassword = await bcrypt.hash(data.password, 10);
     const newUser = await this.usersService.create({
@@ -94,8 +94,15 @@ export class AuthService {
       email: data.email,
       passwordHash: hashedPassword,
     });
-    const { passwordHash, ...result } = newUser as any;
-    return result;
+    const { passwordHash, refreshToken, resetToken, resetTokenExpiry, ...user } = newUser as any;
+    
+    // Automatically issue login tokens upon registration
+    const tokens = await this.login(user);
+
+    return {
+      user,
+      tokens,
+    };
   }
 
   async forgotPassword(email: string) {

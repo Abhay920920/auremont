@@ -2,15 +2,18 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { AllExceptionsFilter } from './all-exceptions.filter';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 import * as cookieParser from 'cookie-parser';
 import * as compression from 'compression';
 const helmet = require('helmet');
 
-// v2 — forced recompile
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   
+  // Enable Trust Proxy for Render / Vercel / Nginx / Cloudflare load balancers
+  app.set('trust proxy', 1);
+
   // Enterprise Hardening: Helmet Security Headers
   app.use(helmet({
     crossOriginEmbedderPolicy: false,
@@ -32,15 +35,21 @@ async function bootstrap() {
   // Enterprise Hardening: Dynamic Production & Vercel CORS
   app.enableCors({
     origin: (origin, callback) => {
-      if (!origin || origin.includes('vercel.app') || origin.includes('localhost') || origin === process.env.FRONTEND_URL) {
+      if (!origin) return callback(null, true);
+      const frontendUrl = process.env.FRONTEND_URL;
+      if (
+        origin.includes('vercel.app') || 
+        origin.includes('localhost') || 
+        (frontendUrl && origin.startsWith(frontendUrl))
+      ) {
         callback(null, true);
       } else {
         callback(null, true);
       }
     },
     credentials: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-razorpay-signature'],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-razorpay-signature', 'Accept', 'X-Requested-With'],
   });
   
   app.use(cookieParser());

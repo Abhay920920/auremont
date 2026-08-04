@@ -28,16 +28,11 @@ export default function Register() {
     setError('');
 
     try {
-      // 1. Register User
-      await api.post('/auth/register', formData);
+      // Single-step atomic registration & login
+      const res = await api.post('/auth/register', formData);
+      const { user, access_token } = res.data;
       
-      // 2. Auto Login after registration
-      const loginRes = await api.post('/auth/login', { 
-        email: formData.email, 
-        password: formData.password 
-      });
-      
-      setAuth(loginRes.data.user, loginRes.data.access_token);
+      setAuth(user, access_token);
       router.push('/account');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Registration failed.');
