@@ -17,14 +17,7 @@ async function bootstrap() {
   // Enterprise Hardening: Helmet Security Headers
   app.use(helmet({
     crossOriginEmbedderPolicy: false,
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: ["'self'", "data:", "https:"],
-      },
-    },
+    contentSecurityPolicy: false,
     hsts: {
       maxAge: 31536000,
       includeSubDomains: true,
