@@ -34,53 +34,53 @@ export default function Footer() {
   };
 
   return (
-    <footer className="w-full bg-background border-t border-divider pt-32 pb-12 mt-auto">
+    <footer className="w-full bg-background border-t border-divider pt-24 md:pt-32 pb-12 mt-auto">
       <div className="max-w-[2000px] mx-auto px-6 md:px-12">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-24 mb-24">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-24 mb-20 md:mb-24">
           
-          <div className="md:col-span-5 space-y-8">
-            <h3 className="font-serif text-5xl text-luxuryGold tracking-widest uppercase">Auremont</h3>
-            <p className="text-secondaryText text-lg max-w-md leading-relaxed font-light">
-              Purveyors of the finest California Almonds. Hand-selected, perfectly roasted, and presented with unparalleled elegance for those who appreciate true craftsmanship.
+          <div className="md:col-span-5 space-y-6">
+            <h3 className="font-serif text-3xl md:text-4xl text-luxuryGold tracking-ultra uppercase">Auremont</h3>
+            <p className="text-secondaryText text-sm sm:text-base max-w-md leading-relaxed font-light">
+              Purveyors of the finest California Almonds. Hand-selected, slow-roasted, and presented with supreme elegance for those who appreciate true botanical craftsmanship.
             </p>
-            <div className="pt-4 flex gap-6 text-secondaryText">
+            <div className="pt-2 flex gap-6 text-secondaryText">
               <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-luxuryGold transition-colors" aria-label="Instagram">
-                <Instagram size={20} strokeWidth={1.5} />
+                <Instagram size={18} strokeWidth={1.5} />
               </a>
               <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-luxuryGold transition-colors" aria-label="Twitter">
-                <Twitter size={20} strokeWidth={1.5} />
+                <Twitter size={18} strokeWidth={1.5} />
               </a>
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-luxuryGold transition-colors" aria-label="Facebook">
-                <Facebook size={20} strokeWidth={1.5} />
+                <Facebook size={18} strokeWidth={1.5} />
               </a>
             </div>
           </div>
 
-          <div className="md:col-span-2 space-y-8">
-            <h4 className="text-[11px] tracking-widest uppercase text-primaryText font-medium">Explore</h4>
-            <div className="flex flex-col gap-5 text-base text-secondaryText font-light">
-              <Link href="/shop" className="hover:text-luxuryGold transition-colors w-fit">The Collection</Link>
-              <Link href="/journal" className="hover:text-luxuryGold transition-colors w-fit">Journal</Link>
-              <Link href="/about" className="hover:text-luxuryGold transition-colors w-fit">Our Heritage</Link>
-              <Link href="/corporate-gifts" className="hover:text-luxuryGold transition-colors w-fit">Corporate Gifting</Link>
-              <Link href="/contact" className="hover:text-luxuryGold transition-colors w-fit">Contact Concierge</Link>
+          <div className="md:col-span-2 space-y-6">
+            <h4 className="text-[10px] tracking-ultra uppercase text-luxuryGold font-medium">Explore</h4>
+            <div className="flex flex-col gap-4 text-xs sm:text-sm text-secondaryText font-light">
+              <Link href="/shop" className="hover:text-primaryText transition-colors w-fit">The Collection</Link>
+              <Link href="/journal" className="hover:text-primaryText transition-colors w-fit">Journal</Link>
+              <Link href="/about" className="hover:text-primaryText transition-colors w-fit">Our Heritage</Link>
+              <Link href="/corporate-gifts" className="hover:text-primaryText transition-colors w-fit">Corporate Gifting</Link>
+              <Link href="/contact" className="hover:text-primaryText transition-colors w-fit">Contact Concierge</Link>
             </div>
           </div>
 
-          <div className="md:col-span-2 space-y-8">
-            <h4 className="text-[11px] tracking-widest uppercase text-primaryText font-medium">Legal</h4>
-            <div className="flex flex-col gap-5 text-base text-secondaryText font-light">
-              <Link href="/shipping" className="hover:text-luxuryGold transition-colors w-fit">Shipping & Returns</Link>
-              <Link href="/privacy-policy" className="hover:text-luxuryGold transition-colors w-fit">Privacy Policy</Link>
-              <Link href="/terms" className="hover:text-luxuryGold transition-colors w-fit">Terms of Service</Link>
-              <Link href="/faq" className="hover:text-luxuryGold transition-colors w-fit">FAQ</Link>
+          <div className="md:col-span-2 space-y-6">
+            <h4 className="text-[10px] tracking-ultra uppercase text-luxuryGold font-medium">Legal</h4>
+            <div className="flex flex-col gap-4 text-xs sm:text-sm text-secondaryText font-light">
+              <Link href="/shipping" className="hover:text-primaryText transition-colors w-fit">Shipping & Returns</Link>
+              <Link href="/privacy-policy" className="hover:text-primaryText transition-colors w-fit">Privacy Policy</Link>
+              <Link href="/terms" className="hover:text-primaryText transition-colors w-fit">Terms of Service</Link>
+              <Link href="/faq" className="hover:text-primaryText transition-colors w-fit">FAQ</Link>
             </div>
           </div>
 
-          <div className="md:col-span-3 space-y-8">
-            <h4 className="text-[11px] tracking-widest uppercase text-primaryText font-medium">The Inner Circle</h4>
-            <p className="text-secondaryText text-sm font-light">
-              Subscribe to receive exclusive access to limited editions and insider news.
+          <div className="md:col-span-3 space-y-6">
+            <h4 className="text-[10px] tracking-ultra uppercase text-luxuryGold font-medium">The Inner Circle</h4>
+            <p className="text-secondaryText text-xs font-light leading-relaxed">
+              Subscribe to receive private invitations to limited reserve harvests and insider news.
             </p>
 
             {status === 'success' ? (
@@ -96,7 +96,7 @@ export default function Footer() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Email Address" 
                   aria-label="Subscribe to The Inner Circle newsletter"
-                  className="bg-transparent border-none outline-none flex-1 text-primaryText placeholder:text-mutedText placeholder:tracking-widest placeholder:text-xs placeholder:uppercase"
+                  className="bg-transparent border-none outline-none flex-1 text-primaryText text-xs placeholder:text-mutedText placeholder:tracking-widest placeholder:text-[10px] placeholder:uppercase"
                   required
                 />
                 <button 
@@ -105,7 +105,7 @@ export default function Footer() {
                   className="text-secondaryText group-focus-within:text-luxuryGold transition-colors disabled:opacity-50" 
                   aria-label="Subscribe"
                 >
-                  <ArrowRight size={18} />
+                  <ArrowRight size={16} />
                 </button>
               </form>
             )}
@@ -113,12 +113,12 @@ export default function Footer() {
 
         </div>
 
-        <div className="pt-8 border-t border-divider flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-mutedText uppercase tracking-superwide">
+        <div className="pt-8 border-t border-divider flex flex-col md:flex-row justify-between items-center gap-4 text-[9px] text-mutedText uppercase tracking-ultra">
           <p>&copy; {new Date().getFullYear()} AUREMONT. ALL RIGHTS RESERVED.</p>
-          <div className="flex gap-8">
-            <span>Secure Checkout</span>
-            <span>Global Shipping</span>
-            <span>Ethically Sourced</span>
+          <div className="flex gap-6 sm:gap-8">
+            <span>256-Bit Encryption</span>
+            <span>Global Concierge Shipping</span>
+            <span>100% Ethically Sourced</span>
           </div>
         </div>
       </div>
