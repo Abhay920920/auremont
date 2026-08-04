@@ -35,8 +35,12 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
       const res = await api.get(`/wishlists`);
       set({ items: res.data || [] });
     } catch (err: any) {
-      console.error("Failed to fetch wishlist", err);
-      set({ error: 'Failed to load wishlist' });
+      if (err?.response?.status === 401) {
+        set({ items: [] });
+      } else {
+        console.error("Failed to fetch wishlist", err);
+        set({ error: 'Failed to load wishlist' });
+      }
     } finally {
       set({ loading: false });
     }
