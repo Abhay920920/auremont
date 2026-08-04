@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { Star } from "lucide-react";
+import { Star, Rotate3d } from "lucide-react";
 import FlavorRadarChart from "./FlavorRadarChart";
+import Packaging3DViewer from "./Packaging3DViewer";
 import { useCurrencyStore } from "@/store/currencyStore";
 
 function StarRating({ rating, size = 16 }: { rating: number; size?: number }) {
@@ -16,7 +18,9 @@ function StarRating({ rating, size = 16 }: { rating: number; size?: number }) {
 }
 
 export default function ProductInfo({ product, reviews, avgRating }: { product: any, reviews: any[], avgRating: number }) {
-  const formatPrice = useCurrencyStore((state) => state.formatPrice);
+  const { currency, formatPrice } = useCurrencyStore();
+  const [is3DOpen, setIs3DOpen] = useState(false);
+
   const displayPrice = product.salePrice ? Number(product.salePrice) : Number(product.price);
   const originalPrice = product.salePrice ? Number(product.price) : null;
 
@@ -67,10 +71,28 @@ export default function ProductInfo({ product, reviews, avgRating }: { product: 
         </p>
       )}
 
+      {/* 3D Packaging Inspector Trigger Button */}
+      <div className="pt-2">
+        <button
+          onClick={() => setIs3DOpen(true)}
+          className="luxury-button-outline w-full flex items-center justify-center gap-2.5 py-3 text-xs tracking-ultra border-luxuryGold/40 hover:bg-luxuryGold/10 text-luxuryGold"
+        >
+          <Rotate3d size={16} />
+          <span>Inspect 3D Vessel & Engraving</span>
+        </button>
+      </div>
+
       {/* Interactive Botanical Flavor & Texture Radar Chart */}
       <div className="pt-4">
         <FlavorRadarChart />
       </div>
+
+      {/* 3D Packaging Viewer Modal */}
+      <Packaging3DViewer 
+        isOpen={is3DOpen} 
+        onClose={() => setIs3DOpen(false)} 
+        defaultText={product.name.toUpperCase()}
+      />
     </div>
   );
 }

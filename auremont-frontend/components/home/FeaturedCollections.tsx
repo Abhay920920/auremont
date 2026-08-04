@@ -4,9 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import AddToCartButton from "@/components/AddToCartButton";
+import { useCurrencyStore } from "@/store/currencyStore";
 
 export default function FeaturedCollections({ products }: { products: any[] }) {
   const featured = products.slice(0, 3);
+  const { currency, formatPrice } = useCurrencyStore();
   
   return (
     <section className="w-full py-24 md:py-super px-6 md:px-12 max-w-[2000px] mx-auto bg-background relative z-10">
@@ -49,8 +51,8 @@ export default function FeaturedCollections({ products }: { products: any[] }) {
                 <Link href={`/shop/${product.slug}`}>
                   <h3 className="font-serif text-2xl text-primaryText mb-2 group-hover:text-luxuryGold transition-colors">{product.name}</h3>
                 </Link>
-                <p className="text-xs text-secondaryText tracking-superwide uppercase mb-4">{product.weightGrams}G</p>
-                <span className="font-medium text-primaryText">₹{product.price}</span>
+                <p className="text-xs text-secondaryText tracking-superwide uppercase mb-4">{product.weightGrams || 250}G</p>
+                <span suppressHydrationWarning className="font-medium text-primaryText">{formatPrice(product.price)}</span>
               </div>
             </motion.div>
           )) : (

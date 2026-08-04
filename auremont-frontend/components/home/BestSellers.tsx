@@ -9,7 +9,7 @@ import { useCurrencyStore } from "@/store/currencyStore";
 
 export default function BestSellers({ products }: { products: any[] }) {
   const bestSellers = products.slice(0, 4);
-  const formatPrice = useCurrencyStore((state) => state.formatPrice);
+  const { currency, formatPrice } = useCurrencyStore();
   
   return (
     <section className="w-full py-20 md:py-32 px-6 md:px-12 max-w-[2000px] mx-auto bg-secondaryBg border-t border-divider relative">

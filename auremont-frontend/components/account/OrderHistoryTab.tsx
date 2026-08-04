@@ -9,7 +9,7 @@ interface OrderHistoryTabProps {
 
 export default function OrderHistoryTab({ orders, loadingOrders }: OrderHistoryTabProps) {
   const router = useRouter();
-  const formatPrice = useCurrencyStore((state) => state.formatPrice);
+  const { currency, formatPrice } = useCurrencyStore();
 
   const getDispatchSteps = (status: string) => {
     const s = (status || '').toLowerCase();

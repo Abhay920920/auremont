@@ -14,7 +14,7 @@ import { useCurrencyStore } from "@/store/currencyStore";
 export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { items, fetchCart, updateQuantity, removeItem } = useCartStore();
   const { user } = useAuthStore();
-  const formatPrice = useCurrencyStore((state) => state.formatPrice);
+  const { currency, formatPrice } = useCurrencyStore();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
