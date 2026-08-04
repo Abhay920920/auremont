@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { Star } from "lucide-react";
+import FlavorRadarChart from "./FlavorRadarChart";
+import { useCurrencyStore } from "@/store/currencyStore";
 
 function StarRating({ rating, size = 16 }: { rating: number; size?: number }) {
   return (
@@ -14,6 +16,7 @@ function StarRating({ rating, size = 16 }: { rating: number; size?: number }) {
 }
 
 export default function ProductInfo({ product, reviews, avgRating }: { product: any, reviews: any[], avgRating: number }) {
+  const formatPrice = useCurrencyStore((state) => state.formatPrice);
   const displayPrice = product.salePrice ? Number(product.salePrice) : Number(product.price);
   const originalPrice = product.salePrice ? Number(product.price) : null;
 
@@ -42,9 +45,9 @@ export default function ProductInfo({ product, reviews, avgRating }: { product: 
       )}
 
       <div className="flex items-baseline gap-4 pt-2 border-y border-divider/60 py-6">
-        <span className="text-3xl sm:text-4xl font-serif text-luxuryGold font-light">₹{displayPrice.toFixed(2)}</span>
+        <span suppressHydrationWarning className="text-3xl sm:text-4xl font-serif text-luxuryGold font-light">{formatPrice(displayPrice)}</span>
         {originalPrice && (
-          <span className="text-mutedText line-through text-lg font-serif">₹{originalPrice.toFixed(2)}</span>
+          <span suppressHydrationWarning className="text-mutedText line-through text-lg font-serif">{formatPrice(originalPrice)}</span>
         )}
         {product.salePrice && (
           <span className="bg-luxuryGold/10 text-luxuryGold text-[9px] px-3 py-1 rounded-sm uppercase tracking-ultra">Bespoke Offer</span>
@@ -63,6 +66,11 @@ export default function ProductInfo({ product, reviews, avgRating }: { product: 
           {product.shortDescription}
         </p>
       )}
+
+      {/* Interactive Botanical Flavor & Texture Radar Chart */}
+      <div className="pt-4">
+        <FlavorRadarChart />
+      </div>
     </div>
   );
 }

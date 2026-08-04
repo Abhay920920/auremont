@@ -11,6 +11,7 @@ import OrderHistoryTab from "@/components/account/OrderHistoryTab";
 import ProfileTab from "@/components/account/ProfileTab";
 import AddressesTab from "@/components/account/AddressesTab";
 import WishlistTab from "@/components/account/WishlistTab";
+import ReserveTierCard from "@/components/account/ReserveTierCard";
 
 export default function AccountDashboard() {
   const { user, setUser, logout } = useAuthStore();
@@ -184,13 +185,20 @@ export default function AccountDashboard() {
         
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-divider pb-8 gap-4">
           <div>
-             <h1 className="text-4xl md:text-5xl font-serif text-primaryText">Welcome, {user.firstName}</h1>
-             <p className="text-secondaryText mt-3 uppercase tracking-widest text-xs">Manage your exclusive Auremont account and track orders.</p>
+             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-luxuryGold/30 bg-luxuryGold/10 mb-3">
+               <span className="w-1.5 h-1.5 rounded-full bg-luxuryGold animate-ping" />
+               <span className="text-[9px] uppercase tracking-ultra text-luxuryGold font-medium">Auremont Reserve Member</span>
+             </div>
+             <h1 className="text-3xl sm:text-5xl font-serif text-primaryText tracking-tight">Welcome, {user.firstName}</h1>
+             <p className="text-secondaryText mt-2 uppercase tracking-ultra text-[10px]">Your private concierge membership portal, order vault, and saved privileges.</p>
           </div>
-          <button onClick={handleLogout} className="text-xs uppercase tracking-widest text-secondaryText hover:text-luxuryGold transition-colors py-2 md:py-0 md:pb-1">
-            Sign Out
+          <button onClick={handleLogout} className="text-[10px] uppercase tracking-ultra text-secondaryText hover:text-luxuryGold transition-colors py-2 md:py-0 md:pb-1">
+            Sign Out Concierge
           </button>
         </div>
+
+        {/* Reserve Tier Loyalty Card */}
+        <ReserveTierCard orderCount={orders.length} />
 
         <div className="flex flex-col md:flex-row gap-12 lg:gap-24">
            {/* Sidebar */}

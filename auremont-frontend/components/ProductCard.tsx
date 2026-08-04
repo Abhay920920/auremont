@@ -3,6 +3,7 @@ import Image from 'next/image';
 import AddToCartButton from '@/components/AddToCartButton';
 import { useAuthStore } from '@/store/authStore';
 import { useWishlistStore } from '@/store/wishlistStore';
+import { useCurrencyStore } from '@/store/currencyStore';
 
 interface Product {
   id: string;
@@ -16,6 +17,7 @@ interface Product {
 export default function ProductCard({ product }: { product: Product }) {
   const { user } = useAuthStore();
   const { items: wishlistItems, addWishlist, removeWishlist } = useWishlistStore();
+  const formatPrice = useCurrencyStore((state) => state.formatPrice);
   
   const isWishlisted = wishlistItems.some(item => item.productId === product.id);
 
@@ -70,7 +72,7 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
         
         <div className="w-full">
-          <span className="font-medium text-xs sm:text-base text-primaryText block mb-2 sm:mb-4">₹{Number(product.price).toFixed(2)}</span>
+          <span suppressHydrationWarning className="font-medium text-xs sm:text-base text-primaryText block mb-2 sm:mb-4">{formatPrice(product.price)}</span>
           
           {/* Mobile Quick Add */}
           <div className="md:hidden w-full">

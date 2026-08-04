@@ -9,9 +9,12 @@ import { useCartStore } from "@/store/cartStore";
 import QuantityControl from "./QuantityControl";
 import { useAuthStore } from "@/store/authStore";
 
+import { useCurrencyStore } from "@/store/currencyStore";
+
 export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { items, fetchCart, updateQuantity, removeItem } = useCartStore();
   const { user } = useAuthStore();
+  const formatPrice = useCurrencyStore((state) => state.formatPrice);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -106,7 +109,7 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
                             onIncrease={() => updateQuantity(item.id, item.quantity + 1)}
                             onDecrease={() => updateQuantity(item.id, item.quantity - 1)}
                           />
-                          <span className="font-medium text-primaryText">₹{(item.quantity * Number(item.unitPrice)).toFixed(2)}</span>
+                          <span className="font-medium text-primaryText">{formatPrice(item.quantity * Number(item.unitPrice))}</span>
                         </div>
                       </div>
                     </div>
@@ -117,24 +120,37 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
 
             {/* Footer */}
             {user && items.length > 0 && (
-              <div className="border-t border-divider p-6 pb-safe-bottom bg-secondaryBg">
-                <div className="flex justify-between items-center mb-6">
-                  <span className="font-serif text-xl text-primaryText">Subtotal</span>
-                  <span className="font-serif text-2xl text-luxuryGold">₹{subtotal.toFixed(2)}</span>
+              <div className="border-t border-divider p-6 pb-safe-bottom bg-secondaryBg space-y-4">
+                {/* Bespoke Laser Engraving & Gift Option */}
+                <div className="p-3 bg-background border border-luxuryGold/20 rounded-card space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] uppercase tracking-ultra text-luxuryGold font-medium">Bespoke Concierge Options</span>
+                    <span className="text-[9px] uppercase tracking-ultra text-mutedText">Complimentary</span>
+                  </div>
+                  <input 
+                    type="text" 
+                    placeholder="Enter custom initials or text for laser engraving..." 
+                    className="w-full bg-secondaryBg border border-divider px-3 py-2 text-xs text-primaryText rounded-sm outline-none focus:border-luxuryGold transition-colors placeholder:text-mutedText"
+                  />
                 </div>
-                <p className="text-xs text-mutedText text-center mb-6 font-light">
-                  Shipping and taxes calculated at checkout.
+
+                <div className="flex justify-between items-center pt-2">
+                  <span className="font-serif text-xl text-primaryText">Subtotal</span>
+                  <span className="font-serif text-2xl text-luxuryGold">{formatPrice(subtotal)}</span>
+                </div>
+                <p className="text-[10px] text-mutedText text-center font-light">
+                  Complimentary Vault Dispatch & Insured Shipping applied at checkout.
                 </p>
                 <Link 
                   href="/checkout" 
                   onClick={onClose}
-                  className="luxury-button w-full flex justify-center"
+                  className="luxury-button w-full flex justify-center py-4 text-xs tracking-ultra"
                 >
-                  Proceed to Checkout
+                  Proceed to Concierge Checkout
                 </Link>
-                <div className="mt-4 text-center">
-                  <Link href="/cart" onClick={onClose} className="text-xs uppercase tracking-widest text-secondaryText hover:text-primaryText hover:underline transition-all p-2 inline-block">
-                    View Full Cart
+                <div className="text-center">
+                  <Link href="/cart" onClick={onClose} className="text-[10px] uppercase tracking-ultra text-secondaryText hover:text-primaryText transition-all p-1 inline-block">
+                    View Complete Vault Cart
                   </Link>
                 </div>
               </div>

@@ -15,11 +15,14 @@ import CartDrawer from "./cart/CartDrawer";
 import MobileNavDrawer from "./MobileNavDrawer";
 import { Menu } from "lucide-react";
 
+import { useCurrencyStore, CurrencyCode } from "@/store/currencyStore";
+
 export default function Header() {
   const { user, logout } = useAuthStore();
   const items = useCartStore((state) => state.items);
   const fetchCart = useCartStore((state) => state.fetchCart);
   const { fetchWishlist } = useWishlistStore();
+  const { currency, setCurrency } = useCurrencyStore();
   const [mounted, setMounted] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   
@@ -87,9 +90,23 @@ export default function Header() {
 
           {/* Nav Right */}
           <div 
-            className="flex flex-1 gap-4 md:gap-8 items-center justify-end text-[13px] tracking-widest uppercase text-primaryText font-medium"
+            className="flex flex-1 gap-3 sm:gap-6 items-center justify-end text-[13px] tracking-widest uppercase text-primaryText font-medium"
             onMouseEnter={() => setIsMegaNavOpen(false)}
           >
+             {/* Currency Dropdown Pill (Desktop Only) */}
+             <div className="hidden md:flex relative items-center">
+               <select 
+                 value={mounted ? currency : 'INR'}
+                 onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
+                 className="bg-secondaryBg/90 border border-luxuryGold/30 text-luxuryGold text-[10px] uppercase tracking-ultra px-2 py-1 rounded-full outline-none cursor-pointer hover:border-luxuryGold transition-colors"
+               >
+                 <option value="INR" className="bg-background text-primaryText">INR ₹</option>
+                 <option value="USD" className="bg-background text-primaryText">USD $</option>
+                 <option value="EUR" className="bg-background text-primaryText">EUR €</option>
+                 <option value="GBP" className="bg-background text-primaryText">GBP £</option>
+               </select>
+             </div>
+
              <button onClick={() => setIsSearchOpen(true)} className="w-11 h-11 flex items-center justify-center hover:text-luxuryGold transition-colors md:w-auto md:h-auto" aria-label="Search">
                <Search size={20} className="md:w-[18px] md:h-[18px]" />
              </button>
@@ -125,6 +142,21 @@ export default function Header() {
                )}
              </button>
           </div>
+        </div>
+
+        {/* Mobile Sub-Header Currency Strip (Right-Aligned Below Search & Cart) */}
+        <div className="md:hidden w-full pt-1 pb-1.5 px-6 flex justify-end items-center text-[9px] uppercase tracking-ultra text-mutedText border-t border-divider/30 bg-background/80 backdrop-blur-md">
+          <span className="text-secondaryText font-light mr-1.5">Currency:</span>
+          <select 
+            value={mounted ? currency : 'INR'}
+            onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
+            className="bg-secondaryBg border border-luxuryGold/40 text-luxuryGold text-[9px] uppercase tracking-ultra px-2 py-0.5 rounded-full outline-none cursor-pointer"
+          >
+            <option value="INR" className="bg-background text-primaryText">INR (₹)</option>
+            <option value="USD" className="bg-background text-primaryText">USD ($)</option>
+            <option value="EUR" className="bg-background text-primaryText">EUR (€)</option>
+            <option value="GBP" className="bg-background text-primaryText">GBP (£)</option>
+          </select>
         </div>
 
         <MegaNavigation isOpen={isMegaNavOpen} onMouseLeave={() => setIsMegaNavOpen(false)} />

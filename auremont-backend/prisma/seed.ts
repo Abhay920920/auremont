@@ -127,7 +127,68 @@ async function main() {
     },
   });
 
-  // 4. Create Admin Account
+  // 4. Create Luxury Journal Blogs
+  await prisma.blog.upsert({
+    where: { slug: 'art-of-slow-roasting' },
+    update: { published: true, publishedAt: new Date() },
+    create: {
+      title: 'The Art of Slow Roasting: Preserving Aromatic Oils',
+      slug: 'art-of-slow-roasting',
+      content: 'True luxury requires patience. Unlike high-heat industrial processing, Auremont slow-roasts our Nonpareil California almonds at low temperatures. This gentle technique locks in essential vitamin E and natural nut oils while developing a crisp, buttery aromatic crunch.',
+      authorName: 'Auremont Botanical Masters',
+      authorRole: 'Master Roaster',
+      coverImage: '/images/roasted-almonds-jar.png',
+      published: true,
+      publishedAt: new Date(),
+    }
+  });
+
+  await prisma.blog.upsert({
+    where: { slug: 'heritage-of-auremont-unboxing' },
+    update: { published: true, publishedAt: new Date() },
+    create: {
+      title: 'Handcrafted Mahogany & Velvet: The Heritage Unboxing',
+      slug: 'heritage-of-auremont-unboxing',
+      content: 'A gift from Auremont is designed to leave a lasting impression. Every wooden box is carved from solid mahogany wood, polished with natural oils, and lined with custom gold velvet to protect our extra-large almonds.',
+      authorName: 'Auremont Design Studio',
+      authorRole: 'Creative Director',
+      coverImage: '/images/royal-almonds-wooden-box.png',
+      published: true,
+      publishedAt: new Date(),
+    }
+  });
+
+  await prisma.blog.upsert({
+    where: { slug: 'california-valley-terroir' },
+    update: { published: true, publishedAt: new Date() },
+    create: {
+      title: 'California Valley Terroir: Why Geography Defines Excellence',
+      slug: 'california-valley-terroir',
+      content: 'Situated along the 36th parallel north, California’s Central Valley offers the world’s ideal microclimate for almond cultivation. Deep alluvial soils and Mediterranean sun combine to produce kernels of unprecedented size and rich flavor.',
+      authorName: 'Master Agronomist',
+      authorRole: 'Orchard Director',
+      coverImage: '/images/california-almonds-250g.png',
+      published: true,
+      publishedAt: new Date(),
+    }
+  });
+
+  await prisma.blog.upsert({
+    where: { slug: 'bespoke-pairing-guide' },
+    update: { published: true, publishedAt: new Date() },
+    create: {
+      title: 'Bespoke Pairing: Reserve Almonds with Vintage Champagne',
+      slug: 'bespoke-pairing-guide',
+      content: 'Elevate your sensory experience. Our sommelier shares why Auremont slow-roasted sea salt almonds complement Blanc de Blancs Champagne, vintage Chardonnay, and aged artisanal cheeses.',
+      authorName: 'Auremont Sommelier',
+      authorRole: 'Culinary Advisor',
+      coverImage: '/images/roasted-almonds-jar.png',
+      published: true,
+      publishedAt: new Date(),
+    }
+  });
+
+  // 5. Create Admin Account
   const hashedPassword = await bcrypt.hash('Admin@12345', 10);
   await prisma.user.upsert({
     where: { email: 'admin@auremont.com' },

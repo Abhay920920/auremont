@@ -1,13 +1,15 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ChevronRight, User, ShoppingBag } from "lucide-react";
+import { X, ChevronRight, User } from "lucide-react";
 import Link from "next/link";
 import { useAuthStore } from "@/store/authStore";
 import { useState, useEffect } from "react";
+import { useCurrencyStore, CurrencyCode } from "@/store/currencyStore";
 
 export default function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { user } = useAuthStore();
+  const { currency, setCurrency } = useCurrencyStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -97,6 +99,21 @@ export default function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; 
                   Sign In / Register
                 </Link>
               )}
+
+              {/* Currency Selector */}
+              <div className="pt-2 border-t border-divider/60 flex items-center justify-between text-xs text-secondaryText">
+                <span className="uppercase tracking-widest">Currency</span>
+                <select 
+                  value={mounted ? currency : 'INR'}
+                  onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
+                  className="bg-background border border-divider rounded px-2.5 py-1 text-xs text-primaryText outline-none"
+                >
+                  <option value="INR">INR (₹)</option>
+                  <option value="USD">USD ($)</option>
+                  <option value="EUR">EUR (€)</option>
+                  <option value="GBP">GBP (£)</option>
+                </select>
+              </div>
             </div>
           </motion.div>
         </>
