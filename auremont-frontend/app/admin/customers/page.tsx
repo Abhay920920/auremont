@@ -90,7 +90,7 @@ export default function AdminCustomersPage() {
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-5 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+                    <td className="px-6 py-5 text-right opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                       <Link 
                         href={`/admin/customers/${c.id}`}
                         className="text-luxuryGold hover:text-goldHover font-medium transition-colors border border-luxuryGold px-4 py-1.5 rounded-lg"

@@ -102,7 +102,7 @@ export default function AdminProductsPage() {
                       )}
                       {p.status !== false ? 'Active' : 'Draft'}
                     </td>
-                    <td className="px-6 py-5 text-right space-x-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <td className="px-6 py-5 text-right space-x-4 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                       <Link href={`/admin/products/${p.id}`} className="text-luxuryGold hover:text-goldHover font-medium transition-colors">Edit</Link>
                       <button onClick={() => handleDelete(p.id)} className="text-red-400 hover:text-red-300 font-medium transition-colors">Delete</button>
                     </td>

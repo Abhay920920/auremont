@@ -20,8 +20,8 @@ export default function ProductCard({ product }: { product: Product }) {
   const isWishlisted = wishlistItems.some(item => item.productId === product.id);
 
   return (
-    <div className="group cursor-pointer flex flex-col">
-      <div className="w-full aspect-[4/5] relative bg-secondaryBg overflow-hidden mb-8 border border-divider">
+    <div className="group cursor-pointer flex flex-col h-full">
+      <div className="w-full aspect-[4/5] relative bg-secondaryBg overflow-hidden mb-3 sm:mb-8 border border-divider">
         <Link href={`/shop/${product.slug}`}>
           <Image 
             src={product.thumbnailUrl || '/images/california-almonds-250g.png'} 
@@ -32,9 +32,9 @@ export default function ProductCard({ product }: { product: Product }) {
         </Link>
         
         {/* Wishlist Heart */}
-        <div className="absolute top-4 right-4 z-20">
+        <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-20">
           <button 
-            className="bg-background/80 backdrop-blur-md w-11 h-11 flex items-center justify-center rounded-full border border-divider text-primaryText hover:border-luxuryGold hover:text-luxuryGold transition-colors"
+            className="bg-background/80 backdrop-blur-md w-8 h-8 sm:w-11 sm:h-11 flex items-center justify-center rounded-full border border-divider text-primaryText hover:border-luxuryGold hover:text-luxuryGold transition-colors"
             onClick={(e) => {
                 e.preventDefault(); 
                 if (user) {
@@ -49,7 +49,7 @@ export default function ProductCard({ product }: { product: Product }) {
             }}
             aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill={isWishlisted ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill={isWishlisted ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="sm:w-[18px] sm:h-[18px]"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
           </button>
         </div>
 
@@ -61,16 +61,21 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
       </div>
       
-      <div className="flex flex-col items-center text-center">
-        <Link href={`/shop/${product.slug}`}>
-          <h3 className="font-serif text-2xl text-primaryText mb-2 group-hover:text-luxuryGold transition-colors">{product.name}</h3>
-        </Link>
-        <p className="text-xs text-secondaryText tracking-superwide uppercase mb-4">{product.weightGrams || 250}G</p>
-        <span className="font-medium text-primaryText mb-4">₹{Number(product.price).toFixed(2)}</span>
+      <div className="flex flex-col items-center text-center flex-grow justify-between">
+        <div>
+          <Link href={`/shop/${product.slug}`}>
+            <h3 className="font-serif text-sm sm:text-2xl text-primaryText mb-1 sm:mb-2 group-hover:text-luxuryGold transition-colors line-clamp-2">{product.name}</h3>
+          </Link>
+          <p className="text-[10px] sm:text-xs text-secondaryText tracking-superwide uppercase mb-1 sm:mb-4">{product.weightGrams || 250}G</p>
+        </div>
         
-        {/* Mobile Quick Add */}
-        <div className="md:hidden w-full px-4">
-          <AddToCartButton productId={product.id} className="luxury-button w-full text-xs py-3" />
+        <div className="w-full">
+          <span className="font-medium text-xs sm:text-base text-primaryText block mb-2 sm:mb-4">₹{Number(product.price).toFixed(2)}</span>
+          
+          {/* Mobile Quick Add */}
+          <div className="md:hidden w-full">
+            <AddToCartButton productId={product.id} className="luxury-button w-full text-[10px] py-2 px-2" />
+          </div>
         </div>
       </div>
     </div>

@@ -128,7 +128,7 @@ export default function AdminOrdersPage() {
                     <td className="px-6 py-5 text-primaryText font-medium">₹{Number(o.total).toFixed(2)}</td>
                     <td className="px-6 py-5">{getPaymentBadge(o.paymentStatus)}</td>
                     <td className="px-6 py-5">{getStatusBadge(o.orderStatus)}</td>
-                    <td className="px-6 py-5 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+                    <td className="px-6 py-5 text-right opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                       <Link 
                         href={`/admin/orders/${o.id}`}
                         className="text-luxuryGold hover:text-goldHover font-medium transition-colors border border-luxuryGold px-4 py-1.5 rounded-lg"

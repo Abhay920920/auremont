@@ -17,15 +17,15 @@ export default function AccountSidebar({ activeTab, setActiveTab, wishlistCount 
   ];
 
   return (
-    <div className="w-full md:w-80 flex-shrink-0 space-y-2">
+    <div className="w-full md:w-80 flex-shrink-0 flex md:flex-col overflow-x-auto scrollbar-hide gap-2 pb-2 md:pb-0">
       {tabs.map(tab => (
         <button
           key={tab.id}
           onClick={() => setActiveTab(tab.id as Tab)}
-          className={`w-full flex items-center gap-4 text-left px-6 py-4 rounded-sm transition-all duration-300 group
+          className={`flex-shrink-0 whitespace-nowrap flex items-center gap-3 text-left px-4 md:px-6 py-3 md:py-4 rounded-sm transition-all duration-300 group text-xs md:text-sm
             ${activeTab === tab.id 
               ? 'bg-secondaryBg border border-luxuryGold text-primaryText shadow-[0_0_15px_rgba(212,175,55,0.1)]' 
-              : 'border border-transparent text-secondaryText hover:bg-secondaryBg hover:text-primaryText hover:border-divider'
+              : 'border border-divider text-secondaryText hover:bg-secondaryBg hover:text-primaryText hover:border-divider'
             }`}
         >
           <span className={`${activeTab === tab.id ? 'text-luxuryGold' : 'text-mutedText group-hover:text-luxuryGold'} transition-colors`}>
