@@ -281,23 +281,23 @@ export default function CheckoutPage() {
         
         {/* Checkout Form */}
         <div className="flex-grow max-w-2xl">
-          <h1 className="text-4xl md:text-5xl font-serif text-primaryText mb-12 flex items-center gap-4">
+          <h1 className="text-2xl md:text-3xl font-serif text-primaryText mb-8 flex items-center gap-3">
             Secure Checkout
-            <Lock className="text-luxuryGold" size={28} strokeWidth={1.5} />
+            <Lock className="text-luxuryGold" size={22} strokeWidth={1.5} />
           </h1>
           
           <ProgressIndicator steps={steps} currentStep={currentStep} />
 
-          <form onSubmit={handlePlaceOrder} className="space-y-12">
+          <form onSubmit={handlePlaceOrder} className="space-y-10">
             
             {/* Step 0: Information */}
             {currentStep === 0 && (
-              <div className="space-y-12 animate-fade-in">
-                {error && <div className="text-error bg-error/10 border border-error/20 p-4 rounded-sm text-sm">{error}</div>}
+              <div className="space-y-10 animate-fade-in">
+                {error && <div className="text-error bg-error/10 border border-error/20 p-3 rounded-sm text-xs">{error}</div>}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-10">
                   <div className="md:col-span-2">
-                    <h2 className="text-[13px] tracking-widest uppercase text-primaryText border-b border-divider pb-4 font-medium mb-8">Shipping Information</h2>
+                    <h2 className="text-[11px] tracking-widest uppercase text-primaryText border-b border-divider pb-3 font-medium mb-6">Shipping Information</h2>
                   </div>
                   
                   <CustomInput label="Full Name" name="fullName" value={address.fullName} onChange={handleChange} required />
@@ -319,7 +319,7 @@ export default function CheckoutPage() {
                 <button 
                   type="button" 
                   onClick={() => validateAddress() && setCurrentStep(1)}
-                  className="w-full luxury-button mt-12 h-16"
+                  className="w-full luxury-button mt-8 h-12 text-xs"
                 >
                   Continue to Payment
                 </button>
@@ -328,49 +328,49 @@ export default function CheckoutPage() {
 
             {/* Step 1: Payment */}
             {currentStep === 1 && (
-              <div className="space-y-12 animate-fade-in">
-                {error && <div className="text-error bg-error/10 border border-error/20 p-4 rounded-sm text-sm">{error}</div>}
+              <div className="space-y-10 animate-fade-in">
+                {error && <div className="text-error bg-error/10 border border-error/20 p-3 rounded-sm text-xs">{error}</div>}
 
                 <div>
-                  <h2 className="text-[13px] tracking-widest uppercase text-primaryText border-b border-divider pb-4 font-medium mb-8 flex justify-between items-center">
+                  <h2 className="text-[11px] tracking-widest uppercase text-primaryText border-b border-divider pb-3 font-medium mb-6 flex justify-between items-center">
                     Payment
                     <button type="button" onClick={() => setCurrentStep(0)} className="text-luxuryGold hover:text-goldHover text-[10px]">Edit Info</button>
                   </h2>
                   
-                  <div className="flex items-start gap-6 p-6 border border-luxuryGold bg-secondaryBg relative overflow-hidden">
+                  <div className="flex items-start gap-4 p-5 border border-luxuryGold bg-secondaryBg relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-1 h-full bg-luxuryGold" />
-                    <div className="flex-shrink-0 mt-1">
-                      <CreditCard className="w-6 h-6 text-luxuryGold" strokeWidth={1.5} />
+                    <div className="flex-shrink-0 mt-0.5">
+                      <CreditCard className="w-5 h-5 text-luxuryGold" strokeWidth={1.5} />
                     </div>
                     <div>
-                      <p className="font-serif text-xl text-primaryText mb-1">Razorpay Secure Checkout</p>
-                      <p className="text-xs tracking-wide text-secondaryText mb-4">You will be redirected to Razorpay to complete your purchase securely.</p>
+                      <p className="font-serif text-lg text-primaryText mb-1">Razorpay Secure Checkout</p>
+                      <p className="text-xs tracking-wide text-secondaryText mb-3">You will be redirected to Razorpay to complete your purchase securely.</p>
                       <div className="flex gap-2">
-                        <span className="px-2 py-1 bg-background border border-divider text-[9px] uppercase tracking-widest text-mutedText rounded-sm">UPI</span>
-                        <span className="px-2 py-1 bg-background border border-divider text-[9px] uppercase tracking-widest text-mutedText rounded-sm">Cards</span>
-                        <span className="px-2 py-1 bg-background border border-divider text-[9px] uppercase tracking-widest text-mutedText rounded-sm">Net Banking</span>
+                        <span className="px-2 py-0.5 bg-background border border-divider text-[9px] uppercase tracking-widest text-mutedText rounded-sm">UPI</span>
+                        <span className="px-2 py-0.5 bg-background border border-divider text-[9px] uppercase tracking-widest text-mutedText rounded-sm">Cards</span>
+                        <span className="px-2 py-0.5 bg-background border border-divider text-[9px] uppercase tracking-widest text-mutedText rounded-sm">Net Banking</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-6 border border-divider bg-background text-sm text-secondaryText leading-relaxed">
+                <div className="p-4 border border-divider bg-background text-xs text-secondaryText leading-relaxed">
                   <p>By clicking "Complete Purchase", you acknowledge that you have read and agree to Auremont's <Link href="/terms" className="text-luxuryGold underline hover:text-goldHover" target="_blank">Terms of Service</Link> and <Link href="/privacy-policy" className="text-luxuryGold underline hover:text-goldHover" target="_blank">Privacy Policy</Link>.</p>
                 </div>
 
                 <button 
                   type="submit" 
                   disabled={loading || paymentLoading} 
-                  className="w-full luxury-button mt-12 disabled:opacity-50 flex items-center justify-center h-16 group"
+                  className="w-full luxury-button mt-8 disabled:opacity-50 flex items-center justify-center h-12 text-xs group"
                 >
                   {loading ? (
-                    <span className="flex items-center gap-4">
-                      <span className="w-4 h-4 border border-background border-t-transparent rounded-full animate-spin" />
+                    <span className="flex items-center gap-3">
+                      <span className="w-3.5 h-3.5 border border-background border-t-transparent rounded-full animate-spin" />
                       Processing Securely...
                     </span>
                   ) : (
-                    <span className="flex items-center gap-3">
-                      <ShieldCheck size={18} className="group-hover:scale-110 transition-transform" />
+                    <span className="flex items-center gap-2">
+                      <ShieldCheck size={16} className="group-hover:scale-110 transition-transform" />
                       Complete Purchase — ₹{total.toFixed(2)}
                     </span>
                   )}
@@ -381,14 +381,14 @@ export default function CheckoutPage() {
         </div>
 
         {/* Order Summary Sidebar */}
-        <div className="w-full lg:w-[450px] flex-shrink-0 mt-12 lg:mt-0">
-          <div className="bg-secondaryBg p-8 border border-divider sticky top-32">
-            <h2 className="font-serif text-3xl text-primaryText border-b border-divider pb-6 mb-8">Summary</h2>
+        <div className="w-full lg:w-[420px] flex-shrink-0 mt-10 lg:mt-0">
+          <div className="bg-secondaryBg p-6 border border-divider sticky top-32">
+            <h2 className="font-serif text-xl md:text-2xl text-primaryText border-b border-divider pb-4 mb-6">Summary</h2>
 
-            <div className="space-y-6 mb-8 max-h-[40vh] overflow-y-auto pr-2 scrollbar-hide">
+            <div className="space-y-4 mb-6 max-h-[35vh] overflow-y-auto pr-2 scrollbar-hide">
               {safeItems.map(item => (
-                <div key={item.id} className="flex gap-4 items-center group">
-                  <div className="w-16 h-20 bg-background border border-divider relative flex-shrink-0 overflow-hidden">
+                <div key={item.id} className="flex gap-3 items-center group">
+                  <div className="w-14 h-16 bg-background border border-divider relative flex-shrink-0 overflow-hidden">
                     <Image 
                       src={(item as any).product?.thumbnailUrl || '/images/california-almonds-250g.png'} 
                       alt={(item as any).product?.name || 'Product'} 
@@ -396,10 +396,10 @@ export default function CheckoutPage() {
                       className="object-cover group-hover:scale-110 transition-transform duration-700" 
                     />
                   </div>
-                  <div className="flex-grow flex justify-between items-center text-sm">
+                  <div className="flex-grow flex justify-between items-center text-xs">
                     <div>
-                      <p className="text-primaryText font-serif text-lg group-hover:text-luxuryGold transition-colors">{(item as any).product?.name}</p>
-                      <p className="text-secondaryText text-[10px] uppercase tracking-widest mt-1">Qty: {item.quantity}</p>
+                      <p className="text-primaryText font-serif text-sm group-hover:text-luxuryGold transition-colors">{(item as any).product?.name}</p>
+                      <p className="text-secondaryText text-[9px] uppercase tracking-widest mt-0.5">Qty: {item.quantity}</p>
                     </div>
                     <span className="text-primaryText font-medium">₹{(item.quantity * Number(item.unitPrice || 0)).toFixed(2)}</span>
                   </div>
@@ -407,8 +407,8 @@ export default function CheckoutPage() {
               ))}
             </div>
 
-            <div className="border-t border-divider pt-6 space-y-6 mb-8">
-              <div className="space-y-4">
+            <div className="border-t border-divider pt-4 space-y-4 mb-6">
+              <div className="space-y-3">
                 <CustomInput 
                   label="Gift Card or Privilege Code" 
                   name="couponCode" 
@@ -421,7 +421,7 @@ export default function CheckoutPage() {
                   type="button"
                   onClick={appliedCoupon ? removeCoupon : applyCoupon}
                   disabled={applyingCoupon || (!couponCode && !appliedCoupon)}
-                  className="w-full h-12 luxury-button-outline disabled:opacity-50"
+                  className="w-full h-10 luxury-button-outline text-xs disabled:opacity-50"
                 >
                   {applyingCoupon ? 'Verifying...' : appliedCoupon ? 'Remove Code' : 'Apply Code'}
                 </button>
@@ -430,7 +430,7 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            <div className="border-t border-divider pt-6 space-y-4 text-sm text-secondaryText mb-8">
+            <div className="border-t border-divider pt-4 space-y-3 text-xs text-secondaryText mb-6">
               <div className="flex justify-between">
                 <span>Subtotal</span>
                 <span className="text-primaryText">₹{subtotal.toFixed(2)}</span>
@@ -451,7 +451,7 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            <div className="border-t border-divider pt-6 flex justify-between font-serif text-3xl text-primaryText">
+            <div className="border-t border-divider pt-4 flex justify-between font-serif text-xl md:text-2xl text-primaryText">
               <span>Total</span>
               <span className="text-luxuryGold">₹{total.toFixed(2)}</span>
             </div>

@@ -15,7 +15,7 @@ export default function CustomInput({ label, id, ...props }: CustomInputProps) {
       <label 
         htmlFor={inputId}
         className={`absolute left-0 transition-all duration-300 pointer-events-none uppercase tracking-widest
-          ${isFocused || props.value ? '-top-5 text-xs md:text-sm text-luxuryGold' : 'top-5 text-lg text-secondaryText'}
+          ${isFocused || props.value ? '-top-4 text-[10px] text-luxuryGold' : 'top-2.5 text-xs text-secondaryText'}
         `}
       >
         {label}
@@ -31,7 +31,7 @@ export default function CustomInput({ label, id, ...props }: CustomInputProps) {
           setIsFocused(false);
           props.onBlur?.(e);
         }}
-        className={`w-full bg-transparent border-b h-16 pt-6 pb-2 text-primaryText text-xl md:text-2xl outline-none transition-colors duration-300
+        className={`w-full bg-transparent border-b h-11 pt-3 pb-1 text-sm md:text-base text-primaryText outline-none transition-colors duration-300
           ${isFocused ? 'border-luxuryGold' : 'border-divider hover:border-secondaryText'}
           ${props.className || ''}
         `}
