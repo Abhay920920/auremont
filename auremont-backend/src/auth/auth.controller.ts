@@ -22,23 +22,23 @@ export class AuthController {
     
     const tokens = await this.authService.login(user);
     
-    // Set refresh token in HttpOnly cookie with cross-site support
     res.cookie('refresh_token', tokens.refresh_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     return {
       access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token,
       user: tokens.user,
     };
   }
 
   @Post('refresh')
-  async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const refreshToken = req.cookies['refresh_token'];
+  async refresh(@Req() req: Request, @Body() body: any, @Res({ passthrough: true }) res: Response) {
+    const refreshToken = req.cookies['refresh_token'] || body?.refreshToken;
     if (!refreshToken) {
       throw new UnauthorizedException('No refresh token provided');
     }
@@ -52,7 +52,10 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return { access_token: tokens.access_token };
+    return {
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token,
+    };
   }
 
   @Post('logout')
@@ -81,6 +84,7 @@ export class AuthController {
 
     return {
       access_token: result.tokens.access_token,
+      refresh_token: result.tokens.refresh_token,
       user: result.user,
     };
   }

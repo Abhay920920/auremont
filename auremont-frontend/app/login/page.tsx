@@ -21,7 +21,7 @@ export default function Login() {
 
     try {
       const response = await api.post('/auth/login', { email, password });
-      setAuth(response.data.user, response.data.access_token);
+      setAuth(response.data.user, response.data.access_token, response.data.refresh_token);
       
       // Trigger cart merge and fetch wishlist (do not await so it doesn't block routing)
       import('@/store/cartStore').then(({ useCartStore }) => {

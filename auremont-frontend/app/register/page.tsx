@@ -30,9 +30,9 @@ export default function Register() {
     try {
       // Single-step atomic registration & login
       const res = await api.post('/auth/register', formData);
-      const { user, access_token } = res.data;
+      const { user, access_token, refresh_token } = res.data;
       
-      setAuth(user, access_token);
+      setAuth(user, access_token, refresh_token);
       router.push('/account');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Registration failed.');
