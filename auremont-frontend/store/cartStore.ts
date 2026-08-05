@@ -43,11 +43,10 @@ export const useCartStore = create<CartState>()(
 
       fetchCart: async () => {
         const cartId = get().cartId;
-        if (!cartId) return;
-
         set({ loading: true, error: null });
         try {
-          const res = await api.get(`/cart?cartId=${cartId}`);
+          const url = cartId ? `/cart?cartId=${cartId}` : '/cart';
+          const res = await api.get(url);
           if (res.data) {
             set({ cartId: res.data.id, items: res.data.items || [] });
           } else {

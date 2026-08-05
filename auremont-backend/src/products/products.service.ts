@@ -44,22 +44,26 @@ export class ProductsService {
           price: true,
           salePrice: true,
           shortDescription: true,
+          weightGrams: true,
           stockQty: true,
+          thumbnailUrl: true,
+          isFeatured: true,
           images: {
-            where: { isPrimary: true },
-            take: 1,
-            select: { imageUrl: true },
+            take: 5,
+            select: { imageUrl: true, isPrimary: true },
           },
         },
       }),
     ]);
 
-    // Map to include rating summary if we were fetching it (mocked/omitted for now since reviews require aggregation)
-    const formattedData = data.map(product => ({
-      ...product,
-      primaryImage: product.images[0]?.imageUrl || null,
-      images: undefined,
-    }));
+    const formattedData = data.map(product => {
+      const primaryImg = product.images.find(i => i.isPrimary)?.imageUrl || product.images[0]?.imageUrl;
+      return {
+        ...product,
+        thumbnailUrl: product.thumbnailUrl || primaryImg || '/images/california-almonds-250g.png',
+        primaryImage: primaryImg || product.thumbnailUrl || '/images/california-almonds-250g.png',
+      };
+    });
 
     return {
       data: formattedData,

@@ -6,31 +6,44 @@ const prisma = new PrismaClient();
 @Injectable()
 export class CartService {
   async getCart(cartId?: string, userId?: string): Promise<Cart | null> {
-    const where: any = {};
+    let cart: any = null;
+
     if (cartId) {
-      where.id = cartId;
-    } else if (userId) {
-      where.userId = userId;
-      where.status = 'active';
-    } else {
+      cart = await prisma.cart.findFirst({
+        where: { id: cartId },
+        include: {
+          items: {
+            include: { product: true },
+            orderBy: { id: 'asc' },
+          },
+        },
+      });
+    }
+
+    if (!cart && userId) {
+      cart = await prisma.cart.findFirst({
+        where: { userId, status: 'active' },
+        include: {
+          items: {
+            include: { product: true },
+            orderBy: { id: 'asc' },
+          },
+        },
+      });
+    }
+
+    if (!cart) {
       return null;
     }
 
-    const cart = await prisma.cart.findFirst({
-      where,
-      include: {
-        items: {
-          include: { product: true },
-          orderBy: { id: 'asc' },
-        },
-      },
-    });
-
-    if (cart && cart.userId && cart.userId !== userId) {
-      // Cart belongs to a user, but either no user is logged in, or a different user is logged in
+    if (cart.userId && userId && cart.userId !== userId) {
       throw new ForbiddenException('You do not have permission to access this cart');
     }
-    
+
+    if (cart.userId && !userId) {
+      return null;
+    }
+
     return cart;
   }
 

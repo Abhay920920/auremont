@@ -69,7 +69,14 @@ async function main() {
   // 3. Create Products
   await prisma.product.upsert({
     where: { sku: 'ALM-EV-250' },
-    update: {},
+    update: {
+      thumbnailUrl: '/images/california-almonds-250g.png',
+      name: 'California Reserve Raw Almonds 250g',
+      price: 999.00,
+      salePrice: 799.00,
+      shortDescription: '100% natural, unpasteurized California raw almonds. High protein, extra crunch.',
+      isFeatured: true,
+    },
     create: {
       categoryId: catRaw.id,
       collectionId: collEveryday.id,
@@ -89,7 +96,14 @@ async function main() {
 
   await prisma.product.upsert({
     where: { sku: 'ALM-SIG-500' },
-    update: {},
+    update: {
+      thumbnailUrl: '/images/roasted-almonds-jar.png',
+      name: 'Slow-Roasted Sea Salt Almonds 500g',
+      price: 1499.00,
+      salePrice: 1299.00,
+      shortDescription: 'Masterfully roasted California almonds with artisanal sea salt in a thick UV-protected glass jar.',
+      isFeatured: true,
+    },
     create: {
       categoryId: catRoasted.id,
       collectionId: collSignature.id,
@@ -109,7 +123,14 @@ async function main() {
 
   await prisma.product.upsert({
     where: { sku: 'ALM-HER-1000' },
-    update: {},
+    update: {
+      thumbnailUrl: '/images/royal-almonds-wooden-box.png',
+      name: 'Everyday Collection Rigid Gift Box 1kg',
+      price: 2999.00,
+      salePrice: 2499.00,
+      shortDescription: 'Custom matte black rigid gift box with embossed gold lettering and gold edge trim.',
+      isFeatured: true,
+    },
     create: {
       categoryId: catGift.id,
       collectionId: collHeritage.id,
@@ -129,7 +150,14 @@ async function main() {
 
   await prisma.product.upsert({
     where: { sku: 'ALM-WIN-250' },
-    update: {},
+    update: {
+      thumbnailUrl: '/images/almonds-pouch-window.png',
+      name: 'Transparent Window Pouch Edition 250g',
+      price: 1099.00,
+      salePrice: 899.00,
+      shortDescription: 'Matte black stand-up pouch featuring a clear window displaying fresh California almonds.',
+      isFeatured: true,
+    },
     create: {
       categoryId: catRaw.id,
       collectionId: collEveryday.id,
@@ -149,7 +177,14 @@ async function main() {
 
   await prisma.product.upsert({
     where: { sku: 'ALM-UNB-1000' },
-    update: {},
+    update: {
+      thumbnailUrl: '/images/luxury-gift-box-unboxing.png',
+      name: 'Grand Unboxing Luxury Gift Box',
+      price: 3499.00,
+      salePrice: 2999.00,
+      shortDescription: 'Hinged black gift box with gold interior rim, gold-stamped pouch & thank you card.',
+      isFeatured: true,
+    },
     create: {
       categoryId: catGift.id,
       collectionId: collHeritage.id,
@@ -166,6 +201,22 @@ async function main() {
       nutritionJson: { protein: '21g', fiber: '12g', fats: '49g', energy: '579 kcal' }
     },
   });
+
+  // Populate ProductImage records for all products
+  const allProds = await prisma.product.findMany();
+  for (const p of allProds) {
+    if (p.thumbnailUrl) {
+      await prisma.productImage.deleteMany({ where: { productId: p.id } });
+      await prisma.productImage.create({
+        data: {
+          productId: p.id,
+          imageUrl: p.thumbnailUrl,
+          sortOrder: 0,
+          isPrimary: true,
+        },
+      });
+    }
+  }
 
   // 4. Create Luxury Journal Blogs
   await prisma.blog.upsert({
