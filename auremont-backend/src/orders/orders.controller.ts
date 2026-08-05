@@ -78,7 +78,7 @@ export class OrdersController {
     @Body() dto: UpdateOrderStatusDto,
     @GetUser() user: any
   ) {
-    return this.ordersService.updateOrderStatus(id, dto, user.id);
+    return this.ordersService.updateOrderStatus(id, dto, user?.id);
   }
 }
 
@@ -104,6 +104,6 @@ export class AdminOrdersController {
     @Body() dto: UpdateOrderStatusDto,
     @GetUser() user: any
   ) {
-    return this.ordersService.updateOrderStatus(id, dto, user.id);
+    return this.ordersService.updateOrderStatus(id, dto, user?.id);
   }
 }

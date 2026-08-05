@@ -340,7 +340,7 @@ export class OrdersService {
     return { data, total };
   }
 
-  async updateOrderStatus(orderId: string, dto: UpdateOrderStatusDto, adminId: string): Promise<Order> {
+  async updateOrderStatus(orderId: string, dto: UpdateOrderStatusDto, adminId?: string): Promise<Order> {
     const order = await this.prisma.order.findUnique({ where: { id: orderId } });
     if (!order) throw new NotFoundException('Order not found');
 
@@ -351,16 +351,27 @@ export class OrdersService {
 
     // Send notification (only for registered users, guest orders have no userId)
     if (order.userId) {
-      const friendlyStatus = dto.status.charAt(0).toUpperCase() + dto.status.slice(1);
-      await this.notifications.create(
-        order.userId,
-        'order_update',
-        `Order ${friendlyStatus}`,
-        `Your order #${order.orderNumber} is now ${dto.status}.`
-      );
+      try {
+        const friendlyStatus = dto.status.charAt(0).toUpperCase() + dto.status.slice(1);
+        await this.notifications.create(
+          order.userId,
+          'order_update',
+          `Order ${friendlyStatus}`,
+          `Your order #${order.orderNumber} is now ${dto.status}.`
+        );
+      } catch (err) {
+        console.warn('Failed to send order status notification:', err);
+      }
     }
 
-    await this.audit.log({ userId: adminId, action: 'UPDATE_ORDER_STATUS', entity: 'Order', entityId: orderId });
+    if (adminId) {
+      try {
+        await this.audit.log({ userId: adminId, action: 'UPDATE_ORDER_STATUS', entity: 'Order', entityId: orderId });
+      } catch (err) {
+        console.warn('Failed to record audit log for order status update:', err);
+      }
+    }
+
     return updatedOrder;
   }
 }
