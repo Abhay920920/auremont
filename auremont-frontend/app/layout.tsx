@@ -4,11 +4,12 @@ import Link from "next/link";
 import Script from "next/script";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const cormorant = Cormorant_Garamond({ 
   weight: ["300", "400", "500", "600", "700"],
   subsets: ["latin"],
-  variable: "--font-cormorant-garamond"
+  variable: "--font-cormorant-garamond",
+  display: "swap"
 });
 
 export const metadata: Metadata = {

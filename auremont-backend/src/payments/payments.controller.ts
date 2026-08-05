@@ -1,4 +1,5 @@
-import { Controller, Post, Body, Headers, HttpCode } from '@nestjs/common';
+import { Controller, Post, Body, Headers, HttpCode, UseGuards } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { PaymentsService } from './payments.service';
 
 @Controller('payments')
@@ -16,6 +17,7 @@ export class PaymentsController {
 
   @Post('verify')
   @HttpCode(200)
+  @Throttle({ default: { limit: 5, ttl: 60000 } }) // Max 5 verifications per minute per IP
   async verifyPayment(
     @Body('razorpay_order_id') razorpayOrderId: string,
     @Body('razorpay_payment_id') razorpayPaymentId: string,

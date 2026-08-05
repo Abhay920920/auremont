@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, ConflictException, BadRequestException, NotFoundException, OnModuleInit } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, BadRequestException, NotFoundException, OnModuleInit, Logger } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
@@ -170,12 +170,13 @@ export class AuthService implements OnModuleInit {
     });
 
     // Mock Email Sending
-    console.log('\n=============================================');
-    console.log(`[MOCK EMAIL] To: ${email}`);
-    console.log(`[MOCK EMAIL] Subject: Password Reset Request`);
+    const logger = new Logger('EmailService');
+    logger.log('\n=============================================');
+    logger.log(`[MOCK EMAIL] To: ${email}`);
+    logger.log(`[MOCK EMAIL] Subject: Password Reset Request`);
     const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}&email=${email}`;
-    console.log(`[MOCK EMAIL] Body: Please click the link to reset your password: ${resetUrl}`);
-    console.log('=============================================\n');
+    logger.log(`[MOCK EMAIL] Body: Please click the link to reset your password: ${resetUrl}`);
+    logger.log('=============================================\n');
 
     return { message: 'If an account exists, a reset link has been sent.' };
   }

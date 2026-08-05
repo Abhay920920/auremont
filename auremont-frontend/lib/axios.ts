@@ -67,6 +67,11 @@ api.interceptors.response.use(
 
       try {
         const currentRefreshToken = useAuthStore.getState().refreshToken;
+        if (!currentRefreshToken) {
+          useAuthStore.getState().logout();
+          useWishlistStore.getState().clearWishlist();
+          return Promise.reject(error);
+        }
         const res = await axios.post(
           `${baseURL}/auth/refresh`,
           { refreshToken: currentRefreshToken },

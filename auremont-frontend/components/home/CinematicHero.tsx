@@ -107,6 +107,7 @@ export default function CinematicHero() {
                 alt="Auremont Royal Almonds Wooden Vessel" 
                 fill 
                 priority
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover object-center filter brightness-105 contrast-105 transition-transform duration-[2s] group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-85" />

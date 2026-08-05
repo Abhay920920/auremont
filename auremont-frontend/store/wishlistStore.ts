@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import api from '@/lib/axios';
+import { useAuthStore } from './authStore';
 
 export interface WishlistItem {
   id: string;
@@ -29,7 +30,11 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
   error: null,
 
   fetchWishlist: async (userId: string) => {
-    if (!userId) return;
+    const token = useAuthStore.getState().token;
+    if (!userId || !token) {
+      set({ items: [] });
+      return;
+    }
     set({ loading: true, error: null });
     try {
       const res = await api.get(`/wishlists`);

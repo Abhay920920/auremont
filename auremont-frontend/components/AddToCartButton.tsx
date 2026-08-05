@@ -18,6 +18,7 @@ export default function AddToCartButton({ productId, className }: { productId: s
 
   return (
     <button 
+      data-testid="add-to-cart-btn"
       onClick={handleAdd}
       disabled={loading}
       className={`${baseClass} transition-colors ${success ? 'bg-green-600 text-white border-green-600' : ''}`}

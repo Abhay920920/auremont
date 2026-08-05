@@ -45,6 +45,7 @@ export default function AboutPage() {
               fill
               className="object-cover"
               priority
+              sizes="100vw"
               onError={(e) => {
                 // Fallback if image not found
                 e.currentTarget.style.display = 'none';

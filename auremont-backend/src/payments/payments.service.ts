@@ -100,6 +100,17 @@ export class PaymentsService {
         throw new NotFoundException(`Order with paymentRef ${razorpayOrderId} not found`);
       }
 
+      // SECURITY: Double-spend prevention
+      if (order.paymentStatus === 'paid') {
+        return { received: true, message: 'Already processed' };
+      }
+
+      // SECURITY: Strict Amount Matching
+      const expectedAmount = Number(order.total);
+      if (Math.abs(amount - expectedAmount) > 0.01) {
+        throw new BadRequestException(`Security alert: Amount mismatch. Expected ${expectedAmount}, received ${amount}`);
+      }
+
       // 3. Update Database
       await this.prisma.$transaction(async (tx) => {
         // Upsert Payment Record
@@ -160,6 +171,11 @@ export class PaymentsService {
 
     if (!order) {
       throw new NotFoundException(`Order with paymentRef ${razorpayOrderId} not found`);
+    }
+
+    // SECURITY: Double-spend prevention
+    if (order.paymentStatus === 'paid') {
+      return { success: true, message: 'Already processed' };
     }
 
     await this.prisma.$transaction(async (tx) => {

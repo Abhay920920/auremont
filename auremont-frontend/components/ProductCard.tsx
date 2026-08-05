@@ -24,7 +24,7 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <div className="group cursor-pointer flex flex-col h-full">
       <div className="w-full aspect-[4/5] relative bg-secondaryBg overflow-hidden mb-3 sm:mb-8 border border-divider">
-        <Link href={`/shop/${product.slug}`}>
+        <Link data-testid={`product-link-${product.slug}`} href={`/shop/${product.slug}`} className="block absolute inset-0 z-10">
           <Image 
             src={product.thumbnailUrl || '/images/california-almonds-250g.png'} 
             alt={product.name} 
@@ -56,8 +56,8 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
 
         {/* Desktop Quick Add Overlay */}
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 hidden md:flex items-center justify-center pointer-events-none">
-          <div className="pointer-events-auto">
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 hidden md:flex items-center justify-center pointer-events-none z-20">
+          <div className="pointer-events-none group-hover:pointer-events-auto">
             <AddToCartButton productId={product.id} className="luxury-button-outline bg-background/50 backdrop-blur-md" />
           </div>
         </div>
@@ -65,7 +65,7 @@ export default function ProductCard({ product }: { product: Product }) {
       
       <div className="flex flex-col items-center text-center flex-grow justify-between">
         <div>
-          <Link href={`/shop/${product.slug}`}>
+          <Link href={`/shop/${product.slug}`} data-testid={`product-title-link-${product.slug}`}>
             <h3 className="font-serif text-sm sm:text-2xl text-primaryText mb-1 sm:mb-2 group-hover:text-luxuryGold transition-colors line-clamp-2">{product.name}</h3>
           </Link>
           <p className="text-[10px] sm:text-xs text-secondaryText tracking-superwide uppercase mb-1 sm:mb-4">{product.weightGrams || 250}G</p>
