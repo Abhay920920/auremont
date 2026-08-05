@@ -76,21 +76,27 @@ export class AdminOrdersService {
       data: { orderStatus: status },
     });
 
-    await this.prisma.adminAuditLog.create({
-      data: {
-        adminId,
-        action: 'UPDATE_ORDER_STATUS',
-        entity: 'ORDER',
-        entityId: id,
-        oldValue: { status: order.orderStatus },
-        newValue: { status },
-      },
-    });
+    if (adminId) {
+      try {
+        await this.prisma.adminAuditLog.create({
+          data: {
+            adminId,
+            action: 'UPDATE_ORDER_STATUS',
+            entity: 'ORDER',
+            entityId: id,
+            oldValue: { status: order.orderStatus },
+            newValue: { status },
+          },
+        });
+      } catch (err) {
+        console.warn('Failed to create admin audit log for order status update:', err);
+      }
+    }
 
     return updated;
   }
 
-  async updatePaymentStatus(id: string, status: PayStatus, adminId: string) {
+  async updatePaymentStatus(id: string, status: PayStatus, adminId?: string) {
     const order = await this.prisma.order.findUnique({ where: { id } });
     if (!order) {
       throw new NotFoundException(`Order with ID ${id} not found`);
@@ -101,16 +107,22 @@ export class AdminOrdersService {
       data: { paymentStatus: status },
     });
 
-    await this.prisma.adminAuditLog.create({
-      data: {
-        adminId,
-        action: 'UPDATE_PAYMENT_STATUS',
-        entity: 'ORDER',
-        entityId: id,
-        oldValue: { status: order.paymentStatus },
-        newValue: { status },
-      },
-    });
+    if (adminId) {
+      try {
+        await this.prisma.adminAuditLog.create({
+          data: {
+            adminId,
+            action: 'UPDATE_PAYMENT_STATUS',
+            entity: 'ORDER',
+            entityId: id,
+            oldValue: { status: order.paymentStatus },
+            newValue: { status },
+          },
+        });
+      } catch (err) {
+        console.warn('Failed to create admin audit log for payment status update:', err);
+      }
+    }
 
     return updated;
   }

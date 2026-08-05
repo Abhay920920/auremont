@@ -34,55 +34,55 @@ export class ProductsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   async createProduct(@Body() dto: CreateProductDto, @GetUser() user: any) {
-    return this.productsService.createProduct(dto, user.id);
+    return this.productsService.createProduct(dto, user?.id);
   }
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   async updateProduct(@Param('id') id: string, @Body() dto: UpdateProductDto, @GetUser() user: any) {
-    return this.productsService.updateProduct(id, dto, user.id);
+    return this.productsService.updateProduct(id, dto, user?.id);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   async deleteProduct(@Param('id') id: string, @GetUser() user: any) {
-    return this.productsService.deleteProduct(id, user.id);
+    return this.productsService.deleteProduct(id, user?.id);
   }
 
   @Post(':id/images')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   async addImage(@Param('id') id: string, @Body() dto: AddProductImageDto, @GetUser() user: any) {
-    return this.productsService.addImage(id, dto, user.id);
+    return this.productsService.addImage(id, dto, user?.id);
   }
 
   @Delete(':id/images/:imageId')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   async removeImage(@Param('id') id: string, @Param('imageId') imageId: string, @GetUser() user: any) {
-    return this.productsService.removeImage(id, imageId, user.id);
+    return this.productsService.removeImage(id, imageId, user?.id);
   }
 
   @Post(':id/attributes')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   async addAttribute(@Param('id') id: string, @Body() dto: AddProductAttributeDto, @GetUser() user: any) {
-    return this.productsService.addAttribute(id, dto, user.id);
+    return this.productsService.addAttribute(id, dto, user?.id);
   }
 
   @Delete(':id/attributes/:attrId')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   async removeAttribute(@Param('id') id: string, @Param('attrId') attrId: string, @GetUser() user: any) {
-    return this.productsService.removeAttribute(id, attrId, user.id);
+    return this.productsService.removeAttribute(id, attrId, user?.id);
   }
 
   @Post(':id/inventory')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   async adjustInventory(@Param('id') id: string, @Body() dto: AdjustInventoryDto, @GetUser() user: any) {
-    return this.productsService.adjustInventory(id, dto, user.id);
+    return this.productsService.adjustInventory(id, dto, user?.id);
   }
 }

@@ -37,7 +37,8 @@ export class AdminOrdersController {
     @Body('status') status: OrderStatus,
     @Request() req: any,
   ) {
-    return this.ordersService.updateOrderStatus(id, status, req.admin.id);
+    const adminId = req.admin?.sub || req.admin?.id;
+    return this.ordersService.updateOrderStatus(id, status, adminId);
   }
 
   @Patch(':id/payment')
@@ -47,6 +48,7 @@ export class AdminOrdersController {
     @Body('status') status: PayStatus,
     @Request() req: any,
   ) {
-    return this.ordersService.updatePaymentStatus(id, status, req.admin.id);
+    const adminId = req.admin?.sub || req.admin?.id;
+    return this.ordersService.updatePaymentStatus(id, status, adminId);
   }
 }

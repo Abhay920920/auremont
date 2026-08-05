@@ -101,57 +101,71 @@ export class ProductsService {
 
   // ── ADMIN ──────────────────────────────────────────────────────────────────
 
-  async createProduct(dto: CreateProductDto, adminId: string): Promise<Product> {
+  async createProduct(dto: CreateProductDto, adminId?: string): Promise<Product> {
     const product = await this.prisma.product.create({ data: { ...dto } });
-    await this.audit.log({ userId: adminId, action: 'CREATE_PRODUCT', entity: 'Product', entityId: product.id });
+    if (adminId) {
+      try { await this.audit.log({ userId: adminId, action: 'CREATE_PRODUCT', entity: 'Product', entityId: product.id }); } catch (e) {}
+    }
     return product;
   }
 
-  async updateProduct(id: string, dto: UpdateProductDto, adminId: string): Promise<Product> {
+  async updateProduct(id: string, dto: UpdateProductDto, adminId?: string): Promise<Product> {
     await this.findProductOrThrow(id);
     const product = await this.prisma.product.update({ where: { id }, data: { ...dto } });
-    await this.audit.log({ userId: adminId, action: 'UPDATE_PRODUCT', entity: 'Product', entityId: id });
+    if (adminId) {
+      try { await this.audit.log({ userId: adminId, action: 'UPDATE_PRODUCT', entity: 'Product', entityId: id }); } catch (e) {}
+    }
     return product;
   }
 
-  async deleteProduct(id: string, adminId: string): Promise<Product> {
+  async deleteProduct(id: string, adminId?: string): Promise<Product> {
     await this.findProductOrThrow(id);
     const product = await this.prisma.product.update({ where: { id }, data: { status: false } });
-    await this.audit.log({ userId: adminId, action: 'DELETE_PRODUCT', entity: 'Product', entityId: id });
+    if (adminId) {
+      try { await this.audit.log({ userId: adminId, action: 'DELETE_PRODUCT', entity: 'Product', entityId: id }); } catch (e) {}
+    }
     return product;
   }
 
-  async addImage(productId: string, dto: AddProductImageDto, adminId: string) {
+  async addImage(productId: string, dto: AddProductImageDto, adminId?: string) {
     await this.findProductOrThrow(productId);
     const image = await this.prisma.productImage.create({ data: { productId, ...dto } });
-    await this.audit.log({ userId: adminId, action: 'ADD_PRODUCT_IMAGE', entity: 'ProductImage', entityId: image.id });
+    if (adminId) {
+      try { await this.audit.log({ userId: adminId, action: 'ADD_PRODUCT_IMAGE', entity: 'ProductImage', entityId: image.id }); } catch (e) {}
+    }
     return image;
   }
 
-  async removeImage(productId: string, imageId: string, adminId: string) {
+  async removeImage(productId: string, imageId: string, adminId?: string) {
     const image = await this.prisma.productImage.findUnique({ where: { id: imageId } });
     if (!image || image.productId !== productId) throw new NotFoundException('Image not found');
     await this.prisma.productImage.delete({ where: { id: imageId } });
-    await this.audit.log({ userId: adminId, action: 'REMOVE_PRODUCT_IMAGE', entity: 'ProductImage', entityId: imageId });
+    if (adminId) {
+      try { await this.audit.log({ userId: adminId, action: 'REMOVE_PRODUCT_IMAGE', entity: 'ProductImage', entityId: imageId }); } catch (e) {}
+    }
     return { success: true };
   }
 
-  async addAttribute(productId: string, dto: AddProductAttributeDto, adminId: string) {
+  async addAttribute(productId: string, dto: AddProductAttributeDto, adminId?: string) {
     await this.findProductOrThrow(productId);
     const attr = await this.prisma.productAttribute.create({ data: { productId, ...dto } });
-    await this.audit.log({ userId: adminId, action: 'ADD_PRODUCT_ATTRIBUTE', entity: 'ProductAttribute', entityId: attr.id });
+    if (adminId) {
+      try { await this.audit.log({ userId: adminId, action: 'ADD_PRODUCT_ATTRIBUTE', entity: 'ProductAttribute', entityId: attr.id }); } catch (e) {}
+    }
     return attr;
   }
 
-  async removeAttribute(productId: string, attrId: string, adminId: string) {
+  async removeAttribute(productId: string, attrId: string, adminId?: string) {
     const attr = await this.prisma.productAttribute.findUnique({ where: { id: attrId } });
     if (!attr || attr.productId !== productId) throw new NotFoundException('Attribute not found');
     await this.prisma.productAttribute.delete({ where: { id: attrId } });
-    await this.audit.log({ userId: adminId, action: 'REMOVE_PRODUCT_ATTRIBUTE', entity: 'ProductAttribute', entityId: attrId });
+    if (adminId) {
+      try { await this.audit.log({ userId: adminId, action: 'REMOVE_PRODUCT_ATTRIBUTE', entity: 'ProductAttribute', entityId: attrId }); } catch (e) {}
+    }
     return { success: true };
   }
 
-  async adjustInventory(productId: string, dto: AdjustInventoryDto, adminId: string) {
+  async adjustInventory(productId: string, dto: AdjustInventoryDto, adminId?: string) {
     await this.findProductOrThrow(productId);
     const product = await this.prisma.$transaction(async (tx) => {
       const updated = await tx.product.update({
@@ -163,7 +177,9 @@ export class ProductsService {
       });
       return updated;
     });
-    await this.audit.log({ userId: adminId, action: 'ADJUST_INVENTORY', entity: 'Product', entityId: productId });
+    if (adminId) {
+      try { await this.audit.log({ userId: adminId, action: 'ADJUST_INVENTORY', entity: 'Product', entityId: productId }); } catch (e) {}
+    }
     return product;
   }
 

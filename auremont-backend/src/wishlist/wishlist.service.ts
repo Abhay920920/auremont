@@ -1,12 +1,13 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
-import { PrismaClient, Wishlist } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { Wishlist } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class WishlistService {
+  constructor(private prisma: PrismaService) {}
+
   async getWishlist(userId: string): Promise<Wishlist[]> {
-    return prisma.wishlist.findMany({
+    return this.prisma.wishlist.findMany({
       where: { userId },
       include: { product: true },
       orderBy: { createdAt: 'desc' }
@@ -14,7 +15,7 @@ export class WishlistService {
   }
 
   async addProduct(userId: string, productId: string): Promise<Wishlist> {
-    const existing = await prisma.wishlist.findFirst({
+    const existing = await this.prisma.wishlist.findFirst({
       where: { userId, productId }
     });
 
@@ -22,7 +23,7 @@ export class WishlistService {
       throw new BadRequestException('Product already in wishlist');
     }
 
-    return prisma.wishlist.create({
+    return this.prisma.wishlist.create({
       data: {
         userId,
         productId
@@ -32,7 +33,7 @@ export class WishlistService {
   }
 
   async removeProduct(userId: string, productId: string): Promise<void> {
-    const existing = await prisma.wishlist.findFirst({
+    const existing = await this.prisma.wishlist.findFirst({
       where: { userId, productId }
     });
 
@@ -40,7 +41,7 @@ export class WishlistService {
       throw new NotFoundException('Product not in wishlist');
     }
 
-    await prisma.wishlist.delete({
+    await this.prisma.wishlist.delete({
       where: { id: existing.id }
     });
   }

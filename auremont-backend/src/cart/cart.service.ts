@@ -1,15 +1,16 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { PrismaClient, Cart, CartItem } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { Cart } from '@prisma/client';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class CartService {
+  constructor(private prisma: PrismaService) {}
+
   async getCart(cartId?: string, userId?: string): Promise<Cart | null> {
     let cart: any = null;
 
     if (cartId) {
-      cart = await prisma.cart.findFirst({
+      cart = await this.prisma.cart.findFirst({
         where: { id: cartId },
         include: {
           items: {
@@ -21,7 +22,7 @@ export class CartService {
     }
 
     if (!cart && userId) {
-      cart = await prisma.cart.findFirst({
+      cart = await this.prisma.cart.findFirst({
         where: { userId, status: 'active' },
         include: {
           items: {
@@ -48,7 +49,7 @@ export class CartService {
   }
 
   async createCart(userId?: string): Promise<Cart> {
-    return prisma.cart.create({
+    return this.prisma.cart.create({
       data: {
         userId: userId || null,
         status: 'active',
@@ -72,7 +73,7 @@ export class CartService {
       whereOr.push({ id: dto.productId });
     }
 
-    const product = await prisma.product.findFirst({
+    const product = await this.prisma.product.findFirst({
       where: { OR: whereOr },
     });
     if (!product) {
@@ -82,19 +83,19 @@ export class CartService {
     const unitPrice = product.salePrice || product.price;
     const subtotal = Number(unitPrice) * dto.quantity;
 
-    const existingItem = await prisma.cartItem.findFirst({
+    const existingItem = await this.prisma.cartItem.findFirst({
       where: { cartId: cart.id, productId: product.id },
     });
 
     if (existingItem) {
       const newQuantity = existingItem.quantity + dto.quantity;
       const newSubtotal = Number(unitPrice) * newQuantity;
-      await prisma.cartItem.update({
+      await this.prisma.cartItem.update({
         where: { id: existingItem.id },
         data: { quantity: newQuantity, subtotal: newSubtotal },
       });
     } else {
-      await prisma.cartItem.create({
+      await this.prisma.cartItem.create({
         data: {
           cartId: cart.id,
           productId: product.id,
@@ -109,7 +110,7 @@ export class CartService {
   }
 
   async updateItemQuantity(itemId: string, quantity: number, userId?: string): Promise<Cart> {
-    const item = await prisma.cartItem.findUnique({ where: { id: itemId }, include: { cart: true } });
+    const item = await this.prisma.cartItem.findUnique({ where: { id: itemId }, include: { cart: true } });
     if (!item) {
       throw new NotFoundException('Cart item not found');
     }
@@ -120,7 +121,7 @@ export class CartService {
 
     const subtotal = Number(item.unitPrice) * quantity;
 
-    await prisma.cartItem.update({
+    await this.prisma.cartItem.update({
       where: { id: itemId },
       data: { quantity, subtotal },
     });
@@ -129,7 +130,7 @@ export class CartService {
   }
 
   async removeItem(itemId: string, userId?: string): Promise<Cart> {
-    const item = await prisma.cartItem.findUnique({ where: { id: itemId }, include: { cart: true } });
+    const item = await this.prisma.cartItem.findUnique({ where: { id: itemId }, include: { cart: true } });
     if (!item) {
       throw new NotFoundException('Cart item not found');
     }
@@ -138,19 +139,18 @@ export class CartService {
       throw new ForbiddenException('You do not have permission to modify this cart');
     }
 
-    await prisma.cartItem.delete({ where: { id: itemId } });
+    await this.prisma.cartItem.delete({ where: { id: itemId } });
     
     return this.getCart(item.cartId, userId) as Promise<Cart>;
   }
 
   async mergeCart(guestCartId: string, userId: string): Promise<Cart> {
-    const guestCart = await prisma.cart.findUnique({
+    const guestCart = await this.prisma.cart.findUnique({
       where: { id: guestCartId },
       include: { items: true },
     });
 
     if (!guestCart || guestCart.userId) {
-      // If no guest cart, or the cart already belongs to a user, do nothing or just return user's active cart
       let userCart = await this.getCart(undefined, userId);
       if (!userCart) {
         userCart = await this.createCart(userId);
@@ -160,29 +160,27 @@ export class CartService {
 
     let userCart = await this.getCart(undefined, userId);
     if (!userCart) {
-      // If user has no cart, just take over the guest cart
-      await prisma.cart.update({
+      await this.prisma.cart.update({
         where: { id: guestCartId },
         data: { userId },
       });
       return this.getCart(guestCartId, userId) as Promise<Cart>;
     }
 
-    // Otherwise, move items from guest cart to user cart
     for (const item of guestCart.items) {
-      const existingItem = await prisma.cartItem.findFirst({
+      const existingItem = await this.prisma.cartItem.findFirst({
         where: { cartId: userCart.id, productId: item.productId },
       });
 
       if (existingItem) {
         const newQuantity = existingItem.quantity + item.quantity;
         const newSubtotal = Number(existingItem.unitPrice) * newQuantity;
-        await prisma.cartItem.update({
+        await this.prisma.cartItem.update({
           where: { id: existingItem.id },
           data: { quantity: newQuantity, subtotal: newSubtotal },
         });
       } else {
-        await prisma.cartItem.create({
+        await this.prisma.cartItem.create({
           data: {
             cartId: userCart.id,
             productId: item.productId,
@@ -194,9 +192,8 @@ export class CartService {
       }
     }
 
-    // Delete the old guest cart and its remaining items
-    await prisma.cartItem.deleteMany({ where: { cartId: guestCartId } });
-    await prisma.cart.delete({ where: { id: guestCartId } });
+    await this.prisma.cartItem.deleteMany({ where: { cartId: guestCartId } });
+    await this.prisma.cart.delete({ where: { id: guestCartId } });
 
     return this.getCart(undefined, userId) as Promise<Cart>;
   }
