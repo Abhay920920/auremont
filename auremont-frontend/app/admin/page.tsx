@@ -4,33 +4,29 @@ import React, { useEffect, useState } from "react";
 import api from "@/lib/axios";
 import { Users, ShoppingBag, Package, MessageSquare } from "lucide-react";
 import Link from "next/link";
+import { useCurrencyStore } from "@/store/currencyStore";
 
 export default function AdminDashboardPage() {
+  const { formatPrice } = useCurrencyStore();
   const [stats, setStats] = useState({
-    users: 0,
-    orders: 0,
-    products: 0,
-    messages: 0
+    todaySales: 0,
+    monthlySales: 0,
+    monthOrders: 0,
+    totalCustomers: 0,
+    lowStockProducts: 0
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Ideally we would have a dedicated /admin/stats endpoint, 
-    // but for this phase we'll just fetch all data and count it.
     const fetchStats = async () => {
       try {
-        const [usersRes, ordersRes, productsRes, messagesRes] = await Promise.all([
-          api.get('/users/admin/all').catch(() => ({ data: [] })),
-          api.get('/orders/admin/all').catch(() => ({ data: [] })),
-          api.get('/products').catch(() => ({ data: [] })),
-          api.get('/contact').catch(() => ({ data: [] }))
-        ]);
-        
+        const res = await api.get('/admin/dashboard/metrics');
         setStats({
-          users: (usersRes.data.data || usersRes.data).length || 0,
-          orders: ordersRes.data.total !== undefined ? ordersRes.data.total : (ordersRes.data.data || ordersRes.data).length || 0,
-          products: productsRes.data.total !== undefined ? productsRes.data.total : (productsRes.data.data || productsRes.data).length || 0,
-          messages: (messagesRes.data.data || messagesRes.data).length || 0
+          todaySales: res.data.todaySales || 0,
+          monthlySales: res.data.monthlySales || 0,
+          monthOrders: res.data.monthOrders || 0,
+          totalCustomers: res.data.totalCustomers || 0,
+          lowStockProducts: res.data.lowStockProducts || 0
         });
       } catch (err) {
         console.error(err);
@@ -43,10 +39,10 @@ export default function AdminDashboardPage() {
   }, []);
 
   const statCards = [
-    { title: "Total Customers", value: stats.users, icon: Users, href: "/admin/customers", color: "bg-blue-500/10 text-blue-400" },
-    { title: "Total Orders", value: stats.orders, icon: ShoppingBag, href: "/admin/orders", color: "bg-emerald-500/10 text-emerald-400" },
-    { title: "Active Products", value: stats.products, icon: Package, href: "/admin/products", color: "bg-purple-500/10 text-purple-400" },
-    { title: "Support Messages", value: stats.messages, icon: MessageSquare, href: "/admin/support", color: "bg-amber-500/10 text-amber-400" },
+    { title: "Today's Sales", value: formatPrice(stats.todaySales), icon: ShoppingBag, href: "/admin/orders", color: "bg-emerald-500/10 text-emerald-400" },
+    { title: "Monthly Sales", value: formatPrice(stats.monthlySales), icon: ShoppingBag, href: "/admin/orders", color: "bg-blue-500/10 text-blue-400" },
+    { title: "Total Customers", value: stats.totalCustomers, icon: Users, href: "/admin/customers", color: "bg-purple-500/10 text-purple-400" },
+    { title: "Low Stock Items", value: stats.lowStockProducts, icon: Package, href: "/admin/inventory", color: "bg-amber-500/10 text-amber-400" },
   ];
 
   return (

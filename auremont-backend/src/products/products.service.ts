@@ -16,7 +16,7 @@ export class ProductsService {
   ) {}
 
   async findAll(query: any): Promise<any> {
-    const { categoryId, collectionId, minPrice, maxPrice, page = 1, limit = 20 } = query;
+    const { categoryId, collectionId, minPrice, maxPrice, page = 1, limit = 20, sort } = query;
     const where: any = { status: true };
 
     if (categoryId) where.categoryId = categoryId;
@@ -31,12 +31,19 @@ export class ProductsService {
     const take = Math.min(50, Math.max(1, Number(limit))); // safe maximum limit
     const skip = (pageNumber - 1) * take;
 
+    let orderBy: any = { createdAt: 'desc' };
+    if (sort === 'price_asc') orderBy = { price: 'asc' };
+    else if (sort === 'price_desc') orderBy = { price: 'desc' };
+    else if (sort === 'recommended') orderBy = { isFeatured: 'desc' };
+    else if (sort === 'newest') orderBy = { createdAt: 'desc' };
+
     const [total, data] = await this.prisma.$transaction([
       this.prisma.product.count({ where }),
       this.prisma.product.findMany({
         where,
         take,
         skip,
+        orderBy,
         select: {
           id: true,
           name: true,

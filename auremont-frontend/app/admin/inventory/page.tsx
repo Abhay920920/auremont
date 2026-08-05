@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Search, Download, Plus, AlertCircle, History } from "lucide-react";
+import api from "@/lib/axios";
 
 export default function AdminInventoryPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -13,38 +14,26 @@ export default function AdminInventoryPage() {
   const [adjustQty, setAdjustQty] = useState("");
   const [adjustReason, setAdjustReason] = useState("RESTOCK");
 
-  useEffect(() => {
-    // Stubbing API call for inventory list
-    setTimeout(() => {
-      setProducts([
-        {
-          id: '1',
-          name: 'Premium California Badam',
-          sku: 'ALM-CAL-500G',
-          stockQty: 150,
-          status: true,
-          thumbnailUrl: null,
-        },
-        {
-          id: '2',
-          name: 'Roasted & Salted Almonds',
-          sku: 'ALM-RST-250G',
-          stockQty: 8, // Low stock
-          status: true,
-          thumbnailUrl: null,
-        },
-        {
-          id: '3',
-          name: 'Chocolate Coated Almonds',
-          sku: 'ALM-CHO-200G',
-          stockQty: 0, // Out of stock
-          status: false,
-          thumbnailUrl: null,
-        }
-      ]);
+  const [search, setSearch] = useState("");
+
+  const fetchInventory = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get('/admin/inventory', { params: { search, limit: 50 } });
+      setProducts(res.data.data || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
       setLoading(false);
-    }, 600);
-  }, []);
+    }
+  };
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      fetchInventory();
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [search]);
 
   const handleAdjustClick = (product: any) => {
     setSelectedProduct(product);
@@ -53,19 +42,29 @@ export default function AdminInventoryPage() {
     setIsModalOpen(true);
   };
 
-  const handleAdjustSubmit = (e: React.FormEvent) => {
+  const handleAdjustSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const qtyNum = parseInt(adjustQty, 10);
     if (isNaN(qtyNum)) return;
     
-    // Optimistic update
-    setProducts(products.map(p => 
-      p.id === selectedProduct.id 
-        ? { ...p, stockQty: p.stockQty + qtyNum } 
-        : p
-    ));
-    
-    setIsModalOpen(false);
+    try {
+      await api.post(`/admin/inventory/${selectedProduct.id}/adjust`, {
+        changeQty: qtyNum,
+        reason: adjustReason
+      });
+      
+      // Optimistic update
+      setProducts(products.map(p => 
+        p.id === selectedProduct.id 
+          ? { ...p, stockQty: p.stockQty + qtyNum } 
+          : p
+      ));
+      
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error("Failed to adjust stock", err);
+      alert("Failed to adjust stock. Please try again.");
+    }
   };
 
   return (
@@ -85,6 +84,8 @@ export default function AdminInventoryPage() {
             <input 
               type="text" 
               placeholder="Search by SKU or Product Name..." 
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-3 bg-surface border border-divider text-primaryText rounded-xl focus:outline-none focus:ring-1 focus:ring-luxuryGold focus:border-luxuryGold"
             />
           </div>

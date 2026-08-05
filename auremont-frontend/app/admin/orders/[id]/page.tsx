@@ -6,19 +6,21 @@ import Link from "next/link";
 import { ArrowLeft, CheckCircle2, Package, Truck, Printer, Info, CreditCard, Box } from "lucide-react";
 import { format } from "date-fns";
 import api from "@/lib/axios";
+import { useCurrencyStore } from "@/store/currencyStore";
 
 const STEPS = ["placed", "confirmed", "packed", "shipped", "delivered"];
 
 export default function OrderDetailPage() {
   const rawParams = useParams();
   const id = rawParams?.id as string;
+  const { formatPrice } = useCurrencyStore();
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const { data } = await api.get(`/orders/admin/${id}`);
+        const { data } = await api.get(`/admin/orders/${id}`);
         setOrder(data);
       } catch (err) {
         console.error("Failed to fetch order:", err);
@@ -38,7 +40,7 @@ export default function OrderDetailPage() {
   const updateStatus = async (newStatus: string) => {
     try {
       setLoading(true);
-      const res = await api.patch(`/orders/admin/${id}/status`, { status: newStatus });
+      const res = await api.patch(`/admin/orders/${id}/status`, { status: newStatus });
       setOrder(res.data);
     } catch (err) {
       console.error("Failed to update status:", err);
@@ -149,9 +151,9 @@ export default function OrderDetailPage() {
                       <div className="font-medium">{item.productName}</div>
                       <div className="text-xs text-secondaryText mt-1">SKU: {item.sku}</div>
                     </td>
-                    <td className="px-5 py-4 text-secondaryText">₹{Number(item.price).toFixed(2)}</td>
+                    <td className="px-5 py-4 text-secondaryText">{formatPrice(item.price)}</td>
                     <td className="px-5 py-4 text-secondaryText">{item.quantity}</td>
-                    <td className="px-5 py-4 text-primaryText font-medium text-right">₹{Number(item.subtotal).toFixed(2)}</td>
+                    <td className="px-5 py-4 text-primaryText font-medium text-right">{formatPrice(item.subtotal)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -159,19 +161,19 @@ export default function OrderDetailPage() {
             <div className="p-5 bg-surface border-t border-divider space-y-2">
               <div className="flex justify-between text-secondaryText text-sm">
                 <span>Subtotal</span>
-                <span>₹{Number(order.subtotal).toFixed(2)}</span>
+                <span>{formatPrice(order.subtotal)}</span>
               </div>
               <div className="flex justify-between text-secondaryText text-sm">
                 <span>Shipping</span>
-                <span>{Number(order.shipping) === 0 ? 'Free' : `₹${Number(order.shipping).toFixed(2)}`}</span>
+                <span>{Number(order.shipping) === 0 ? 'Free' : formatPrice(order.shipping)}</span>
               </div>
               <div className="flex justify-between text-secondaryText text-sm">
                 <span>Tax</span>
-                <span>₹{Number(order.tax).toFixed(2)}</span>
+                <span>{formatPrice(order.tax)}</span>
               </div>
               <div className="flex justify-between text-primaryText font-medium pt-2 border-t border-divider mt-2">
                 <span>Total</span>
-                <span className="text-lg text-luxuryGold">₹{Number(order.total).toFixed(2)}</span>
+                <span className="text-lg text-luxuryGold">{formatPrice(order.total)}</span>
               </div>
             </div>
           </div>
@@ -295,8 +297,8 @@ export default function OrderDetailPage() {
                   <div className="text-[10px] text-mutedText mt-1">SKU: {item.sku}</div>
                 </td>
                 <td className="py-4 text-center text-sm text-secondaryText">{item.quantity}</td>
-                <td className="py-4 text-right text-sm text-secondaryText">₹{Number(item.price).toFixed(2)}</td>
-                <td className="py-4 text-right text-sm text-primaryText font-medium">₹{Number(item.subtotal).toFixed(2)}</td>
+                <td className="py-4 text-right text-sm text-secondaryText">{formatPrice(item.price)}</td>
+                <td className="py-4 text-right text-sm text-primaryText font-medium">{formatPrice(item.subtotal)}</td>
               </tr>
             ))}
           </tbody>
@@ -306,19 +308,19 @@ export default function OrderDetailPage() {
           <div className="w-[300px] bg-secondaryBg p-5 border border-divider rounded-lg">
             <div className="flex justify-between text-secondaryText text-xs mb-3">
               <span>Subtotal</span>
-              <span>₹{Number(order.subtotal).toFixed(2)}</span>
+              <span>{formatPrice(order.subtotal)}</span>
             </div>
             <div className="flex justify-between text-secondaryText text-xs mb-3">
               <span>Shipping</span>
-              <span>{Number(order.shipping) === 0 ? 'Free' : `₹${Number(order.shipping).toFixed(2)}`}</span>
+              <span>{Number(order.shipping) === 0 ? 'Free' : formatPrice(order.shipping)}</span>
             </div>
             <div className="flex justify-between text-secondaryText text-xs mb-4">
               <span>Tax</span>
-              <span>₹{Number(order.tax).toFixed(2)}</span>
+              <span>{formatPrice(order.tax)}</span>
             </div>
             <div className="flex justify-between text-luxuryGold font-medium text-base pt-3 border-t border-divider">
               <span>Total</span>
-              <span>₹{Number(order.total).toFixed(2)}</span>
+              <span>{formatPrice(order.total)}</span>
             </div>
           </div>
         </div>

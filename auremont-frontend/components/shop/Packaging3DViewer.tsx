@@ -56,11 +56,11 @@ export default function Packaging3DViewer({ isOpen, onClose, defaultText = "AURE
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="relative w-full max-w-4xl bg-secondaryBg border border-luxuryGold/40 rounded-card overflow-hidden shadow-[0_25px_80px_rgba(0,0,0,0.9)] z-10 flex flex-col lg:flex-row"
+            className="relative w-full max-w-5xl max-h-[95vh] overflow-y-auto bg-secondaryBg border border-luxuryGold/40 rounded-card shadow-[0_25px_80px_rgba(0,0,0,0.9)] z-10 flex flex-col lg:flex-row custom-scrollbar"
           >
             {/* Left 3D Interactive Canvas */}
             <div 
-              className="relative w-full lg:w-2/3 h-[380px] sm:h-[500px] bg-[#050505] flex items-center justify-center cursor-grab active:cursor-grabbing select-none overflow-hidden"
+              className="relative w-full lg:w-[55%] h-[40vh] min-h-[300px] sm:min-h-[400px] lg:h-[500px] bg-[#050505] flex items-center justify-center cursor-grab active:cursor-grabbing select-none overflow-hidden shrink-0"
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
@@ -101,7 +101,7 @@ export default function Packaging3DViewer({ isOpen, onClose, defaultText = "AURE
             </div>
 
             {/* Right Controls Panel */}
-            <div className="w-full lg:w-1/3 p-6 sm:p-8 flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-divider bg-background space-y-6">
+            <div className="w-full lg:w-[45%] p-6 sm:p-8 flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-divider bg-background space-y-6">
               <div className="space-y-6">
                 {/* Header */}
                 <div className="flex justify-between items-start border-b border-divider pb-4">
@@ -119,29 +119,29 @@ export default function Packaging3DViewer({ isOpen, onClose, defaultText = "AURE
                   <label className="text-[10px] uppercase tracking-ultra text-secondaryText flex items-center gap-1.5 font-medium">
                     <Layers size={13} className="text-luxuryGold" /> Select Vessel Material
                   </label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="flex flex-col gap-3">
                     <button 
                       onClick={() => setActiveMaterial('mahogany')}
-                      className={`p-3 rounded-card border text-left flex flex-col justify-between transition-all ${
+                      className={`p-3.5 rounded-card border text-left flex items-center justify-between transition-all ${
                         activeMaterial === 'mahogany' 
                           ? 'border-luxuryGold bg-luxuryGold/10 text-primaryText' 
-                          : 'border-divider bg-secondaryBg text-secondaryText hover:border-divider'
+                          : 'border-divider bg-secondaryBg text-secondaryText hover:border-luxuryGold/50'
                       }`}
                     >
-                      <span className="text-xs font-serif">Mahogany Box</span>
-                      <span className="text-[9px] text-mutedText uppercase tracking-wider mt-1">Velvet Lined</span>
+                      <span className="text-sm font-serif">Mahogany Box</span>
+                      <span className="text-[10px] text-mutedText uppercase tracking-wider">Velvet Lined</span>
                     </button>
 
                     <button 
                       onClick={() => setActiveMaterial('glass')}
-                      className={`p-3 rounded-card border text-left flex flex-col justify-between transition-all ${
+                      className={`p-3.5 rounded-card border text-left flex items-center justify-between transition-all ${
                         activeMaterial === 'glass' 
                           ? 'border-luxuryGold bg-luxuryGold/10 text-primaryText' 
-                          : 'border-divider bg-secondaryBg text-secondaryText hover:border-divider'
+                          : 'border-divider bg-secondaryBg text-secondaryText hover:border-luxuryGold/50'
                       }`}
                     >
-                      <span className="text-xs font-serif">UV Dark Glass Jar</span>
-                      <span className="text-[9px] text-mutedText uppercase tracking-wider mt-1">Double Walled</span>
+                      <span className="text-sm font-serif">UV Dark Glass Jar</span>
+                      <span className="text-[10px] text-mutedText uppercase tracking-wider">Double Walled</span>
                     </button>
                   </div>
                 </div>

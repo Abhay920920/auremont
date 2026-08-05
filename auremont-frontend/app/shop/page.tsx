@@ -16,6 +16,7 @@ export default function Shop() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<string>("recommended");
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const productsPerPage = 9;
 
   useEffect(() => {
@@ -23,7 +24,14 @@ export default function Shop() {
       setLoading(true);
       try {
         const [productsRes, categoriesRes] = await Promise.all([
-          api.get('/products'),
+          api.get('/products', {
+            params: {
+              categoryId: activeCategory || undefined,
+              sort: sortBy,
+              page: currentPage,
+              limit: productsPerPage
+            }
+          }),
           api.get('/categories').catch(() => ({ data: { data: [
             { id: '1', name: 'Raw Almonds' },
             { id: '2', name: 'Roasted Almonds' },
@@ -32,22 +40,10 @@ export default function Shop() {
           ]}}))
         ]);
         
-        let fetchedProducts = productsRes.data?.data || [];
+        const fetchedProducts = productsRes.data?.data || [];
         
-        // Client-side filtering/sorting for demo
-        if (activeCategory) {
-          fetchedProducts = fetchedProducts.filter((p: any) => p.categoryId === activeCategory);
-        }
-
-        if (sortBy === 'price_asc') {
-          fetchedProducts.sort((a: any, b: any) => Number(a.price) - Number(b.price));
-        } else if (sortBy === 'price_desc') {
-          fetchedProducts.sort((a: any, b: any) => Number(b.price) - Number(a.price));
-        } else if (sortBy === 'newest') {
-          fetchedProducts.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-        }
-
         setProducts(fetchedProducts);
+        setTotalPages(productsRes.data?.meta?.lastPage || 1);
         setCategories(categoriesRes.data?.data || []);
       } catch (err) {
         console.error("Failed to load products");
@@ -56,11 +52,9 @@ export default function Shop() {
       }
     };
     fetchData();
-  }, [activeCategory, sortBy]);
+  }, [activeCategory, sortBy, currentPage]);
 
-  // Pagination logic
-  const totalPages = Math.ceil(products.length / productsPerPage);
-  const currentProducts = products.slice((currentPage - 1) * productsPerPage, currentPage * productsPerPage);
+  const currentProducts = products;
 
   const handleCategorySelect = (id: string | null) => {
     setActiveCategory(id);
@@ -68,10 +62,10 @@ export default function Shop() {
   };
 
   return (
-    <div className="w-full bg-background pt-32 pb-24 md:pb-super min-h-screen">
+    <div className="w-full bg-background pt-24 md:pt-32 pb-16 md:pb-super min-h-screen">
       
       {/* Header Section */}
-      <div className="max-w-[2000px] mx-auto px-6 md:px-12 mb-16 md:mb-24">
+      <div className="max-w-[2000px] mx-auto px-6 md:px-12 mb-8 md:mb-24">
         <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
           <h4 className="text-luxuryGold uppercase tracking-superwide text-xs mb-6">The Collection</h4>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif text-primaryText mb-8">
@@ -84,7 +78,7 @@ export default function Shop() {
       </div>
 
       {/* Main Shop Area */}
-      <div className="max-w-[2000px] mx-auto px-6 md:px-12 flex flex-col lg:flex-row gap-12 xl:gap-24">
+      <div className="max-w-[2000px] mx-auto px-6 md:px-12 flex flex-col lg:flex-row gap-8 md:gap-12 xl:gap-24">
         
         {/* Sticky Filters */}
         <aside className="w-full lg:w-64 flex-shrink-0">

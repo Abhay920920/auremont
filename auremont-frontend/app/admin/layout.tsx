@@ -5,11 +5,13 @@ import { useAuthStore } from "@/store/authStore";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { LayoutDashboard, ShoppingBag, Package, Users, FileText, MessageSquare, LogOut, ArrowLeft } from "lucide-react";
+import { useCurrencyStore, CurrencyCode } from "@/store/currencyStore";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
+  const { currency, setCurrency } = useCurrencyStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -76,6 +78,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </nav>
 
         <div className="p-4 border-t border-divider space-y-2">
+          {/* Currency Dropdown */}
+          <div className="px-4 py-2 flex items-center justify-between text-sm">
+            <span className="text-secondaryText font-medium">Currency</span>
+            <select 
+              value={mounted ? currency : 'INR'}
+              onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
+              className="bg-secondaryBg border border-luxuryGold/30 text-luxuryGold text-xs uppercase tracking-ultra px-2 py-1 rounded-md outline-none cursor-pointer hover:border-luxuryGold transition-colors"
+            >
+              <option value="INR" className="bg-background text-primaryText">INR ₹</option>
+              <option value="USD" className="bg-background text-primaryText">USD $</option>
+              <option value="EUR" className="bg-background text-primaryText">EUR €</option>
+              <option value="GBP" className="bg-background text-primaryText">GBP £</option>
+            </select>
+          </div>
+
           <Link 
             href="/"
             className="flex items-center gap-3 px-4 py-3 rounded-xl text-secondaryText hover:bg-surface transition-colors"

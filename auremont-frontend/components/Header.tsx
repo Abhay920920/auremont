@@ -66,17 +66,8 @@ export default function Header() {
             </button>
           </div>
 
-          {/* Desktop Nav Left */}
+          {/* Desktop Nav Left - Intentionally Empty as per request */}
           <nav className="hidden md:flex flex-1 gap-10 text-[13px] tracking-widest uppercase items-center text-primaryText font-medium">
-            <div 
-              className="relative py-4"
-              onMouseEnter={() => setIsMegaNavOpen(true)}
-            >
-              <Link href="/shop" className="luxury-link pb-1">The Collection</Link>
-            </div>
-            <Link href="/custom-gift-box" className="luxury-link pb-1 text-luxuryGold" onMouseEnter={() => setIsMegaNavOpen(false)}>Gift Builder</Link>
-            <Link href="/journal" className="luxury-link pb-1" onMouseEnter={() => setIsMegaNavOpen(false)}>Journal</Link>
-            <Link href="/contact" className="luxury-link pb-1" onMouseEnter={() => setIsMegaNavOpen(false)}>Contact</Link>
           </nav>
 
           {/* Logo Center */}

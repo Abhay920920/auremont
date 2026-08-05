@@ -60,10 +60,11 @@ export default function Footer() {
             <h4 className="text-[10px] tracking-ultra uppercase text-luxuryGold font-medium">Explore</h4>
             <div className="flex flex-col gap-4 text-xs sm:text-sm text-secondaryText font-light">
               <Link href="/shop" className="hover:text-primaryText transition-colors w-fit">The Collection</Link>
+              <Link href="/custom-gift-box" className="hover:text-primaryText transition-colors w-fit">Gift Builder</Link>
+              <Link href="/about" className="hover:text-primaryText transition-colors w-fit">Our Story</Link>
               <Link href="/journal" className="hover:text-primaryText transition-colors w-fit">Journal</Link>
-              <Link href="/about" className="hover:text-primaryText transition-colors w-fit">Our Heritage</Link>
-              <Link href="/corporate-gifts" className="hover:text-primaryText transition-colors w-fit">Corporate Gifting</Link>
-              <Link href="/contact" className="hover:text-primaryText transition-colors w-fit">Contact Concierge</Link>
+              <Link href="/contact" className="hover:text-primaryText transition-colors w-fit">Contact</Link>
+              <Link href="/corporate-gifts" className="hover:text-primaryText transition-colors w-fit mt-4 pt-4 border-t border-divider/30">Corporate Gifting</Link>
             </div>
           </div>
 

@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface FlavorMetric {
   label: string;
@@ -91,12 +92,15 @@ export default function FlavorRadarChart({ metrics = DEFAULT_METRICS }: { metric
             })}
 
             {/* Polygon Data Fill */}
-            <polygon
+            <motion.polygon
+              initial={{ opacity: 0, scale: 0.2, transformOrigin: 'center' }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
               points={points}
               fill="rgba(212, 175, 55, 0.25)"
               stroke="#D4AF37"
               strokeWidth="2"
-              className="transition-all duration-1000 ease-out"
             />
 
             {/* Interactive Glowing Nodes */}
@@ -124,9 +128,12 @@ export default function FlavorRadarChart({ metrics = DEFAULT_METRICS }: { metric
                 <span className="text-luxuryGold font-medium">{m.score}%</span>
               </div>
               <div className="w-full h-1.5 bg-background rounded-full overflow-hidden border border-divider">
-                <div 
-                  className="h-full bg-gradient-to-r from-goldDark via-luxuryGold to-goldHover rounded-full transition-all duration-1000" 
-                  style={{ width: `${m.score}%` }} 
+                <motion.div 
+                  initial={{ width: 0 }}
+                  whileInView={{ width: `${m.score}%` }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 1.2, delay: idx * 0.1, ease: "easeOut" }}
+                  className="h-full bg-gradient-to-r from-goldDark via-luxuryGold to-goldHover rounded-full" 
                 />
               </div>
             </div>

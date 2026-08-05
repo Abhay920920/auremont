@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronDown, ChevronUp, Check } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function FilterSidebar({ 
@@ -14,6 +14,12 @@ export default function FilterSidebar({
   onSelectCategory: (id: string | null) => void;
 }) {
   const [isOpen, setIsOpen] = useState(true);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      setIsOpen(false);
+    }
+  }, []);
 
   return (
     <div className="w-full">

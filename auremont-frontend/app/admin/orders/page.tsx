@@ -6,26 +6,45 @@ import { Search, Filter, Download } from "lucide-react";
 import { format } from "date-fns";
 
 import api from "@/lib/axios";
+import { useCurrencyStore } from "@/store/currencyStore";
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const { formatPrice } = useCurrencyStore();
+
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const { data } = await api.get('/admin/orders', {
+        params: {
+          page,
+          limit: 10,
+          search: search || undefined,
+          status: statusFilter === "ALL" ? undefined : statusFilter,
+        }
+      });
+      setOrders(data.data || []);
+      setTotalPages(data.meta?.totalPages || 1);
+      setTotalOrders(data.meta?.total || 0);
+    } catch (err) {
+      console.error("Failed to fetch orders:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const { data } = await api.get('/orders/admin/all');
-        // The backend returns { data: Order[], total: number }
-        setOrders(data.data || []);
-      } catch (err) {
-        console.error("Failed to fetch orders:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchOrders();
-  }, []);
+    const handler = setTimeout(() => {
+      fetchOrders();
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [page, search, statusFilter]);
 
   const getStatusBadge = (status: string) => {
     switch(status) {
@@ -49,7 +68,7 @@ export default function AdminOrdersPage() {
     }
   };
 
-  const filteredOrders = statusFilter === 'ALL' ? orders : orders.filter(o => o.orderStatus === statusFilter);
+
 
   return (
     <div className="space-y-6">
@@ -67,6 +86,8 @@ export default function AdminOrdersPage() {
             <Search className="absolute left-3 top-3.5 text-secondaryText" size={18} />
             <input 
               type="text" 
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
               placeholder="Search by Order ID or Customer..." 
               className="w-full pl-10 pr-4 py-3 bg-surface border border-divider text-primaryText rounded-xl focus:outline-none focus:ring-1 focus:ring-luxuryGold focus:border-luxuryGold"
             />
@@ -75,7 +96,7 @@ export default function AdminOrdersPage() {
             <select 
               className="bg-surface border border-divider text-primaryText rounded-xl px-4 py-3 focus:outline-none focus:ring-1 focus:ring-luxuryGold focus:border-luxuryGold flex-1 md:flex-none appearance-none"
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
+              onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
             >
               <option value="ALL">All Statuses</option>
               <option value="placed">Placed</option>
@@ -106,12 +127,12 @@ export default function AdminOrdersPage() {
                 <tr>
                   <td colSpan={7} className="px-6 py-12 text-center text-secondaryText">Loading orders...</td>
                 </tr>
-              ) : filteredOrders.length === 0 ? (
+              ) : orders.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-12 text-center text-secondaryText">No orders found.</td>
                 </tr>
               ) : (
-                filteredOrders.map((o: any) => (
+                orders.map((o: any) => (
                   <tr key={o.id} className="hover:bg-surface transition-colors group">
                     <td className="px-6 py-5 font-medium text-primaryText">
                       <Link href={`/admin/orders/${o.id}`} className="hover:text-luxuryGold transition-colors">
@@ -125,7 +146,7 @@ export default function AdminOrdersPage() {
                         <span className="text-xs text-secondaryText">{o.user?.email || 'N/A'}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-5 text-primaryText font-medium">₹{Number(o.total).toFixed(2)}</td>
+                    <td className="px-6 py-5 text-primaryText font-medium">{formatPrice(o.total)}</td>
                     <td className="px-6 py-5">{getPaymentBadge(o.paymentStatus)}</td>
                     <td className="px-6 py-5">{getStatusBadge(o.orderStatus)}</td>
                     <td className="px-6 py-5 text-right opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
@@ -144,10 +165,22 @@ export default function AdminOrdersPage() {
         </div>
 
         <div className="p-6 border-t border-divider flex items-center justify-between text-sm text-secondaryText bg-secondaryBg">
-          <span>Showing 1 to {filteredOrders.length} of {orders.length} entries</span>
+          <span>Showing {orders.length} of {totalOrders} entries</span>
           <div className="flex gap-2">
-            <button className="px-4 py-2 border border-divider rounded-lg hover:bg-surface disabled:opacity-50 transition-colors" disabled>Prev</button>
-            <button className="px-4 py-2 border border-divider rounded-lg hover:bg-surface disabled:opacity-50 transition-colors" disabled>Next</button>
+            <button 
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="px-4 py-2 border border-divider rounded-lg hover:bg-surface disabled:opacity-50 transition-colors"
+            >
+              Prev
+            </button>
+            <button 
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+              className="px-4 py-2 border border-divider rounded-lg hover:bg-surface disabled:opacity-50 transition-colors"
+            >
+              Next
+            </button>
           </div>
         </div>
       </div>

@@ -10,17 +10,13 @@ export default function RelatedProducts({ categoryId, currentProductId }: { cate
   useEffect(() => {
     const fetchRelated = async () => {
       try {
-        const res = await api.get('/products');
+        const res = await api.get('/products', {
+          params: { categoryId: categoryId || undefined, limit: 5 }
+        });
         let allProducts = res.data?.data || [];
         // filter out current
         allProducts = allProducts.filter((p: any) => p.id !== currentProductId);
-        // prefer same category
-        if (categoryId) {
-          const sameCat = allProducts.filter((p: any) => p.categoryId === categoryId);
-          if (sameCat.length > 0) {
-            allProducts = [...sameCat, ...allProducts.filter((p: any) => p.categoryId !== categoryId)];
-          }
-        }
+        
         setProducts(allProducts.slice(0, 3));
       } catch (e) {
         console.error(e);

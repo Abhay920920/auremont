@@ -19,7 +19,7 @@ export class AdminAuthGuard implements CanActivate {
 
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: process.env.ADMIN_JWT_SECRET || 'fallback-admin-secret-dev-only',
+        secret: process.env.JWT_SECRET || 'AUREMONT_LUXURY_SECRET_KEY',
       });
       request['admin'] = payload;
     } catch {
@@ -37,11 +37,12 @@ export class AdminAuthGuard implements CanActivate {
     }
 
     const { role } = request['admin'];
-    if (role === 'SUPER_ADMIN') {
-      return true; // SUPER_ADMIN can access anything
+    const uppercaseRole = role ? role.toUpperCase() : '';
+    if (uppercaseRole === 'SUPER_ADMIN') {
+      return true;
     }
 
-    if (!requiredRoles.includes(role)) {
+    if (!requiredRoles.includes(uppercaseRole)) {
       throw new ForbiddenException('Insufficient permissions');
     }
 

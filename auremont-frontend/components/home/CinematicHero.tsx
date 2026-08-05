@@ -3,11 +3,37 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ChevronDown, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
 export default function CinematicHero() {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (typeof window !== "undefined") {
+      const { clientX, clientY } = e;
+      const { innerWidth, innerHeight } = window;
+      const x = (clientX / innerWidth) * 2 - 1;
+      const y = (clientY / innerHeight) * 2 - 1;
+      mouseX.set(x);
+      mouseY.set(y);
+    }
+  };
+
+  const smoothX = useSpring(mouseX, { stiffness: 50, damping: 20 });
+  const smoothY = useSpring(mouseY, { stiffness: 50, damping: 20 });
+
+  const textX = useTransform(smoothX, [-1, 1], [-15, 15]);
+  const textY = useTransform(smoothY, [-1, 1], [-15, 15]);
+
+  const imageX = useTransform(smoothX, [-1, 1], [25, -25]);
+  const imageY = useTransform(smoothY, [-1, 1], [25, -25]);
+
   return (
-    <section className="relative w-full min-h-[100dvh] flex flex-col justify-between overflow-hidden bg-background pt-28 pb-12 lg:pt-36 lg:pb-16">
+    <section 
+      onMouseMove={handleMouseMove}
+      className="relative w-full min-h-[100dvh] flex flex-col justify-between overflow-hidden bg-background pt-28 pb-12 lg:pt-36 lg:pb-16"
+    >
       {/* Background Ambient Lighting & Radial Vignette */}
       <div className="absolute inset-0 w-full h-full -z-10 bg-[#050505] overflow-hidden">
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 lg:left-3/4 w-[500px] lg:w-[700px] h-[500px] lg:h-[700px] bg-luxuryGold/15 rounded-full blur-[160px] pointer-events-none animate-pulse-glow" />
@@ -20,7 +46,10 @@ export default function CinematicHero() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center w-full">
           
           {/* LEFT: Typography & Narrative CTA */}
-          <div className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 lg:space-y-8">
+          <motion.div 
+            style={{ x: textX, y: textY }}
+            className="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 lg:space-y-8"
+          >
             <motion.div 
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -62,11 +91,12 @@ export default function CinematicHero() {
                 Our Heritage
               </Link>
             </motion.div>
-          </div>
+          </motion.div>
 
           {/* RIGHT: Photography Showcase Frame */}
           <div className="lg:col-span-5 flex justify-center lg:justify-end">
             <motion.div 
+              style={{ x: imageX, y: imageY }}
               initial={{ opacity: 0, scale: 0.92, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}

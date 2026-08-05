@@ -51,6 +51,8 @@ import EntranceSplash from "@/components/EntranceSplash";
 import StorefrontWrapper from "@/components/StorefrontWrapper";
 import AnnouncementBar from "@/components/AnnouncementBar";
 import CookieBanner from "@/components/CookieBanner";
+import CustomCursor from "@/components/ui/CustomCursor";
+import TransitionProvider from "@/components/providers/TransitionProvider";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
@@ -108,8 +110,11 @@ export default function RootLayout({
         
         <AnnouncementBar />
         
+        <CustomCursor />
         <StorefrontWrapper>
-          {children}
+          <TransitionProvider>
+            {children}
+          </TransitionProvider>
         </StorefrontWrapper>
 
         <CookieBanner />
