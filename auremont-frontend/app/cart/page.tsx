@@ -19,22 +19,10 @@ export default function CartPage() {
 
   useEffect(() => {
     setMounted(true);
-    if (user) {
-      fetchCart();
-    }
-  }, [fetchCart, user]);
+    fetchCart();
+  }, [fetchCart]);
 
   if (!mounted) return null;
-
-  if (!user) {
-    return (
-      <div className="w-full min-h-[60vh] flex flex-col items-center justify-center px-6 py-24 text-center space-y-8 bg-background pt-40">
-        <h1 className="text-4xl md:text-5xl font-serif text-primaryText">Your Cart</h1>
-        <p className="text-secondaryText text-lg max-w-md">Please sign in to view your shopping bag.</p>
-        <Link href="/login" className="luxury-button mt-4">Sign In</Link>
-      </div>
-    );
-  }
 
   const safeItems = items || [];
   const subtotal = safeItems.reduce((sum, item) => sum + (item.quantity * Number(item.unitPrice)), 0);

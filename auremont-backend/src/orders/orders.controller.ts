@@ -2,6 +2,7 @@ import { Controller, Post, Body, Get, Param, UseGuards, Delete, Patch, Query, Pa
 import { Throttle } from '@nestjs/throttler';
 import { OrdersService } from './orders.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { OptionalJwtAuthGuard } from '../auth/optional-jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { GetUser } from '../auth/get-user.decorator';
@@ -16,12 +17,12 @@ export class OrdersController {
   // ── PUBLIC / USER ──────────────────────────────────────────────────────────
 
   @Post()
-  @UseGuards(JwtAuthGuard)
-  @Throttle({ default: { limit: 10, ttl: 60000 } })
+  @UseGuards(OptionalJwtAuthGuard)
+  @Throttle({ default: { limit: 20, ttl: 60000 } })
   async placeOrder(@Body() dto: CreateOrderDto, @GetUser() user: any) {
     const order = await this.ordersService.createOrder({
       ...dto,
-      userId: user.id
+      userId: user?.id
     });
 
     // Initiate Razorpay payment session

@@ -13,7 +13,7 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @Throttle({ default: { limit: 60, ttl: 60000 } })
   async login(@Body() body: any, @Res({ passthrough: true }) res: Response) {
     const user = await this.authService.validateUser(body.email, body.password);
     if (!user) {
@@ -71,7 +71,7 @@ export class AuthController {
   }
 
   @Post('register')
-  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  @Throttle({ default: { limit: 60, ttl: 60000 } })
   async register(@Body() body: any, @Res({ passthrough: true }) res: Response) {
     const result = await this.authService.register(body);
     

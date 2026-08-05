@@ -18,10 +18,10 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (isOpen && user) {
+    if (isOpen) {
       fetchCart();
     }
-  }, [isOpen, user, fetchCart]);
+  }, [isOpen, fetchCart]);
 
   const subtotal = items.reduce((sum, item) => sum + (item.quantity * Number(item.unitPrice)), 0);
 
@@ -63,13 +63,7 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-6 scrollbar-hide">
-              {!user ? (
-                <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
-                  <ShoppingBag size={48} strokeWidth={0.5} className="text-divider mb-4" />
-                  <h3 className="font-serif text-xl text-primaryText">Sign in to view your cart</h3>
-                  <Link href="/login" onClick={onClose} className="luxury-button w-full mt-4">Sign In</Link>
-                </div>
-              ) : items.length === 0 ? (
+              {items.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
                   <ShoppingBag size={48} strokeWidth={0.5} className="text-divider mb-4" />
                   <h3 className="font-serif text-xl text-primaryText">Your cart is empty</h3>
@@ -119,7 +113,7 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
             </div>
 
             {/* Footer */}
-            {user && items.length > 0 && (
+            {items.length > 0 && (
               <div className="border-t border-divider p-6 pb-safe-bottom bg-secondaryBg space-y-4">
                 {/* Bespoke Laser Engraving & Gift Option */}
                 <div className="p-3 bg-background border border-luxuryGold/20 rounded-card space-y-2">

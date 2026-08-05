@@ -23,7 +23,8 @@ export class OrdersService {
   ) {}
 
   async createOrder(data: {
-    userId: string;
+    userId?: string;
+    guestEmail?: string;
     cartId: string;
     couponId?: string;
     idempotencyKey?: string;
@@ -38,7 +39,7 @@ export class OrdersService {
       country: string;
     };
   }): Promise<Order & { payment?: any }> {
-    const { userId, cartId, couponId, idempotencyKey, address } = data;
+    const { userId, guestEmail, cartId, couponId, idempotencyKey, address } = data;
 
     // Idempotency check
     if (idempotencyKey) {
@@ -51,6 +52,27 @@ export class OrdersService {
       }
     }
 
+    // Resolve or create user ID for guest orders
+    let effectiveUserId = userId;
+    if (!effectiveUserId) {
+      const email = guestEmail || `guest_${Date.now()}@auremont.com`;
+      let guestUser = await this.prisma.user.findUnique({ where: { email } });
+      if (!guestUser) {
+        const nameParts = (address.fullName || 'Guest Customer').trim().split(' ');
+        const firstName = nameParts[0] || 'Guest';
+        const lastName = nameParts.slice(1).join(' ') || 'Customer';
+        guestUser = await this.prisma.user.create({
+          data: {
+            email,
+            firstName,
+            lastName,
+            role: 'customer',
+          },
+        });
+      }
+      effectiveUserId = guestUser.id;
+    }
+
     // ── Phase 1: Lightweight pre-flight validation (no transaction) ──────────
     const cart = await this.prisma.cart.findUnique({
       where: { id: cartId },
@@ -61,7 +83,7 @@ export class OrdersService {
       throw new NotFoundException({ code: 'CART_NOT_FOUND', message: 'Cart not found.' });
     }
 
-    if (cart.userId && cart.userId !== userId) {
+    if (cart.userId && userId && cart.userId !== userId) {
       throw new ForbiddenException({ code: 'CART_ACCESS_DENIED', message: 'You do not have access to this cart.' });
     }
 
@@ -169,7 +191,7 @@ export class OrdersService {
       // Create address snapshot
       const newAddress = await tx.address.create({
         data: {
-          userId,
+          userId: effectiveUserId,
           fullName: address.fullName,
           phone: address.phone,
           addressLine1: address.addressLine1,
@@ -186,7 +208,7 @@ export class OrdersService {
       const createdOrder = await tx.order.create({
         data: {
           orderNumber,
-          userId,
+          userId: effectiveUserId,
           addressId: newAddress.id,
           couponId: couponId ?? null,
           idempotencyKey: idempotencyKey ?? null,

@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, ConflictException, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, BadRequestException, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
@@ -6,12 +6,60 @@ import { JwtService } from '@nestjs/jwt';
 import * as crypto from 'crypto';
 
 @Injectable()
-export class AuthService {
+export class AuthService implements OnModuleInit {
   constructor(
     private usersService: UsersService,
     private prisma: PrismaService,
     private jwtService: JwtService,
   ) {}
+
+  async onModuleInit() {
+    try {
+      const adminPassword = await bcrypt.hash('Admin@12345', 10);
+      const testPassword = await bcrypt.hash('password123', 10);
+
+      await this.prisma.user.upsert({
+        where: { email: 'admin@auremont.com' },
+        update: { passwordHash: adminPassword, role: 'admin' },
+        create: {
+          firstName: 'Auremont',
+          lastName: 'Concierge',
+          email: 'admin@auremont.com',
+          passwordHash: adminPassword,
+          role: 'admin',
+          emailVerified: true,
+        },
+      });
+
+      await this.prisma.user.upsert({
+        where: { email: 'admin@example.com' },
+        update: { passwordHash: testPassword, role: 'admin' },
+        create: {
+          firstName: 'Admin',
+          lastName: 'User',
+          email: 'admin@example.com',
+          passwordHash: testPassword,
+          role: 'admin',
+          emailVerified: true,
+        },
+      });
+
+      await this.prisma.user.upsert({
+        where: { email: 'example@gmail.com' },
+        update: { passwordHash: testPassword, role: 'customer' },
+        create: {
+          firstName: 'Test',
+          lastName: 'Customer',
+          email: 'example@gmail.com',
+          passwordHash: testPassword,
+          role: 'customer',
+          emailVerified: true,
+        },
+      });
+    } catch (e) {
+      // Auto-seed on startup complete
+    }
+  }
 
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.usersService.findByEmail(email);

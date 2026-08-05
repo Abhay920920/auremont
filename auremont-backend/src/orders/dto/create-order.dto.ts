@@ -50,6 +50,10 @@ export class CreateOrderDto {
   @IsString()
   idempotencyKey?: string;
 
+  @IsOptional()
+  @IsString()
+  guestEmail?: string;
+
   @ValidateNested()
   @Type(() => AddressDto)
   @IsNotEmpty()

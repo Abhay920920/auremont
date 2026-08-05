@@ -113,15 +113,55 @@ async function main() {
     create: {
       categoryId: catGift.id,
       collectionId: collHeritage.id,
-      name: 'Heritage Royal Almonds Wooden Box 1kg',
+      name: 'Everyday Collection Rigid Gift Box 1kg',
       slug: 'royal-almonds-wooden-box',
       sku: 'ALM-HER-1000',
-      shortDescription: 'The finest reserve of extra large California almonds in our velvet-lined handcrafted mahogany box.',
+      shortDescription: 'Custom matte black rigid gift box with embossed gold lettering and gold edge trim.',
       weightGrams: 1000,
       price: 2999.00,
       salePrice: 2499.00,
       stockQty: 100,
       thumbnailUrl: '/images/royal-almonds-wooden-box.png',
+      isFeatured: true,
+      nutritionJson: { protein: '21g', fiber: '12g', fats: '49g', energy: '579 kcal' }
+    },
+  });
+
+  await prisma.product.upsert({
+    where: { sku: 'ALM-WIN-250' },
+    update: {},
+    create: {
+      categoryId: catRaw.id,
+      collectionId: collEveryday.id,
+      name: 'Transparent Window Pouch Edition 250g',
+      slug: 'window-pouch-almonds-250g',
+      sku: 'ALM-WIN-250',
+      shortDescription: 'Matte black stand-up pouch featuring a clear window displaying fresh California almonds.',
+      weightGrams: 250,
+      price: 1099.00,
+      salePrice: 899.00,
+      stockQty: 500,
+      thumbnailUrl: '/images/almonds-pouch-window.png',
+      isFeatured: true,
+      nutritionJson: { protein: '21g', fiber: '12g', fats: '49g', energy: '579 kcal' }
+    },
+  });
+
+  await prisma.product.upsert({
+    where: { sku: 'ALM-UNB-1000' },
+    update: {},
+    create: {
+      categoryId: catGift.id,
+      collectionId: collHeritage.id,
+      name: 'Grand Unboxing Luxury Gift Box',
+      slug: 'grand-unboxing-luxury-box',
+      sku: 'ALM-UNB-1000',
+      shortDescription: 'Hinged black gift box with gold interior rim, gold-stamped pouch & thank you card.',
+      weightGrams: 1000,
+      price: 3499.00,
+      salePrice: 2999.00,
+      stockQty: 75,
+      thumbnailUrl: '/images/luxury-gift-box-unboxing.png',
       isFeatured: true,
       nutritionJson: { protein: '21g', fiber: '12g', fats: '49g', energy: '579 kcal' }
     },
@@ -188,25 +228,59 @@ async function main() {
     }
   });
 
-  // 5. Create Admin Account
-  const hashedPassword = await bcrypt.hash('Admin@12345', 10);
+  // 5. Create Test and Admin Accounts
+  const adminPassword = await bcrypt.hash('Admin@12345', 10);
+  const testPassword = await bcrypt.hash('password123', 10);
+
   await prisma.user.upsert({
     where: { email: 'admin@auremont.com' },
     update: {
-      passwordHash: hashedPassword,
+      passwordHash: adminPassword,
       role: Role.admin,
     },
     create: {
       firstName: 'Auremont',
       lastName: 'Concierge',
       email: 'admin@auremont.com',
-      passwordHash: hashedPassword,
+      passwordHash: adminPassword,
       role: Role.admin,
       emailVerified: true,
     },
   });
 
-  console.log('Seed completed successfully! Admin user created: admin@auremont.com');
+  await prisma.user.upsert({
+    where: { email: 'admin@example.com' },
+    update: {
+      passwordHash: testPassword,
+      role: Role.admin,
+    },
+    create: {
+      firstName: 'Admin',
+      lastName: 'User',
+      email: 'admin@example.com',
+      passwordHash: testPassword,
+      role: Role.admin,
+      emailVerified: true,
+    },
+  });
+
+  await prisma.user.upsert({
+    where: { email: 'example@gmail.com' },
+    update: {
+      passwordHash: testPassword,
+      role: Role.customer,
+    },
+    create: {
+      firstName: 'Test',
+      lastName: 'Customer',
+      email: 'example@gmail.com',
+      passwordHash: testPassword,
+      role: Role.customer,
+      emailVerified: true,
+    },
+  });
+
+  console.log('Seed completed successfully! Test users created: example@gmail.com, admin@example.com, admin@auremont.com');
 }
 
 main()

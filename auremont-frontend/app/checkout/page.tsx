@@ -34,6 +34,7 @@ export default function CheckoutPage() {
 
   const [address, setAddress] = useState({
     fullName: "",
+    email: "",
     phone: "",
     addressLine1: "",
     addressLine2: "",
@@ -45,9 +46,13 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     setMounted(true);
+    fetchCart();
     if (user) {
-      fetchCart();
-      setAddress(prev => ({ ...prev, fullName: `${user.firstName} ${user.lastName}` }));
+      setAddress(prev => ({ 
+        ...prev, 
+        fullName: `${user.firstName} ${user.lastName}`,
+        email: user.email,
+      }));
     }
   }, [user, fetchCart]);
 
@@ -98,16 +103,6 @@ export default function CheckoutPage() {
 
   if (!mounted) return null;
 
-  if (!user) {
-    return (
-      <div className="w-full min-h-[60vh] flex flex-col items-center justify-center px-6 py-24 text-center space-y-8 bg-background pt-40">
-        <h1 className="text-4xl md:text-5xl font-serif text-primaryText">Secure Checkout</h1>
-        <p className="text-secondaryText text-lg max-w-md">Please sign in to proceed with your checkout securely.</p>
-        <button onClick={() => router.push('/login')} className="luxury-button mt-4">Sign In to Continue</button>
-      </div>
-    );
-  }
-
   if (safeItems.length === 0 && !successMessage) {
     return (
       <div className="w-full min-h-[60vh] flex flex-col items-center justify-center px-6 py-24 text-center space-y-8 bg-background pt-40">
@@ -122,8 +117,8 @@ export default function CheckoutPage() {
   };
 
   const validateAddress = () => {
-    if (!address.fullName || !address.phone || !address.addressLine1 || !address.city || !address.state || !address.postalCode) {
-      setError("Please fill out all required address fields.");
+    if (!address.fullName || (!user && !address.email) || !address.phone || !address.addressLine1 || !address.city || !address.state || !address.postalCode) {
+      setError("Please fill out all required address and contact fields.");
       return false;
     }
     setError("");
@@ -150,7 +145,7 @@ export default function CheckoutPage() {
           clearCart();
           window.sessionStorage.removeItem('checkout_idempotency_key');
           setSuccessMessage("Payment successful! Your order has been confirmed (Dev Mode).");
-          setTimeout(() => router.push('/account'), 2000);
+          setTimeout(() => router.push(user ? '/account' : '/shop'), 2000);
         } catch (err) {
           setPaymentLoading(false);
           setError("Dev Mode verification failed.");
@@ -179,7 +174,7 @@ export default function CheckoutPage() {
           clearCart();
           window.sessionStorage.removeItem('checkout_idempotency_key');
           setSuccessMessage("Payment successful! Your order has been confirmed.");
-          setTimeout(() => router.push('/account'), 2500);
+          setTimeout(() => router.push(user ? '/account' : '/shop'), 2500);
         } catch (err: any) {
           setPaymentLoading(false);
           setError("Payment verification failed. Please check your account or contact support.");
@@ -188,7 +183,7 @@ export default function CheckoutPage() {
       prefill: {
         name: address.fullName,
         contact: address.phone,
-        email: user?.email || '',
+        email: address.email || user?.email || '',
       },
       theme: {
         color: '#D4AF37',
@@ -204,18 +199,14 @@ export default function CheckoutPage() {
     const rzp = new window.Razorpay(options);
     rzp.on('payment.failed', () => {
       setPaymentLoading(false);
-      setError("Payment failed. Your order is saved — please try again from your account.");
+      setError("Payment failed. Your order is saved — please try again.");
     });
     rzp.open();
   };
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) {
-      setError("You must be logged in to place an order.");
-      router.push('/login');
-      return;
-    }
+    if (!validateAddress()) return;
 
     setLoading(true);
     setError("");
@@ -230,6 +221,7 @@ export default function CheckoutPage() {
         cartId,
         couponId: appliedCoupon ? appliedCoupon.id : undefined,
         idempotencyKey,
+        guestEmail: !user ? address.email : undefined,
         address,
       });
 
@@ -238,12 +230,12 @@ export default function CheckoutPage() {
 
       if (paymentSession?.razorpayOrderId && window.Razorpay) {
         setPaymentLoading(true);
-        openRazorpayModal(paymentSession, res.data.order.id);
+        openRazorpayModal(paymentSession, res.data.id || res.data.order?.id);
       } else {
         clearCart();
         window.sessionStorage.removeItem('checkout_idempotency_key');
-        setSuccessMessage("Order placed successfully!");
-        setTimeout(() => router.push('/account'), 2000);
+        setSuccessMessage("Order placed successfully! A confirmation email has been sent.");
+        setTimeout(() => router.push(user ? '/account' : '/shop'), 2500);
       }
     } catch (err: any) {
       setError(err.response?.data?.message || "Failed to place order. Please try again.");
@@ -262,7 +254,7 @@ export default function CheckoutPage() {
             </div>
             <h2 className="font-serif text-3xl text-primaryText">Order Confirmed</h2>
             <p className="text-secondaryText leading-relaxed">{successMessage}</p>
-            <p className="text-mutedText text-xs uppercase tracking-widest pt-4">Redirecting to Concierge...</p>
+            <p className="text-mutedText text-xs uppercase tracking-widest pt-4">Redirecting...</p>
           </div>
         </div>
       )}
@@ -300,6 +292,12 @@ export default function CheckoutPage() {
                     <h2 className="text-[11px] tracking-widest uppercase text-primaryText border-b border-divider pb-3 font-medium mb-6">Shipping Information</h2>
                   </div>
                   
+                  {!user && (
+                    <div className="md:col-span-2">
+                      <CustomInput label="Email Address (for order tracking & receipt)" name="email" value={address.email} onChange={handleChange} required type="email" />
+                    </div>
+                  )}
+
                   <CustomInput label="Full Name" name="fullName" value={address.fullName} onChange={handleChange} required />
                   <CustomInput label="Phone Number" name="phone" value={address.phone} onChange={handleChange} required type="tel" />
                   
