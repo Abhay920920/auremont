@@ -11,6 +11,7 @@ import { Lock, ShieldCheck, CreditCard } from "lucide-react";
 
 import CustomInput from "@/components/checkout/CustomInput";
 import ProgressIndicator from "@/components/checkout/ProgressIndicator";
+import { useCurrencyStore } from "@/store/currencyStore";
 
 declare global {
   interface Window {
@@ -21,6 +22,7 @@ declare global {
 export default function CheckoutPage() {
   const { items, cartId, clearCart, fetchCart } = useCartStore();
   const { user } = useAuthStore();
+  const { currency, formatPrice } = useCurrencyStore();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
 
@@ -157,7 +159,7 @@ export default function CheckoutPage() {
     const options = {
       key: keyId,
       amount: paymentSession.amount,
-      currency: paymentSession.currency || 'INR',
+      currency: currency || paymentSession.currency || 'INR',
       name: 'AUREMONT',
       description: 'Premium California Almonds',
       order_id: paymentSession.razorpayOrderId,
@@ -173,7 +175,7 @@ export default function CheckoutPage() {
           setPaymentLoading(false);
           clearCart();
           window.sessionStorage.removeItem('checkout_idempotency_key');
-          setSuccessMessage("Payment successful! Your order has been confirmed.");
+          setSuccessMessage("Payment verified! Your order has been confirmed.");
           setTimeout(() => router.push(user ? '/account' : '/shop'), 2500);
         } catch (err: any) {
           setPaymentLoading(false);
@@ -217,12 +219,14 @@ export default function CheckoutPage() {
         `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       window.sessionStorage.setItem('checkout_idempotency_key', idempotencyKey);
 
+      const { email: addrEmail, ...cleanAddress } = address;
+
       const res = await api.post('/orders', {
         cartId,
         couponId: appliedCoupon ? appliedCoupon.id : undefined,
         idempotencyKey,
         guestEmail: !user ? address.email : undefined,
-        address,
+        address: cleanAddress,
       });
 
       setLoading(false);
@@ -234,7 +238,7 @@ export default function CheckoutPage() {
       } else {
         clearCart();
         window.sessionStorage.removeItem('checkout_idempotency_key');
-        setSuccessMessage("Order placed successfully! A confirmation email has been sent.");
+        setSuccessMessage("Order placed successfully! A confirmation email will be sent once payment is processed.");
         setTimeout(() => router.push(user ? '/account' : '/shop'), 2500);
       }
     } catch (err: any) {
@@ -369,7 +373,7 @@ export default function CheckoutPage() {
                   ) : (
                     <span className="flex items-center gap-2">
                       <ShieldCheck size={16} className="group-hover:scale-110 transition-transform" />
-                      Complete Purchase — ₹{total.toFixed(2)}
+                      Complete Purchase — <span suppressHydrationWarning>{formatPrice(total)}</span>
                     </span>
                   )}
                 </button>
@@ -399,7 +403,7 @@ export default function CheckoutPage() {
                       <p className="text-primaryText font-serif text-sm group-hover:text-luxuryGold transition-colors">{(item as any).product?.name}</p>
                       <p className="text-secondaryText text-[9px] uppercase tracking-widest mt-0.5">Qty: {item.quantity}</p>
                     </div>
-                    <span className="text-primaryText font-medium">₹{(item.quantity * Number(item.unitPrice || 0)).toFixed(2)}</span>
+                    <span className="text-primaryText font-medium" suppressHydrationWarning>{formatPrice(item.quantity * Number(item.unitPrice || 0))}</span>
                   </div>
                 </div>
               ))}
@@ -431,12 +435,12 @@ export default function CheckoutPage() {
             <div className="border-t border-divider pt-4 space-y-3 text-xs text-secondaryText mb-6">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span className="text-primaryText">₹{subtotal.toFixed(2)}</span>
+                <span className="text-primaryText" suppressHydrationWarning>{formatPrice(subtotal)}</span>
               </div>
               {appliedCoupon && (
                 <div className="flex justify-between text-luxuryGold">
                   <span>Discount</span>
-                  <span>-₹{discount.toFixed(2)}</span>
+                  <span suppressHydrationWarning>-{formatPrice(discount)}</span>
                 </div>
               )}
               <div className="flex justify-between">
@@ -445,13 +449,13 @@ export default function CheckoutPage() {
               </div>
               <div className="flex justify-between">
                 <span>Tax (5% GST)</span>
-                <span className="text-primaryText">₹{tax.toFixed(2)}</span>
+                <span className="text-primaryText" suppressHydrationWarning>{formatPrice(tax)}</span>
               </div>
             </div>
 
             <div className="border-t border-divider pt-4 flex justify-between font-serif text-xl md:text-2xl text-primaryText">
               <span>Total</span>
-              <span className="text-luxuryGold">₹{total.toFixed(2)}</span>
+              <span className="text-luxuryGold" suppressHydrationWarning>{formatPrice(total)}</span>
             </div>
             
             <div className="mt-8 pt-6 border-t border-divider flex flex-col gap-4 text-[10px] text-mutedText uppercase tracking-widest text-center">

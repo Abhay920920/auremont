@@ -29,6 +29,7 @@ export default function MegaNavigation({ isOpen, onMouseLeave }: { isOpen: boole
              <div className="col-span-3">
                <h4 className="text-[11px] uppercase tracking-widest text-secondaryText mb-6">Explore</h4>
                <ul className="space-y-4">
+                 <li><Link href="/custom-gift-box" className="text-luxuryGold hover:underline transition-colors font-serif text-xl">Bespoke Gift Builder</Link></li>
                  <li><Link href="/about" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-xl">Our Heritage</Link></li>
                  <li><Link href="/process" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-xl">The Craftsmanship</Link></li>
                  <li><Link href="/journal" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-xl">Journal</Link></li>

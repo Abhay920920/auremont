@@ -63,7 +63,18 @@ export class CartService {
       cart = await this.createCart(dto.userId);
     }
 
-    const product = await prisma.product.findUnique({ where: { id: dto.productId } });
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(dto.productId);
+    const whereOr: any[] = [
+      { sku: dto.productId },
+      { slug: dto.productId },
+    ];
+    if (isUuid) {
+      whereOr.push({ id: dto.productId });
+    }
+
+    const product = await prisma.product.findFirst({
+      where: { OR: whereOr },
+    });
     if (!product) {
       throw new NotFoundException('Product not found');
     }
@@ -72,7 +83,7 @@ export class CartService {
     const subtotal = Number(unitPrice) * dto.quantity;
 
     const existingItem = await prisma.cartItem.findFirst({
-      where: { cartId: cart.id, productId: dto.productId },
+      where: { cartId: cart.id, productId: product.id },
     });
 
     if (existingItem) {
@@ -86,7 +97,7 @@ export class CartService {
       await prisma.cartItem.create({
         data: {
           cartId: cart.id,
-          productId: dto.productId,
+          productId: product.id,
           quantity: dto.quantity,
           unitPrice: unitPrice,
           subtotal: subtotal,

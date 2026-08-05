@@ -74,6 +74,7 @@ export default function Header() {
             >
               <Link href="/shop" className="luxury-link pb-1">The Collection</Link>
             </div>
+            <Link href="/custom-gift-box" className="luxury-link pb-1 text-luxuryGold" onMouseEnter={() => setIsMegaNavOpen(false)}>Gift Builder</Link>
             <Link href="/journal" className="luxury-link pb-1" onMouseEnter={() => setIsMegaNavOpen(false)}>Journal</Link>
             <Link href="/contact" className="luxury-link pb-1" onMouseEnter={() => setIsMegaNavOpen(false)}>Contact</Link>
           </nav>

@@ -14,6 +14,8 @@ interface BreadcrumbsProps {
 }
 
 export default function Breadcrumbs({ items }: BreadcrumbsProps) {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://auremont.com';
+
   // Construct JSON-LD
   const breadcrumbListSchema = {
     "@context": "https://schema.org",
@@ -22,7 +24,7 @@ export default function Breadcrumbs({ items }: BreadcrumbsProps) {
       "@type": "ListItem",
       "position": index + 1,
       "name": item.label,
-      "item": item.url ? `http://localhost:3000${item.url}` : undefined,
+      "item": item.url ? `${siteUrl}${item.url}` : undefined,
     }))
   };
 

@@ -17,15 +17,52 @@ function StarRating({ rating, size = 16 }: { rating: number; size?: number }) {
   );
 }
 
+import JsonLd from "@/components/JsonLd";
+
 export default function ProductInfo({ product, reviews, avgRating }: { product: any, reviews: any[], avgRating: number }) {
   const { currency, formatPrice } = useCurrencyStore();
   const [is3DOpen, setIs3DOpen] = useState(false);
 
   const displayPrice = product.salePrice ? Number(product.salePrice) : Number(product.price);
   const originalPrice = product.salePrice ? Number(product.price) : null;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://auremont.com';
+
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.name,
+    "image": product.thumbnailUrl ? [`${siteUrl}${product.thumbnailUrl}`] : undefined,
+    "description": product.shortDescription || product.description || "Luxury California Almonds crafted for discerning tastes.",
+    "sku": product.sku || product.id,
+    "brand": {
+      "@type": "Brand",
+      "name": "Auremont"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": `${siteUrl}/shop/${product.slug}`,
+      "priceCurrency": currency || "INR",
+      "price": displayPrice,
+      "priceValidUntil": "2027-12-31",
+      "itemCondition": "https://schema.org/NewCondition",
+      "availability": product.stockQty > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      "seller": {
+        "@type": "Organization",
+        "name": "Auremont"
+      }
+    },
+    ...(reviews.length > 0 && {
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": avgRating || 5,
+        "reviewCount": reviews.length
+      }
+    })
+  };
 
   return (
     <div className="space-y-6">
+      <JsonLd data={productSchema} />
       <div className="flex flex-wrap items-center gap-3">
         {product.category && (
           <Link href={`/shop?category=${product.category.slug}`} className="text-[10px] uppercase tracking-ultra text-luxuryGold font-medium bg-luxuryGold/10 px-3 py-1 border border-luxuryGold/20">

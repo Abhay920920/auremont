@@ -6,6 +6,10 @@ class AddressDto {
   @IsNotEmpty()
   fullName: string;
 
+  @IsOptional()
+  @IsString()
+  email?: string;
+
   @IsString()
   @IsNotEmpty()
   phone: string;
@@ -38,12 +42,10 @@ class AddressDto {
 export class CreateOrderDto {
   @IsString()
   @IsNotEmpty()
-  @Matches(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, { message: 'cartId must be a valid UUID' })
   cartId: string;
 
   @IsOptional()
   @IsString()
-  @Matches(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, { message: 'couponId must be a valid UUID' })
   couponId?: string;
 
   @IsOptional()
