@@ -25,7 +25,6 @@ export class OrdersController {
       userId: user?.id
     });
 
-    // Initiate Razorpay payment session
     const paymentSession = await this.ordersService.initializePayment(
       order.id,
       Number(order.total),
@@ -74,6 +73,32 @@ export class OrdersController {
   @Patch('admin/:id/status')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
+  async updateOrderStatus(
+    @Param('id') id: string,
+    @Body() dto: UpdateOrderStatusDto,
+    @GetUser() user: any
+  ) {
+    return this.ordersService.updateOrderStatus(id, dto, user.id);
+  }
+}
+
+@Controller('admin/orders')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles('admin')
+export class AdminOrdersController {
+  constructor(private readonly ordersService: OrdersService) {}
+
+  @Get()
+  async getAllOrders(@Query() query: any) {
+    return this.ordersService.getAllOrders(query);
+  }
+
+  @Get(':id')
+  async getOrderAdmin(@Param('id', ParseUUIDPipe) id: string) {
+    return this.ordersService.getOrderByIdAdmin(id);
+  }
+
+  @Patch(':id/status')
   async updateOrderStatus(
     @Param('id') id: string,
     @Body() dto: UpdateOrderStatusDto,

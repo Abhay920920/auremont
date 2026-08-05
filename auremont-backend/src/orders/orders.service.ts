@@ -349,14 +349,16 @@ export class OrdersService {
       data: { orderStatus: dto.status },
     });
 
-    // Send notification
-    const friendlyStatus = dto.status.charAt(0).toUpperCase() + dto.status.slice(1);
-    await this.notifications.create(
-      order.userId,
-      'order_update',
-      `Order ${friendlyStatus}`,
-      `Your order #${order.orderNumber} is now ${dto.status}.`
-    );
+    // Send notification (only for registered users, guest orders have no userId)
+    if (order.userId) {
+      const friendlyStatus = dto.status.charAt(0).toUpperCase() + dto.status.slice(1);
+      await this.notifications.create(
+        order.userId,
+        'order_update',
+        `Order ${friendlyStatus}`,
+        `Your order #${order.orderNumber} is now ${dto.status}.`
+      );
+    }
 
     await this.audit.log({ userId: adminId, action: 'UPDATE_ORDER_STATUS', entity: 'Order', entityId: orderId });
     return updatedOrder;
