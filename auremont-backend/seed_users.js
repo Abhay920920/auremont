@@ -1,5 +1,5 @@
-const { PrismaClient } = require('@prisma/client');
 /* eslint-disable */
+const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcrypt');
 const prisma = new PrismaClient();
 

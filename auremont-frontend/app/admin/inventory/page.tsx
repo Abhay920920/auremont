@@ -64,7 +64,7 @@ export default function AdminInventoryPage() {
     } catch (err) {
       console.error("Failed to adjust stock", err);
       // eslint-disable-next-line no-alert
-      alert("Failed to adjust stock. Please try again.");
+      console.warn("Failed to adjust stock. Please try again.");
     }
   };
 

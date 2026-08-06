@@ -59,7 +59,7 @@ describe('CartService Unit Tests', () => {
       // getCart will return null initially (no cart exists)
       let callCount = 0;
       prismaMock.cart.findFirst = jest.fn().mockImplementation(() => {
-        callCount++;
+        callCount += 1;
         // First call: returns null (no existing cart), subsequent calls return the created cart
         if (callCount === 1) return Promise.resolve(null);
         return Promise.resolve({ id: 'new-cart-001', userId: 'user-001', status: 'active', items: [] });

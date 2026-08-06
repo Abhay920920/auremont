@@ -50,16 +50,17 @@ api.interceptors.response.use(
 
     if (error.response.status === 401 && !originalRequest._retry && !isAuthRequest) {
       if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
-        })
-          .then((token) => {
-            if (originalRequest.headers && token) {
-              originalRequest.headers.Authorization = `Bearer ${token}`;
-            }
-            return api(originalRequest);
-          })
-          .catch((err) => Promise.reject(err));
+        try {
+          const token = await new Promise((resolve, reject) => {
+            failedQueue.push({ resolve, reject });
+          });
+          if (originalRequest.headers && token) {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+          }
+          return await api(originalRequest);
+        } catch (err) {
+          throw err;
+        }
       }
 
       originalRequest._retry = true;

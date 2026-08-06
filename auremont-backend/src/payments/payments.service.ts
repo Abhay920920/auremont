@@ -82,7 +82,7 @@ export class PaymentsService {
     }
 
     // 2. Process Event
-    const event = payload.event;
+    const { event } = payload;
     
     // We care about 'payment.captured' (success) or 'payment.failed'
     if (event === 'payment.captured' || event === 'order.paid') {

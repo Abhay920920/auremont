@@ -156,7 +156,7 @@ export const createMockPrismaService = () => {
         const matches = Object.entries(where).every(([k, v]) => item[k] === v);
         if (matches) {
           Object.assign(item, data);
-          count++;
+          count += 1;
         }
       });
       return { count };

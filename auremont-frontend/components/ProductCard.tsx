@@ -48,7 +48,7 @@ export default function ProductCard({ product }: { product: Product }) {
                   }
                 } else {
                   // eslint-disable-next-line no-alert
-                  alert('Please log in to save to your wishlist.');
+                  console.warn('Please log in to save to your wishlist.');
                 }
             }}
             aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}

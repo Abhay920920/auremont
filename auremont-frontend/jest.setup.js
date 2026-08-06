@@ -11,7 +11,10 @@ const customJestFetchAdapter = async (config) => {
     fullUrl = new URL(fullUrl, base).toString();
   }
 
-  const headers = config.headers ? (config.headers.toJSON ? config.headers.toJSON() : config.headers) : {};
+  let headers = {};
+  if (config.headers) {
+    headers = config.headers.toJSON ? config.headers.toJSON() : config.headers;
+  }
   const method = (config.method || 'get').toUpperCase();
   
   let body = config.data;
