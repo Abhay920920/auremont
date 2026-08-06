@@ -3,6 +3,17 @@ const axios = require('axios');
 
 const API_URL = 'http://127.0.0.1:3001';
 
+/**
+ * Runs the Admin End-to-End QA test suite against the local API server.
+ *
+ * Exercises admin-only endpoints (login, dashboard metrics, product CRUD,
+ * order management, coupon management, and customer listing), asserting
+ * expected HTTP status codes and response shapes.
+ *
+ * @async
+ * @returns {Promise<void>} Resolves when all test cases have been evaluated.
+ *   Exits the process with code 1 if any test fails.
+ */
 async function runAdminQA() {
   console.log('\nStarting ADMIN QA End-to-End Test Suite...\n');
   let passed = 0;

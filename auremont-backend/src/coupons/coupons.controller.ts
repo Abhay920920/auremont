@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { CouponsService } from './coupons.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { OptionalJwtAuthGuard } from '../auth/optional-jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { GetUser } from '../auth/get-user.decorator';
@@ -13,8 +14,9 @@ export class CouponsController {
   // ── PUBLIC ─────────────────────────────────────────────────────────────────
 
   @Post('validate')
-  async validateCoupon(@Body() body: { code: string; subtotal: number }) {
-    const coupon = await this.couponsService.validateCoupon(body.code, body.subtotal);
+  @UseGuards(OptionalJwtAuthGuard)
+  async validateCoupon(@Body() body: { code: string; subtotal: number }, @GetUser() user?: any) {
+    const coupon = await this.couponsService.validateCoupon(body.code, body.subtotal, user?.id);
     return {
       success: true,
       coupon: {

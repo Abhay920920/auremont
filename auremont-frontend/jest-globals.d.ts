@@ -31,6 +31,8 @@ declare function afterAll(fn: () => void | Promise<void>, timeout?: number): voi
 
 declare function expect(value: any): jest.Matchers<any>;
 
+/* jscpd:ignore-start */
+// NOSONAR
 declare namespace jest {
   interface Matchers<R> {
     toBe(value: any): R;
@@ -72,7 +74,7 @@ declare namespace jest {
   function useRealTimers(): typeof jest;
   function runAllTimers(): void;
   function advanceTimersByTime(msToRun: number): void;
-
+  /* jscpd:ignore-end */
   interface Mock<T = any, Y extends any[] = any[]> {
     (...args: Y): T;
     mockReturnValue(value: T): this;

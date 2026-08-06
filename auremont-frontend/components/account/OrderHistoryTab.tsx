@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { Package, Truck, CheckCircle, Clock, ShieldCheck } from "lucide-react";
+import { Package, Truck, CheckCircle } from "lucide-react";
 import { useCurrencyStore } from "@/store/currencyStore";
 
 interface OrderHistoryTabProps {
@@ -9,7 +9,7 @@ interface OrderHistoryTabProps {
 
 export default function OrderHistoryTab({ orders, loadingOrders }: OrderHistoryTabProps) {
   const router = useRouter();
-  const { currency, formatPrice } = useCurrencyStore();
+  const { formatPrice } = useCurrencyStore();
 
   const getDispatchSteps = (status: string) => {
     const s = (status || '').toLowerCase();

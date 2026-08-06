@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Headers, HttpCode, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Headers, HttpCode } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { PaymentsService } from './payments.service';
 

@@ -17,7 +17,7 @@ interface Product {
 export default function ProductCard({ product }: { product: Product }) {
   const { user } = useAuthStore();
   const { items: wishlistItems, addWishlist, removeWishlist } = useWishlistStore();
-  const { currency, formatPrice } = useCurrencyStore();
+  const { formatPrice } = useCurrencyStore();
   
   const isWishlisted = wishlistItems.some(item => item.productId === product.id);
 

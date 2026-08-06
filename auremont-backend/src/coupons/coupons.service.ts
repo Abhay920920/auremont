@@ -11,7 +11,7 @@ export class CouponsService {
     private audit: AuditService,
   ) {}
 
-  async validateCoupon(code: string, subtotal: number): Promise<Coupon> {
+  async validateCoupon(code: string, subtotal: number, userId?: string): Promise<Coupon> {
     const coupon = await this.prisma.coupon.findUnique({ where: { code } });
     if (!coupon) throw new BadRequestException('Invalid coupon code');
     if (!coupon.status) throw new BadRequestException('Coupon is no longer active');
@@ -27,6 +27,15 @@ export class CouponsService {
       const usageCount = await this.prisma.order.count({ where: { couponId: coupon.id } });
       if (usageCount >= coupon.usageLimit) {
         throw new BadRequestException('Coupon usage limit reached');
+      }
+    }
+    // Per-user abuse prevention: block reuse by the same authenticated user
+    if (userId) {
+      const userUsage = await this.prisma.order.count({
+        where: { couponId: coupon.id, userId },
+      });
+      if (userUsage > 0) {
+        throw new BadRequestException('You have already used this coupon');
       }
     }
     return coupon;

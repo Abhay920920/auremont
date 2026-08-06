@@ -48,10 +48,12 @@ test.describe('AUREMONT WCAG 2.1 AA Accessibility & ARIA Audit Suite', () => {
     // Verify images have alt attributes
     const images = page.locator('img');
     const imageCount = await images.count();
-    for (let i = 0; i < Math.min(imageCount, 10); i++) {
-      const alt = await images.nth(i).getAttribute('alt');
-      expect(alt).not.toBeNull();
-    }
+    await Promise.all(
+      Array.from({ length: Math.min(imageCount, 10) }).map(async (_, i) => {
+        const alt = await images.nth(i).getAttribute('alt');
+        expect(alt).not.toBeNull();
+      })
+    );
   });
 
   test('Checkout Page Accessibility & Form Labeling Check', async ({ page }) => {
@@ -72,14 +74,16 @@ test.describe('AUREMONT WCAG 2.1 AA Accessibility & ARIA Audit Suite', () => {
     const inputs = page.locator('input:not([type="hidden"])');
     await expect(inputs.first()).toBeVisible({ timeout: 10000 });
     const count = await inputs.count();
-    for (let i = 0; i < count; i++) {
-      const input = inputs.nth(i);
-      const name = await input.getAttribute('name');
-      const ariaLabel = await input.getAttribute('aria-label');
-      const id = await input.getAttribute('id');
+    await Promise.all(
+      Array.from({ length: count }).map(async (_, i) => {
+        const input = inputs.nth(i);
+        const name = await input.getAttribute('name');
+        const ariaLabel = await input.getAttribute('aria-label');
+        const id = await input.getAttribute('id');
 
-      const hasLabel = name || ariaLabel || id;
-      expect(hasLabel).toBeTruthy();
-    }
+        const hasLabel = name || ariaLabel || id;
+        expect(hasLabel).toBeTruthy();
+      })
+    );
   });
 });

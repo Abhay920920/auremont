@@ -52,7 +52,15 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://cdn.razorpay.com https://*.razorpay.com; connect-src 'self' http://localhost:3001 https://checkout.razorpay.com https://api.razorpay.com https://lumberjack.razorpay.com https://*; frame-src 'self' https://checkout.razorpay.com https://api.razorpay.com https://*.razorpay.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; font-src 'self' data:;"
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://cdn.razorpay.com https://*.razorpay.com",
+              `connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'} https://checkout.razorpay.com https://api.razorpay.com https://lumberjack.razorpay.com`,
+              "frame-src 'self' https://checkout.razorpay.com https://api.razorpay.com https://*.razorpay.com",
+              "img-src 'self' data: https:",
+              "style-src 'self' 'unsafe-inline'",
+              "font-src 'self' data:",
+            ].join('; '),
           },
           {
             key: 'X-Frame-Options',

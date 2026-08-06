@@ -58,6 +58,9 @@ export class CartService {
   }
 
   async addItemToCart(dto: { cartId?: string; userId?: string; productId: string; quantity: number }): Promise<Cart> {
+    if (!dto.quantity || dto.quantity <= 0 || !Number.isInteger(dto.quantity)) {
+      throw new BadRequestException('Quantity must be a positive integer');
+    }
     let cart = await this.getCart(dto.cartId, dto.userId);
     
     if (!cart) {
@@ -110,6 +113,9 @@ export class CartService {
   }
 
   async updateItemQuantity(itemId: string, quantity: number, userId?: string): Promise<Cart> {
+    if (!quantity || quantity <= 0 || !Number.isInteger(quantity)) {
+      throw new BadRequestException('Quantity must be a positive integer');
+    }
     const item = await this.prisma.cartItem.findUnique({ where: { id: itemId }, include: { cart: true } });
     if (!item) {
       throw new NotFoundException('Cart item not found');
@@ -167,30 +173,32 @@ export class CartService {
       return this.getCart(guestCartId, userId) as Promise<Cart>;
     }
 
-    for (const item of guestCart.items) {
-      const existingItem = await this.prisma.cartItem.findFirst({
-        where: { cartId: userCart.id, productId: item.productId },
-      });
+    await Promise.all(
+      guestCart.items.map(async (item) => {
+        const existingItem = await this.prisma.cartItem.findFirst({
+          where: { cartId: userCart.id, productId: item.productId },
+        });
 
-      if (existingItem) {
-        const newQuantity = existingItem.quantity + item.quantity;
-        const newSubtotal = Number(existingItem.unitPrice) * newQuantity;
-        await this.prisma.cartItem.update({
-          where: { id: existingItem.id },
-          data: { quantity: newQuantity, subtotal: newSubtotal },
-        });
-      } else {
-        await this.prisma.cartItem.create({
-          data: {
-            cartId: userCart.id,
-            productId: item.productId,
-            quantity: item.quantity,
-            unitPrice: item.unitPrice,
-            subtotal: item.subtotal,
-          },
-        });
-      }
-    }
+        if (existingItem) {
+          const newQuantity = existingItem.quantity + item.quantity;
+          const newSubtotal = Number(existingItem.unitPrice) * newQuantity;
+          await this.prisma.cartItem.update({
+            where: { id: existingItem.id },
+            data: { quantity: newQuantity, subtotal: newSubtotal },
+          });
+        } else {
+          await this.prisma.cartItem.create({
+            data: {
+              cartId: userCart.id,
+              productId: item.productId,
+              quantity: item.quantity,
+              unitPrice: item.unitPrice,
+              subtotal: item.subtotal,
+            },
+          });
+        }
+      })
+    );
 
     await this.prisma.cartItem.deleteMany({ where: { cartId: guestCartId } });
     await this.prisma.cart.delete({ where: { id: guestCartId } });

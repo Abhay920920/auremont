@@ -1,10 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const CORS_HEADERS = {
-  'access-control-allow-origin': '*',
-  'access-control-allow-headers': '*',
-  'access-control-allow-methods': '*',
-};
+import { CORS_HEADERS, MOCK_PRODUCT, MOCK_CART } from './mocks';
 
 const MOCK_USER = {
   id: 'mock-user-1',
@@ -12,33 +8,6 @@ const MOCK_USER = {
   lastName: 'Vance',
   email: 'alexander.vance@auremont.com',
   phone: '+919876543210',
-};
-
-const MOCK_PRODUCT = {
-  id: 'mock-prod-1',
-  name: 'California Reserve Raw Almonds 250g',
-  slug: 'california-reserve-raw',
-  price: 999,
-  weightGrams: 250,
-  thumbnailUrl: '/images/california-almonds-250g.png',
-  shortDescription: 'Signature matte black pouch.',
-  stockQty: 50,
-};
-
-const MOCK_CART = {
-  id: 'mock-cart-1',
-  items: [{
-    id: 'mock-item-1',
-    productId: MOCK_PRODUCT.id,
-    quantity: 1,
-    unitPrice: '999',
-    subtotal: '999',
-    product: {
-      name: MOCK_PRODUCT.name,
-      thumbnailUrl: MOCK_PRODUCT.thumbnailUrl,
-      slug: MOCK_PRODUCT.slug,
-    }
-  }]
 };
 
 const MOCK_COUPON = {

@@ -46,10 +46,10 @@ if (typeof globalThis.BroadcastChannel === 'undefined') {
   } catch (e) {
     globalThis.BroadcastChannel = class BroadcastChannel {
       constructor(name) { this.name = name; }
-      postMessage() {}
-      close() {}
-      addEventListener() {}
-      removeEventListener() {}
+      postMessage() { /* noop */ }
+      close() { /* noop */ }
+      addEventListener() { /* noop */ }
+      removeEventListener() { /* noop */ }
     };
   }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, UserX, UserCheck, Mail, MapPin, Package, RefreshCw, LogOut } from "lucide-react";
 import { format } from "date-fns";

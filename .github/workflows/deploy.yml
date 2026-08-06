@@ -9,15 +9,20 @@ on:
 env:
   NODE_VERSION: '18.x'
 
+# Least-privilege default: all jobs start with read-only token access.
+# Individual jobs that need write access declare it explicitly.
+permissions:
+  contents: read
+
 jobs:
   security-audit:
     name: Dependency & Security Audit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Use Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -33,30 +38,80 @@ jobs:
         working-directory: ./auremont-frontend
         run: npm audit --audit-level=high
 
+  test-backend:
+    name: Backend Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: auremont-backend/package-lock.json
+
+      - name: Install Backend Dependencies
+        working-directory: ./auremont-backend
+        run: npm ci
+
+      - name: Run Backend Unit Tests
+        working-directory: ./auremont-backend
+        run: npm run test -- --passWithNoTests --forceExit
+        env:
+          NODE_ENV: test
+          DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+          JWT_SECRET: test_jwt_secret_ci
+          JWT_REFRESH_SECRET: test_jwt_refresh_secret_ci
+
+  test-frontend:
+    name: Frontend Unit & Component Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: auremont-frontend/package-lock.json
+
+      - name: Install Frontend Dependencies
+        working-directory: ./auremont-frontend
+        run: npm ci
+
+      - name: Run Frontend Tests
+        working-directory: ./auremont-frontend
+        run: npm test -- --passWithNoTests --watchAll=false --forceExit
+        env:
+          NODE_ENV: test
+          NEXT_PUBLIC_API_URL: http://localhost:3001
+
   static-analysis:
     name: CodeQL Static Analysis
     runs-on: ubuntu-latest
     permissions:
       security-events: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: javascript, typescript
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
 
   docker-build:
     name: Build & Container Scan
-    needs: [security-audit, static-analysis]
+    needs: [security-audit, test-backend, test-frontend, static-analysis]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      
+      - uses: actions/checkout@v4
+
       - name: Build Backend Image
         run: docker build -t auremont/backend:latest ./auremont-backend
-        
+
       - name: Build Frontend Image
         run: docker build -t auremont/frontend:latest ./auremont-frontend
 
@@ -74,9 +129,27 @@ jobs:
     name: Deploy to Production
     needs: docker-build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Backend Dependencies
+        working-directory: ./auremont-backend
+        run: npm ci --omit=dev
+
+      - name: Run Prisma Migrations
+        working-directory: ./auremont-backend
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
       - name: Secure Deployment Trigger
         run: echo "Triggering deployment to Production Cloud Environment..."
-        # Actual deployment steps (e.g., SSH into VPS, docker-compose pull && up -d, or push to ECR/ECS) go here,
-        # securely passing secrets via GitHub Secrets.
+        # Add SSH, ECR push, or render.com deploy hook here
+        # All secrets should be stored in GitHub Secrets, not in code.

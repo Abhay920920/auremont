@@ -26,7 +26,7 @@ async function main() {
 
   console.log('Admin user created successfully.');
   console.log('Username (Email):', admin.email);
-  console.log('Password:', password);
+  console.log('Password:', '[REDACTED_PASSWORD]');
 }
 
 main()

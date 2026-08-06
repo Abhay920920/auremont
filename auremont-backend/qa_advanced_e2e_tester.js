@@ -40,7 +40,7 @@ async function runAdvancedTests() {
   async function registerAndLogin(prefix) {
     const email = `${prefix}_${Date.now()}@example.com`;
     const pwd = "SecurePassword123!";
-    let reg = await fetch(`${API_URL}/auth/register`, {
+    await fetch(`${API_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ firstName: "T", lastName: "U", email, password: pwd })
@@ -238,13 +238,13 @@ async function runAdvancedTests() {
     await runTest(s4, 'Invalid quantities rejected', async () => {
       const invalidQuantities = [0, -1, -100, 1.5, "10", 9999999];
       let qtyPass = true;
-      for (let q of invalidQuantities) {
+      await Promise.all(invalidQuantities.map(async (q) => {
         let res = await fetch(`${API_URL}/cart/items`, {
           method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userA.token}` },
           body: JSON.stringify({ cartId: cartA.id, productId: prod1000.id, quantity: q })
         });
         if (res.status === 200 || res.status === 201) qtyPass = false;
-      }
+      }));
       return { expected: 400, actual: 'Rejected/Clean', pass: qtyPass };
     });
 
@@ -336,7 +336,7 @@ async function runAdvancedTests() {
       await ensureCartItem(cartI2.id, prod1000, 1);
 
       const idemCollisionPayload = { cartId: cartI2.id, idempotencyKey: idemKey, address: baseAddress }; // same key as previous
-      let idem3 = await fetch(`${API_URL}/orders`, {
+      await fetch(`${API_URL}/orders`, {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userI2.token}` },
         body: JSON.stringify(idemCollisionPayload)
       });
@@ -384,8 +384,8 @@ async function runAdvancedTests() {
     // SECTION 10 — COUPON SECURITY
     // ==========================================
     const cpExp = await prisma.coupon.create({ data: { code: `EXP_${Date.now()}`, type: 'flat', value: 100, startDate: new Date('2000-01-01'), endDate: new Date('2001-01-01'), status: true }});
-    const cpFut = await prisma.coupon.create({ data: { code: `FUT_${Date.now()}`, type: 'flat', value: 100, startDate: new Date('2100-01-01'), endDate: new Date('2200-01-01'), status: true }});
-    const cpDis = await prisma.coupon.create({ data: { code: `DIS_${Date.now()}`, type: 'flat', value: 100, startDate: new Date('2000-01-01'), endDate: new Date('2100-01-01'), status: false }});
+    await prisma.coupon.create({ data: { code: `FUT_${Date.now()}`, type: 'flat', value: 100, startDate: new Date('2100-01-01'), endDate: new Date('2200-01-01'), status: true }});
+    await prisma.coupon.create({ data: { code: `DIS_${Date.now()}`, type: 'flat', value: 100, startDate: new Date('2000-01-01'), endDate: new Date('2100-01-01'), status: false }});
     const cpMin = await prisma.coupon.create({ data: { code: `MIN_${Date.now()}`, type: 'flat', value: 100, minimumOrder: 5000, startDate: new Date('2000-01-01'), endDate: new Date('2100-01-01'), status: true }});
     
     await runTest(s8, 'Expired coupon rejected', async () => {
@@ -485,7 +485,7 @@ async function runAdvancedTests() {
     // SECTION 16 — WISHLIST SECURITY
     // ==========================================
     await runTest(s14, 'Wishlist userId spoofing ignored', async () => {
-      let resWish = await fetch(`${API_URL}/wishlist`, {
+    await fetch(`${API_URL}/wishlist`, {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${userA.token}` },
         body: JSON.stringify({ productId: prod1000.id, userId: userB.user.id }) // Spoofing
       });
@@ -543,10 +543,10 @@ async function runAdvancedTests() {
     const s20 = 'Rate Limiting';
     await runTest(s20, 'Rate limiting (429) active', async () => {
       let rateLimitPass = false;
-      for (let i = 0; i < 150; i++) {
-         let r = await fetch(`${API_URL}/categories`);
-         if (r.status === 429) { rateLimitPass = true; break; }
-      }
+      const results = await Promise.all(
+        Array.from({ length: 150 }).map(() => fetch(`${API_URL}/categories`))
+      );
+      if (results.some((r) => r.status === 429)) rateLimitPass = true;
       return { expected: '429 triggered', actual: rateLimitPass ? 'Yes' : 'No', pass: rateLimitPass };
     });
 

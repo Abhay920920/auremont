@@ -8,7 +8,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { PaymentsService } from '../payments/payments.service';
-import { Order, Prisma, OrderStatus } from '@prisma/client';
+import { Order, Prisma } from '@prisma/client';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 
 import { NotificationsService } from '../notifications/notifications.service';
@@ -101,6 +101,7 @@ export class OrdersService {
       const orderItems: any[] = [];
       const inventoryLogs: any[] = [];
 
+      // eslint-disable-next-line no-await-in-loop
       for (const item of cart.items) {
         // Lock product row with FOR UPDATE to prevent race conditions
         const rows = await tx.$queryRaw<any[]>(
@@ -287,6 +288,7 @@ export class OrdersService {
         data: { orderStatus: 'cancelled' },
       });
 
+      // eslint-disable-next-line no-await-in-loop
       for (const item of order.items) {
         await tx.product.update({
           where: { id: item.productId },

@@ -27,7 +27,7 @@ WORKDIR /app
 
 ENV NODE_ENV production
 
-RUN apk add --no-cache openssl
+RUN apk add --no-cache openssl curl
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nestjs
@@ -40,5 +40,8 @@ COPY --from=builder --chown=nestjs:nodejs /app/package.json ./package.json
 USER nestjs
 
 EXPOSE 3001
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
+  CMD curl -f http://localhost:3001/health || exit 1
 
 CMD ["node", "dist/src/main"]

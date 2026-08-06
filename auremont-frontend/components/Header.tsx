@@ -5,7 +5,6 @@ import { useAuthStore } from "@/store/authStore";
 import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 
 import NotificationDropdown from "./NotificationDropdown";
@@ -18,7 +17,7 @@ import { Menu } from "lucide-react";
 import { useCurrencyStore, CurrencyCode } from "@/store/currencyStore";
 
 export default function Header() {
-  const { user, logout } = useAuthStore();
+  const { user } = useAuthStore();
   const items = useCartStore((state) => state.items);
   const fetchCart = useCartStore((state) => state.fetchCart);
   const { fetchWishlist } = useWishlistStore();

@@ -1,7 +1,6 @@
 "use client";
 
 import { useCartStore } from "@/store/cartStore";
-import { useAuthStore } from "@/store/authStore";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -12,7 +11,6 @@ import QuantityControl from "@/components/cart/QuantityControl";
 import GiftOptions from "@/components/cart/GiftOptions";
 
 export default function CartPage() {
-  const { user } = useAuthStore();
   const { items, fetchCart, updateQuantity, removeItem, loading } = useCartStore();
   const [mounted, setMounted] = useState(false);
   const router = useRouter();

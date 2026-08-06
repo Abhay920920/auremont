@@ -4,7 +4,7 @@ import { UsersService } from '../users/users.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { createMockPrismaService } from '../prisma/prisma.service.mock';
-import { UnauthorizedException, ConflictException } from '@nestjs/common';
+import { ConflictException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
 describe('AuthService Unit Tests', () => {

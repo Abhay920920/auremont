@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Rotate3d, Sparkles, X, Type, Layers, Box, Check } from "lucide-react";
+import { Rotate3d, X, Type, Layers, Check } from "lucide-react";
 
 interface Packaging3DViewerProps {
   isOpen: boolean;

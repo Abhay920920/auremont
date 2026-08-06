@@ -84,8 +84,13 @@ export default function JournalDetailPage() {
 
       {/* Content */}
       <div className="max-w-2xl mx-auto px-6 prose prose-brand prose-lg prose-headings:font-serif prose-a:text-brand-900 hover:prose-a:text-brand-600">
-        {/* We dangerouslySetInnerHTML because blog content might be HTML saved by the admin editor */}
-        <div dangerouslySetInnerHTML={{ __html: blog.content }} />
+        {/* Sanitize HTML content to prevent XSS script injection */}
+        <div dangerouslySetInnerHTML={{ 
+          __html: (blog.content || '')
+            .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+            .replace(/on\w+="[^"]*"/gi, '')
+            .replace(/on\w+='[^']*'/gi, '')
+        }} />
       </div>
     </article>
   );

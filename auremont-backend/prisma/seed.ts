@@ -7,7 +7,7 @@ async function main() {
   console.log('Starting seed...');
 
   // 1. Create Categories
-  const catAlmonds = await prisma.category.upsert({
+  await prisma.category.upsert({
     where: { slug: 'almonds' },
     update: {},
     create: {
@@ -204,19 +204,21 @@ async function main() {
 
   // Populate ProductImage records for all products
   const allProds = await prisma.product.findMany();
-  for (const p of allProds) {
-    if (p.thumbnailUrl) {
-      await prisma.productImage.deleteMany({ where: { productId: p.id } });
-      await prisma.productImage.create({
-        data: {
-          productId: p.id,
-          imageUrl: p.thumbnailUrl,
-          sortOrder: 0,
-          isPrimary: true,
-        },
-      });
-    }
-  }
+  await Promise.all(
+    allProds
+      .filter((p) => p.thumbnailUrl)
+      .map(async (p) => {
+        await prisma.productImage.deleteMany({ where: { productId: p.id } });
+        await prisma.productImage.create({
+          data: {
+            productId: p.id,
+            imageUrl: p.thumbnailUrl!,
+            sortOrder: 0,
+            isPrimary: true,
+          },
+        });
+      })
+  );
 
   // 4. Create Luxury Journal Blogs
   await prisma.blog.upsert({

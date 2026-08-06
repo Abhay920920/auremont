@@ -66,7 +66,7 @@ describe('CartService Unit Tests', () => {
 
       prismaMock.cartItem.findFirst = jest.fn().mockResolvedValue(null); // No existing item
 
-      const result = await cartService.addItemToCart({
+      await cartService.addItemToCart({
         productId: 'ALMOND-001',
         quantity: 2,
         userId: 'user-001',

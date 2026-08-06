@@ -12,7 +12,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const product = await res.json();
     
     const imageUrl = product.thumbnailUrl || product.images?.[0]?.imageUrl || '/images/og-auremont.png';
-    const price = product.salePrice ? product.salePrice : product.price;
 
     return {
       title: product.seoTitle || product.name,

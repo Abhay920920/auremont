@@ -5,7 +5,7 @@ import { AuditService } from '../audit/audit.service';
 import { PaymentsService } from '../payments/payments.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { createMockPrismaService } from '../prisma/prisma.service.mock';
-import { NotFoundException, ConflictException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import { ConflictException, ForbiddenException } from '@nestjs/common';
 
 describe('OrdersService Unit Tests & Transaction Safety', () => {
   let ordersService: OrdersService;

@@ -1,21 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCartStore } from "@/store/cartStore";
 import QuantityControl from "./QuantityControl";
-import { useAuthStore } from "@/store/authStore";
-
 import { useCurrencyStore } from "@/store/currencyStore";
 
 export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { items, fetchCart, updateQuantity, removeItem } = useCartStore();
-  const { user } = useAuthStore();
-  const { currency, formatPrice } = useCurrencyStore();
-  const [loading, setLoading] = useState(false);
+  const { formatPrice } = useCurrencyStore();
 
   useEffect(() => {
     if (isOpen) {

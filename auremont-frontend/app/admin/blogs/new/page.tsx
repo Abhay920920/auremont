@@ -30,10 +30,6 @@ export default function AdminNewBlogPage() {
     setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
   };
 
-  const handleContentChange = (content: string) => {
-    setForm({ ...form, content });
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);

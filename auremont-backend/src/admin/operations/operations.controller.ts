@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, Post, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Query, Post, Body, UseGuards } from '@nestjs/common';
 import { AdminOperationsService } from './operations.service';
 import { AdminAuthGuard, Roles } from '../auth/admin-auth.guard';
 

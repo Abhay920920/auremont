@@ -3,7 +3,7 @@ import { CouponsService } from './coupons.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { createMockPrismaService } from '../prisma/prisma.service.mock';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 
 describe('CouponsService Unit Tests', () => {
   let couponsService: CouponsService;

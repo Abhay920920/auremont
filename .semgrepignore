@@ -1,0 +1,24 @@
+# Semgrep / static analysis scanner exclusions
+# Auto-generated files — never scan these
+
+# Code coverage reports (Istanbul/nyc output, regenerated on every test run)
+auremont-backend/coverage/
+
+# NestJS compiled output
+auremont-backend/dist/
+
+# Next.js build output
+auremont-frontend/.next/
+auremont-frontend/out/
+
+# Node dependencies
+**/node_modules/
+
+# Playwright test artifacts
+auremont-frontend/playwright-report/
+auremont-frontend/test-results/
+
+# QA scratch scripts (non-production)
+auremont-backend/qa_e2e_tester.js
+auremont-backend/qa_admin_e2e_tester.js
+auremont-backend/qa_advanced_e2e_tester.js

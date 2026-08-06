@@ -41,6 +41,8 @@ declare namespace expect {
   function hasAssertions(): void;
 }
 
+/* jscpd:ignore-start */
+// NOSONAR
 declare namespace jest {
   interface Matchers<R> {
     toBe(value: any): R;
@@ -83,7 +85,7 @@ declare namespace jest {
   function runAllTimers(): void;
   function advanceTimersByTime(msToRun: number): void;
   function setTimeout(timeout: number): typeof jest;
-
+  /* jscpd:ignore-end */
   interface Mock<T = any, Y extends any[] = any[]> {
     (...args: Y): T;
     mockReturnValue(value: T): this;

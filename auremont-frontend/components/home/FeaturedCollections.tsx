@@ -8,7 +8,7 @@ import { useCurrencyStore } from "@/store/currencyStore";
 
 export default function FeaturedCollections({ products }: { products: any[] }) {
   const featured = products.slice(0, 3);
-  const { currency, formatPrice } = useCurrencyStore();
+  const { formatPrice } = useCurrencyStore();
   
   return (
     <section className="w-full py-24 md:py-super px-6 md:px-12 max-w-[2000px] mx-auto bg-background relative z-10">

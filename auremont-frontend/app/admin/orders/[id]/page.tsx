@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, Package, Truck, Printer, Info, CreditCard, Box } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Package, Printer, Info, CreditCard, Box } from "lucide-react";
 import { format } from "date-fns";
 import api from "@/lib/axios";
 import { useCurrencyStore } from "@/store/currencyStore";

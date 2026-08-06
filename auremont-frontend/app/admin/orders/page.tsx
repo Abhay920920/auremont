@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Search, Filter, Download } from "lucide-react";
+import { Search, Download } from "lucide-react";
 import { format } from "date-fns";
 
 import api from "@/lib/axios";

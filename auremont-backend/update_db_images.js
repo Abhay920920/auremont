@@ -26,13 +26,13 @@ const updates = [
 
 async function main() {
   console.log('Updating product image URLs in database...');
-  for (const item of updates) {
+  await Promise.all(updates.map(async (item) => {
     const res = await prisma.product.updateMany({
       where: { sku: item.sku },
       data: { thumbnailUrl: item.thumbnailUrl },
     });
     console.log(`Updated ${item.sku} -> ${item.thumbnailUrl} (Count: ${res.count})`);
-  }
+  }));
 
   // Also update any products by slug if SKU differs
   await prisma.product.updateMany({
@@ -58,19 +58,21 @@ async function main() {
 
   // Ensure ProductImage records exist for all products
   const allProds = await prisma.product.findMany();
-  for (const p of allProds) {
-    if (p.thumbnailUrl) {
-      await prisma.productImage.deleteMany({ where: { productId: p.id } });
-      await prisma.productImage.create({
-        data: {
-          productId: p.id,
-          imageUrl: p.thumbnailUrl,
-          sortOrder: 0,
-          isPrimary: true,
-        },
-      });
-    }
-  }
+  await Promise.all(
+    allProds
+      .filter((p) => p.thumbnailUrl)
+      .map(async (p) => {
+        await prisma.productImage.deleteMany({ where: { productId: p.id } });
+        await prisma.productImage.create({
+          data: {
+            productId: p.id,
+            imageUrl: p.thumbnailUrl,
+            sortOrder: 0,
+            isPrimary: true,
+          },
+        });
+      })
+  );
 
   // Print updated products with images
   const products = await prisma.product.findMany({

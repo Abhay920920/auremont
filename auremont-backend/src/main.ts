@@ -29,16 +29,18 @@ async function bootstrap() {
   // Enterprise Hardening: Dynamic Production & Vercel CORS
   app.enableCors({
     origin: (origin, callback) => {
+      // Allow requests with no origin (server-to-server, mobile apps)
       if (!origin) return callback(null, true);
-      const frontendUrl = process.env.FRONTEND_URL;
-      if (
-        origin.includes('vercel.app') || 
-        origin.includes('localhost') || 
-        (frontendUrl && origin.startsWith(frontendUrl))
-      ) {
+      const frontendUrl = process.env.FRONTEND_URL || '';
+      const isAllowed =
+        origin.includes('localhost') ||
+        (frontendUrl && origin.startsWith(frontendUrl)) ||
+        /\.vercel\.app$/.test(origin) ||
+        /\.auremont\.com$/.test(origin);
+      if (isAllowed) {
         callback(null, true);
       } else {
-        callback(null, true);
+        callback(new Error(`CORS policy: origin '${origin}' not allowed`), false);
       }
     },
     credentials: true,
@@ -56,6 +58,9 @@ async function bootstrap() {
   }));
   
   app.useGlobalFilters(new AllExceptionsFilter());
+
+  // Enterprise Hardening: Enable Graceful Shutdown Hooks
+  app.enableShutdownHooks();
 
   const port = process.env.PORT || 3001;
   await app.listen(port, '0.0.0.0');

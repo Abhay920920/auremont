@@ -8,6 +8,7 @@ export async function GET() {
     fs.rmSync(dir, { recursive: true, force: true });
     return NextResponse.json({ success: true });
   } catch (err: any) {
-    return NextResponse.json({ success: false, error: err.message });
+    console.error('Delete folder error:', err);
+    return NextResponse.json({ success: false, error: 'Failed to delete folder' }, { status: 500 });
   }
 }
