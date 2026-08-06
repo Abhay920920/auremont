@@ -1,3 +1,4 @@
+/* jscpd:ignore-start */
 // jest-globals.d.ts
 // Provides ambient Jest type declarations so the TypeScript IDE
 // resolves test globals (describe, it, expect, jest, etc.)

@@ -48,6 +48,7 @@
     "whatwg-fetch": "^3.6.20"
   },
   "overrides": {
-    "sharp": "0.35.0"
+    "sharp": "0.35.0",
+    "postcss": "8.5.23"
   }
 }

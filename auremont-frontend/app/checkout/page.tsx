@@ -218,7 +218,7 @@ export default function CheckoutPage() {
     try {
       const idempotencyKey =
         window.sessionStorage.getItem('checkout_idempotency_key') ||
-        `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        `${Date.now()}-${crypto.randomUUID()}`;
       window.sessionStorage.setItem('checkout_idempotency_key', idempotencyKey);
 
       const { email: addrEmail, ...cleanAddress } = address;
