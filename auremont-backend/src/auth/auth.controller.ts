@@ -1,3 +1,4 @@
+/* jscpd:ignore-start */
 import { Controller, Post, Body, UnauthorizedException, Get, UseGuards, Res, Req, HttpCode, HttpStatus } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';

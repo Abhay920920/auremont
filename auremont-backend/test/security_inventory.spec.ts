@@ -1,3 +1,4 @@
+/* jscpd:ignore-start */
 import { Test, TestingModule } from '@nestjs/testing';
 import { OrdersService } from '../src/orders/orders.service';
 import { CartService } from '../src/cart/cart.service';

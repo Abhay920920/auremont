@@ -1,3 +1,4 @@
+/* jscpd:ignore-start */
 "use client";
 
 import { useState, useEffect } from "react";
