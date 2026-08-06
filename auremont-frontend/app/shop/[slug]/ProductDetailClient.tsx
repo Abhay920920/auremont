@@ -44,7 +44,8 @@ export default function ProductDetailClient() {
     const load = async () => {
       try {
         const prodRes = await api.get(`/products/${slug}`);
-        const p = prodRes.data;
+        const rawData = prodRes.data;
+        const p = (rawData && rawData.data && !Array.isArray(rawData.data)) ? rawData.data : rawData;
         setProduct(p);
         try {
           const rr = await api.get(`/reviews/product/${p.id}`);

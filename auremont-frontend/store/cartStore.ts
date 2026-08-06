@@ -132,7 +132,7 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: 'auremont-cart',
-      partialize: (state) => ({ cartId: state.cartId }), // Only persist the cartId
+      partialize: (state) => ({ cartId: state.cartId, items: state.items }), // Persist cartId and items
     }
   )
 );

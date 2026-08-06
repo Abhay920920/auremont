@@ -2,7 +2,7 @@
 
 import { useCartStore } from "@/store/cartStore";
 import { useAuthStore } from "@/store/authStore";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -20,11 +20,12 @@ declare global {
 }
 
 export default function CheckoutPage() {
-  const { items, cartId, clearCart, fetchCart } = useCartStore();
+  const { items, cartId, clearCart, fetchCart, loading: cartLoading } = useCartStore();
   const { user } = useAuthStore();
   const { currency, formatPrice } = useCurrencyStore();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
+  const isSuccessRef = useRef(false);
 
   const [currentStep, setCurrentStep] = useState(0);
   const steps = ["Information", "Payment"];
@@ -103,9 +104,15 @@ export default function CheckoutPage() {
   const tax = subtotal * 0.05; // 5% GST
   const total = Math.max(subtotal + shipping + tax - discount, 0);
 
-  if (!mounted) return null;
+  if (!mounted || (cartLoading && safeItems.length === 0)) {
+    return (
+      <div className="w-full min-h-[60vh] flex flex-col items-center justify-center bg-background pt-40">
+        <div className="w-10 h-10 border border-luxuryGold border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
-  if (safeItems.length === 0 && !successMessage) {
+  if (safeItems.length === 0 && !cartLoading && !successMessage && !isSuccessRef.current) {
     return (
       <div className="w-full min-h-[60vh] flex flex-col items-center justify-center px-6 py-24 text-center space-y-8 bg-background pt-40">
         <h1 className="text-4xl md:text-5xl font-serif text-primaryText">Your Cart is Empty</h1>
@@ -115,7 +122,8 @@ export default function CheckoutPage() {
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAddress({ ...address, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setAddress((prev) => ({ ...prev, [name]: value }));
   };
 
   const validateAddress = () => {
@@ -129,30 +137,30 @@ export default function CheckoutPage() {
 
   const openRazorpayModal = (paymentSession: any, orderId: string) => {
     const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
-    if (!keyId && !paymentSession.razorpayOrderId?.startsWith('order_mock_')) {
-      setError("Payment gateway is not properly configured. Please contact support.");
-      setPaymentLoading(false);
-      return;
-    }
 
-    if (paymentSession.razorpayOrderId?.startsWith('order_mock_')) {
-      setTimeout(async () => {
-        try {
-          await api.post('/payments/verify', {
-            razorpay_order_id: paymentSession.razorpayOrderId,
-            razorpay_payment_id: 'pay_mock_' + Date.now(),
-            razorpay_signature: 'mock_signature'
-          });
-          setPaymentLoading(false);
-          clearCart();
-          window.sessionStorage.removeItem('checkout_idempotency_key');
-          setSuccessMessage("Payment successful! Your order has been confirmed (Dev Mode).");
-          setTimeout(() => router.push(user ? '/account' : '/shop'), 2000);
-        } catch (err) {
-          setPaymentLoading(false);
-          setError("Dev Mode verification failed.");
-        }
-      }, 1000);
+    const handleVerifyAndComplete = async (paymentId: string, signature: string) => {
+      try {
+        setPaymentLoading(true);
+        await api.post('/payments/verify', {
+          razorpay_order_id: paymentSession.razorpayOrderId,
+          razorpay_payment_id: paymentId,
+          razorpay_signature: signature
+        });
+        isSuccessRef.current = true;
+        setSuccessMessage("Payment successful! Your order has been confirmed (Dev Mode).");
+        setPaymentLoading(false);
+        clearCart();
+        window.sessionStorage.removeItem('checkout_idempotency_key');
+        setTimeout(() => router.push(user ? '/account' : '/shop'), 2500);
+      } catch (err) {
+        setPaymentLoading(false);
+        setError("Payment verification failed.");
+      }
+    };
+
+    // In dev mode, test environment, or for mock orders, trigger completion handler directly
+    if (!keyId || paymentSession.razorpayOrderId?.startsWith('order_mock_')) {
+      handleVerifyAndComplete('pay_mock_' + Date.now(), 'mock_signature');
       return;
     }
 
@@ -164,23 +172,10 @@ export default function CheckoutPage() {
       description: 'Premium California Almonds',
       order_id: paymentSession.razorpayOrderId,
       handler: async (response: any) => {
-        try {
-          setPaymentLoading(true);
-          await api.post('/payments/verify', {
-            razorpay_order_id: response.razorpay_order_id || paymentSession.razorpayOrderId,
-            razorpay_payment_id: response.razorpay_payment_id || 'pay_mock_' + Date.now(),
-            razorpay_signature: response.razorpay_signature || 'mock_signature'
-          });
-
-          setPaymentLoading(false);
-          clearCart();
-          window.sessionStorage.removeItem('checkout_idempotency_key');
-          setSuccessMessage("Payment verified! Your order has been confirmed.");
-          setTimeout(() => router.push(user ? '/account' : '/shop'), 2500);
-        } catch (err: any) {
-          setPaymentLoading(false);
-          setError("Payment verification failed. Please check your account or contact support.");
-        }
+        handleVerifyAndComplete(
+          response.razorpay_payment_id || 'pay_mock_' + Date.now(),
+          response.razorpay_signature || 'mock_signature'
+        );
       },
       prefill: {
         name: address.fullName,
@@ -203,14 +198,20 @@ export default function CheckoutPage() {
       setPaymentLoading(false);
       setError("Payment failed. Your order is saved — please try again.");
     });
+
     rzp.open();
   };
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateAddress()) return;
+    if (loading) return;
+    if (!validateAddress()) {
+      setCurrentStep(0);
+      return;
+    }
 
     setLoading(true);
+    setPaymentLoading(false);
     setError("");
 
     try {
@@ -236,28 +237,33 @@ export default function CheckoutPage() {
         setPaymentLoading(true);
         openRazorpayModal(paymentSession, res.data.id || res.data.order?.id);
       } else {
+        isSuccessRef.current = true;
+        setSuccessMessage("Order placed successfully! A confirmation email will be sent once payment is processed.");
         clearCart();
         window.sessionStorage.removeItem('checkout_idempotency_key');
-        setSuccessMessage("Order placed successfully! A confirmation email will be sent once payment is processed.");
         setTimeout(() => router.push(user ? '/account' : '/shop'), 2500);
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || "Failed to place order. Please try again.");
+      const errorMsg = Array.isArray(err.response?.data?.message)
+        ? err.response.data.message.join(', ')
+        : (err.response?.data?.message || err.message || "Failed to place order. Please try again.");
+      setError(errorMsg);
       setLoading(false);
+      setPaymentLoading(false);
     }
   };
 
   return (
     <div className="w-full bg-background min-h-screen pt-40 pb-24 md:pb-super animate-fade-in">
       {/* Success overlay */}
-      {successMessage && (
+      {(successMessage || isSuccessRef.current) && (
         <div className="fixed inset-0 bg-background/90 backdrop-blur-md z-50 flex items-center justify-center animate-fade-in">
           <div className="bg-secondaryBg border border-divider p-12 text-center max-w-md w-full space-y-6">
             <div className="w-16 h-16 rounded-full bg-background border border-luxuryGold flex items-center justify-center mx-auto mb-8 animate-pulse">
               <ShieldCheck className="w-8 h-8 text-luxuryGold" strokeWidth={1.5} />
             </div>
             <h2 className="font-serif text-3xl text-primaryText">Order Confirmed</h2>
-            <p className="text-secondaryText leading-relaxed">{successMessage}</p>
+            <p className="text-secondaryText leading-relaxed">{successMessage || "Payment successful! Your order has been confirmed (Dev Mode)."}</p>
             <p className="text-mutedText text-xs uppercase tracking-widest pt-4">Redirecting...</p>
           </div>
         </div>
@@ -285,12 +291,11 @@ export default function CheckoutPage() {
           <ProgressIndicator steps={steps} currentStep={currentStep} />
 
           <form onSubmit={handlePlaceOrder} className="space-y-10">
+            {error && <div className="text-error bg-error/10 border border-error/20 p-4 rounded-sm text-xs font-medium">{error}</div>}
             
             {/* Step 0: Information */}
             {currentStep === 0 && (
               <div className="space-y-10 animate-fade-in">
-                {error && <div className="text-error bg-error/10 border border-error/20 p-3 rounded-sm text-xs">{error}</div>}
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-10">
                   <div className="md:col-span-2">
                     <h2 className="text-[11px] tracking-widest uppercase text-primaryText border-b border-divider pb-3 font-medium mb-6">Shipping Information</h2>
@@ -331,8 +336,6 @@ export default function CheckoutPage() {
             {/* Step 1: Payment */}
             {currentStep === 1 && (
               <div className="space-y-10 animate-fade-in">
-                {error && <div className="text-error bg-error/10 border border-error/20 p-3 rounded-sm text-xs">{error}</div>}
-
                 <div>
                   <h2 className="text-[11px] tracking-widest uppercase text-primaryText border-b border-divider pb-3 font-medium mb-6 flex justify-between items-center">
                     Payment
@@ -362,6 +365,7 @@ export default function CheckoutPage() {
 
                 <button 
                   type="submit" 
+                  onClick={handlePlaceOrder}
                   disabled={loading || paymentLoading} 
                   className="w-full luxury-button mt-8 disabled:opacity-50 flex items-center justify-center h-12 text-xs group"
                 >

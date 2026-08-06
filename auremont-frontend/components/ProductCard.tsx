@@ -29,6 +29,7 @@ export default function ProductCard({ product }: { product: Product }) {
             src={product.thumbnailUrl || '/images/california-almonds-250g.png'} 
             alt={product.name} 
             fill 
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover group-hover:scale-110 transition-transform duration-[1.5s] ease-[cubic-bezier(0.25,1,0.5,1)]"
           />
         </Link>

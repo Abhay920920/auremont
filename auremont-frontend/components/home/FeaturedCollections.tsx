@@ -33,11 +33,12 @@ export default function FeaturedCollections({ products }: { products: any[] }) {
               className="group cursor-pointer flex flex-col"
             >
               <div className="w-full aspect-[4/5] relative bg-secondaryBg overflow-hidden mb-8 border border-divider">
-                <Link href={`/shop/${product.slug}`}>
+                <Link href={`/shop/${product.slug}`} className="relative block w-full h-full">
                   <Image 
                     src={product.thumbnailUrl || '/images/california-almonds-250g.png'} 
                     alt={product.name} 
                     fill 
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 33vw"
                     className="object-cover group-hover:scale-110 transition-transform duration-[1.5s] ease-[cubic-bezier(0.25,1,0.5,1)]"
                   />
                 </Link>
