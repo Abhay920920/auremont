@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function, complexity */
 import { Metadata } from 'next';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';

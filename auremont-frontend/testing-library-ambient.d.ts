@@ -6,13 +6,7 @@
 declare module '@testing-library/react' {
   import { ReactElement, ReactNode } from 'react';
 
-  export interface RenderResult {
-    container: HTMLElement;
-    baseElement: HTMLElement;
-    debug: (baseElement?: HTMLElement | HTMLElement[]) => void;
-    unmount: () => void;
-    rerender: (ui: ReactElement) => void;
-    asFragment: () => DocumentFragment;
+  export interface Queries {
     getByText: (text: string | RegExp, options?: any) => HTMLElement;
     getByLabelText: (text: string | RegExp, options?: any) => HTMLElement;
     getByPlaceholderText: (text: string | RegExp, options?: any) => HTMLElement;
@@ -28,6 +22,15 @@ declare module '@testing-library/react' {
     findByRole: (role: string, options?: any) => Promise<HTMLElement>;
     getAllByText: (text: string | RegExp, options?: any) => HTMLElement[];
     getAllByRole: (role: string, options?: any) => HTMLElement[];
+  }
+
+  export interface RenderResult extends Queries {
+    container: HTMLElement;
+    baseElement: HTMLElement;
+    debug: (baseElement?: HTMLElement | HTMLElement[]) => void;
+    unmount: () => void;
+    rerender: (ui: ReactElement) => void;
+    asFragment: () => DocumentFragment;
   }
 
   export interface RenderOptions {
@@ -51,22 +54,7 @@ declare module '@testing-library/react' {
   export function waitForElementToBeRemoved(callback: () => any, options?: any): Promise<void>;
   export function cleanup(): void;
 
-  export const screen: {
-    getByText: (text: string | RegExp, options?: any) => HTMLElement;
-    getByLabelText: (text: string | RegExp, options?: any) => HTMLElement;
-    getByPlaceholderText: (text: string | RegExp, options?: any) => HTMLElement;
-    getByRole: (role: string, options?: any) => HTMLElement;
-    getByTestId: (testId: string | RegExp, options?: any) => HTMLElement;
-    getByDisplayValue: (value: string | RegExp, options?: any) => HTMLElement;
-    queryByText: (text: string | RegExp, options?: any) => HTMLElement | null;
-    queryByLabelText: (text: string | RegExp, options?: any) => HTMLElement | null;
-    queryByRole: (role: string, options?: any) => HTMLElement | null;
-    queryByTestId: (testId: string | RegExp, options?: any) => HTMLElement | null;
-    findByText: (text: string | RegExp, options?: any) => Promise<HTMLElement>;
-    findByLabelText: (text: string | RegExp, options?: any) => Promise<HTMLElement>;
-    findByRole: (role: string, options?: any) => Promise<HTMLElement>;
-    getAllByText: (text: string | RegExp, options?: any) => HTMLElement[];
-    getAllByRole: (role: string, options?: any) => HTMLElement[];
+  export const screen: Queries & {
     debug: (element?: HTMLElement) => void;
   };
 

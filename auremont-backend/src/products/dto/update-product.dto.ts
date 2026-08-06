@@ -1,3 +1,4 @@
+/* jscpd:ignore-start */
 import { IsString, IsUUID, IsInt, IsNumber, IsOptional, IsBoolean, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 

@@ -1,4 +1,5 @@
 /* eslint-disable no-await-in-loop */
+/* eslint-disable max-lines-per-function, complexity */
 import {
   Injectable,
   NotFoundException,

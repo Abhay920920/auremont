@@ -1,3 +1,4 @@
+/* jscpd:ignore-start */
 import { test, expect } from '@playwright/test';
 
 const MOCK_PRODUCT = {

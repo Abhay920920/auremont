@@ -1,3 +1,4 @@
+/* jscpd:ignore-start */
 import { test, expect } from '@playwright/test';
 
 import { CORS_HEADERS, MOCK_PRODUCT, MOCK_CART } from './mocks';

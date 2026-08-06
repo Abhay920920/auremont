@@ -5,7 +5,10 @@ const prisma = new PrismaClient();
 
 async function main() {
   const email = 'admin@auremont.com';
-  const password = 'adminPassword123!';
+  const password = process.env.ADMIN_PASSWORD;
+  if (!password) {
+    throw new Error('ADMIN_PASSWORD environment variable is required to create an admin.');
+  }
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const admin = await prisma.user.upsert({
