@@ -26,10 +26,12 @@ export default function Login() {
       // Trigger cart merge and fetch wishlist (do not await so it doesn't block routing)
       import('@/store/cartStore').then(({ useCartStore }) => {
         useCartStore.getState().mergeCart();
-      });
+        return null;
+      }).catch(console.error);
       import('@/store/wishlistStore').then(({ useWishlistStore }) => {
         useWishlistStore.getState().fetchWishlist(response.data.user.id);
-      });
+        return null;
+      }).catch(console.error);
 
       if (response.data.user.role === 'admin') {
         router.push('/admin');

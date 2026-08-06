@@ -1,4 +1,5 @@
 // qa_admin_e2e_tester.js
+/* eslint-disable */
 const axios = require('axios');
 
 const API_URL = 'http://127.0.0.1:3001';

@@ -15,7 +15,8 @@ export default function AdminSupportPage() {
   const fetchMessages = () => {
     api.get('/contact').then(res => {
       setMessages(res.data);
-    }).catch(console.error).finally(() => setLoading(false));
+      return null;
+    }).catch(console.error).finally(() => setLoading(false)).catch(console.error);
   };
 
   const markResolved = async (id: string, currentStatus: string) => {

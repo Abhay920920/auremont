@@ -42,7 +42,7 @@ export const useCartStore = create<CartState>()(
       error: null,
 
       fetchCart: async () => {
-        const cartId = get().cartId;
+        const { cartId } = get();
         set({ loading: true, error: null });
         try {
           const url = cartId ? `/cart?cartId=${cartId}` : '/cart';

@@ -5,14 +5,13 @@ import { useAuthStore } from "@/store/authStore";
 import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
 import { useEffect, useState } from "react";
-import { Search } from "lucide-react";
+import { Search, Menu } from "lucide-react";
 
 import NotificationDropdown from "./NotificationDropdown";
 import MegaNavigation from "./MegaNavigation";
 import SearchDrawer from "./SearchDrawer";
 import CartDrawer from "./cart/CartDrawer";
 import MobileNavDrawer from "./MobileNavDrawer";
-import { Menu } from "lucide-react";
 
 import { useCurrencyStore, CurrencyCode } from "@/store/currencyStore";
 

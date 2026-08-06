@@ -173,9 +173,9 @@ export class AuthService implements OnModuleInit {
     const logger = new Logger('EmailService');
     logger.log('\n=============================================');
     logger.log(`[MOCK EMAIL] To: ${email}`);
-    logger.log(`[MOCK EMAIL] Subject: Password Reset Request`);
+    logger.log(`[MOCK EMAIL] Subject: Account Recovery Request`);
     const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=[REDACTED_TOKEN]&email=${email}`;
-    logger.log(`[MOCK EMAIL] Body: Please click the link to reset your password: ${resetUrl}`);
+    logger.log(`[MOCK EMAIL] Body: Please click the link to recover your account: ${resetUrl}`);
     logger.log('=============================================\n');
 
     return { message: 'If an account exists, a reset link has been sent.' };

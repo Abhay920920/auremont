@@ -30,7 +30,7 @@ export default function AdminEditCouponPage() {
   useEffect(() => {
     if (!id) return;
     api.get(`/coupons/${id}`).then(res => {
-      const data = res.data;
+      const { data } = res;
       setForm({
         code: data.code,
         type: data.type,
@@ -42,10 +42,11 @@ export default function AdminEditCouponPage() {
         usageLimit: data.usageLimit || "",
         status: data.status,
       });
+      return null;
     }).catch(err => {
       console.error(err);
       setError("Failed to load coupon details.");
-    }).finally(() => setLoading(false));
+    }).finally(() => setLoading(false)).catch(console.error);
   }, [id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

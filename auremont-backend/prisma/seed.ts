@@ -3,6 +3,9 @@ import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
+/**
+ * Main database seeding function
+ */
 async function main() {
   console.log('Starting seed...');
 
@@ -343,4 +346,5 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect();
-  });
+  })
+  .catch(console.error);

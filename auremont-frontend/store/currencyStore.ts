@@ -35,9 +35,8 @@ export const useCurrencyStore = create<CurrencyStore>()(
 
         if (config.code === 'INR') {
           return `${config.symbol}${converted.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        } else {
-          return `${config.symbol}${converted.toFixed(2)}`;
         }
+        return `${config.symbol}${converted.toFixed(2)}`;
       },
     }),
     {

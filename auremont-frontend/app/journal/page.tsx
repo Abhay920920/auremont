@@ -51,13 +51,15 @@ export default function JournalPage() {
       .then((res) => {
         const data = res.data?.data || res.data || [];
         setBlogs(Array.isArray(data) && data.length > 0 ? data : FEATURED_STORIES);
+        return null;
       })
       .catch(() => {
         setBlogs(FEATURED_STORIES);
+        return null;
       })
       .finally(() => {
         setLoading(false);
-      });
+      }).catch(console.error);
   }, []);
 
   const displayBlogs = blogs.length > 0 ? blogs : FEATURED_STORIES;

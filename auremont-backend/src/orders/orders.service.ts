@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import {
   Injectable,
   NotFoundException,
@@ -108,7 +109,7 @@ export class OrdersService {
           Prisma.sql`SELECT * FROM "products" WHERE id = ${item.productId}::uuid FOR UPDATE`,
         );
 
-        const prod = rows[0];
+        const [prod] = rows;
         if (!prod) {
           throw new NotFoundException(`Product ${item.product.name} not found`);
         }
@@ -122,7 +123,7 @@ export class OrdersService {
         }
 
         const salePrice = prod.salePrice ?? prod.sale_price;
-        const price = prod.price;
+        const { price } = prod;
         const finalPrice = salePrice !== null && salePrice !== undefined ? salePrice : price;
         
         if (finalPrice === null || finalPrice === undefined || Number.isNaN(Number(finalPrice))) {

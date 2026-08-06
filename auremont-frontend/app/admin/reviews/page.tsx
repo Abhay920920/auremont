@@ -62,7 +62,7 @@ export default function AdminReviewsPage() {
   const filteredReviews = reviews.filter(r => r.status === statusFilter);
 
   const handleAction = (id: string, newStatus: string) => {
-    setReviews(reviews.map(r => r.id === id ? { ...r, status: newStatus } : r));
+    setReviews(reviews.map(r => (r.id === id ? { ...r, status: newStatus } : r)));
   };
 
   const renderStars = (rating: number) => {

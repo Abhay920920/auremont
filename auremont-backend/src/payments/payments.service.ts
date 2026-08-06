@@ -38,7 +38,7 @@ export class PaymentsService {
       // If we are using the fallback dummy keys, mock the response instead of hitting the real API
       if (!process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY_ID === 'rzp_test_12345') {
         rpOrder = {
-          id: 'order_mock_' + Date.now(),
+          id: `order_mock_${Date.now()}`,
           amount: options.amount,
           currency: options.currency,
         };
@@ -157,7 +157,7 @@ export class PaymentsService {
     if (!isMock) {
       const expectedSignature = crypto
         .createHmac('sha256', secret)
-        .update(razorpayOrderId + '|' + razorpayPaymentId)
+        .update(`${razorpayOrderId}|${razorpayPaymentId}`)
         .digest('hex');
 
       if (expectedSignature !== signature) {

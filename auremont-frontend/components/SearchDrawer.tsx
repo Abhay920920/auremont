@@ -29,6 +29,7 @@ export default function SearchDrawer({ isOpen, onClose }: { isOpen: boolean; onC
         setProducts(res.data.data || []);
         setHasFetched(true);
         setIsLoading(false);
+        return null;
       }).catch(err => {
         console.error("Failed to load products for search", err);
         setIsLoading(false);

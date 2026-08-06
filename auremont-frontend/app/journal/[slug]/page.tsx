@@ -7,6 +7,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
+import DOMPurify from 'isomorphic-dompurify';
 
 interface Blog {
   id: string;
@@ -26,15 +27,19 @@ export default function JournalDetailPage() {
   useEffect(() => {
     if (!params.slug) return;
     api.get(`/blogs/${params.slug}`).then((res) => {
-      setBlog(res.data);
+      if (res.data) {
+        setBlog(res.data);
+      }
+      return null;
     }).catch(err => {
       console.error(err);
       if (err.response?.status === 404) {
         router.replace('/journal');
       }
+      return null;
     }).finally(() => {
       setLoading(false);
-    });
+    }).catch(console.error);
   }, [params.slug, router]);
 
   if (loading) {
@@ -85,12 +90,7 @@ export default function JournalDetailPage() {
       {/* Content */}
       <div className="max-w-2xl mx-auto px-6 prose prose-brand prose-lg prose-headings:font-serif prose-a:text-brand-900 hover:prose-a:text-brand-600">
         {/* Sanitize HTML content to prevent XSS script injection */}
-        <div dangerouslySetInnerHTML={{ 
-          __html: (blog.content || '')
-            .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-            .replace(/on\w+="[^"]*"/gi, '')
-            .replace(/on\w+='[^']*'/gi, '')
-        }} />
+        <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(blog.content || '') }} />
       </div>
     </article>
   );

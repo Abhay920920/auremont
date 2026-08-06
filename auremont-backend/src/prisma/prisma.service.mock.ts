@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 export const createMockPrismaService = () => {
   const mockDb: Record<string, any[]> = {
     users: [],
@@ -98,17 +99,16 @@ export const createMockPrismaService = () => {
         });
         existing.updatedAt = new Date();
         return existing;
-      } else {
-        const newItem = {
-          id: createData.id || `${tableName.replace(/s$/, '')}-${Date.now()}`,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          ...createData,
-        };
-        if (!mockDb[tableName]) mockDb[tableName] = [];
-        mockDb[tableName].push(newItem);
-        return newItem;
       }
+      const newItem = {
+        id: createData.id || `${tableName.replace(/s$/, '')}-${Date.now()}`,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        ...createData,
+      };
+      if (!mockDb[tableName]) mockDb[tableName] = [];
+      mockDb[tableName].push(newItem);
+      return newItem;
     }),
 
     delete: jest.fn(async ({ where }: { where: any }) => {

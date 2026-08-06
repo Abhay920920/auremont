@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 import { Test, TestingModule } from '@nestjs/testing';
 import { CartService } from './cart.service';
 import { PrismaService } from '../prisma/prisma.service';

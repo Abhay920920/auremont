@@ -62,8 +62,8 @@ export default async function ProductLayout({ children, params }: { children: Re
       const imageUrl = product.thumbnailUrl || product.images?.[0]?.imageUrl || `${siteUrl}/images/og-auremont.png`;
       const price = product.salePrice ? product.salePrice : product.price;
       
-      let aggregateRating = undefined;
-      let reviewSchema = undefined;
+      let aggregateRating;
+      let reviewSchema;
 
       if (product.reviews && product.reviews.length > 0) {
         const ratingSum = product.reviews.reduce((acc: number, r: any) => acc + r.rating, 0);

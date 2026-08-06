@@ -160,7 +160,7 @@ export default function CheckoutPage() {
 
     // In dev mode, test environment, or for mock orders, trigger completion handler directly
     if (!keyId || paymentSession.razorpayOrderId?.startsWith('order_mock_')) {
-      handleVerifyAndComplete('pay_mock_' + Date.now(), 'mock_signature');
+      handleVerifyAndComplete(`pay_mock_${Date.now()}`, 'mock_signature');
       return;
     }
 
@@ -173,7 +173,7 @@ export default function CheckoutPage() {
       order_id: paymentSession.razorpayOrderId,
       handler: async (response: any) => {
         handleVerifyAndComplete(
-          response.razorpay_payment_id || 'pay_mock_' + Date.now(),
+          response.razorpay_payment_id || `pay_mock_${Date.now()}`,
           response.razorpay_signature || 'mock_signature'
         );
       },
@@ -420,7 +420,7 @@ export default function CheckoutPage() {
                   name="couponCode" 
                   value={couponCode} 
                   onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                  disabled={!!appliedCoupon}
+                  disabled={Boolean(appliedCoupon)}
                 />
                 
                 <button

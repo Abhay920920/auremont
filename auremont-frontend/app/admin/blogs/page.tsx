@@ -17,7 +17,8 @@ export default function AdminBlogsPage() {
   const fetchBlogs = () => {
     api.get('/blogs/admin').then(res => {
       setBlogs(res.data);
-    }).catch(console.error).finally(() => setLoading(false));
+      return null;
+    }).catch(console.error).finally(() => setLoading(false)).catch(console.error);
   };
 
   const togglePublish = async (id: string, published: boolean) => {

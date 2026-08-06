@@ -1,3 +1,4 @@
+/* eslint-disable */
 const { TextDecoder, TextEncoder } = require('node:util');
 const { ReadableStream, WritableStream, TransformStream } = require('node:stream/web');
 

@@ -164,7 +164,7 @@ export class CartService {
       return userCart;
     }
 
-    let userCart = await this.getCart(undefined, userId);
+    const userCart = await this.getCart(undefined, userId);
     if (!userCart) {
       await this.prisma.cart.update({
         where: { id: guestCartId },

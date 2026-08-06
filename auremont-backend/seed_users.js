@@ -1,7 +1,11 @@
 const { PrismaClient } = require('@prisma/client');
+/* eslint-disable */
 const bcrypt = require('bcrypt');
 const prisma = new PrismaClient();
 
+/**
+ * Main seed execution for users
+ */
 async function main() {
   try {
     const adminPassword = await bcrypt.hash('Admin@12345', 10);

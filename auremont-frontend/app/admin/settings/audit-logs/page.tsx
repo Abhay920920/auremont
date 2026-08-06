@@ -13,7 +13,8 @@ export default function AuditLogsPage() {
   useEffect(() => {
     api.get('/admin/audit').then(res => {
       setLogs(res.data);
-    }).catch(console.error).finally(() => setLoading(false));
+      return null;
+    }).catch(console.error).finally(() => setLoading(false)).catch(console.error);
   }, []);
 
   return (

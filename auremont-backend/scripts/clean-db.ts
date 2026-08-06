@@ -1,6 +1,9 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
+/**
+ * Main script execution
+ */
 async function main() {
   console.log('Cleaning up database...');
 
@@ -28,4 +31,5 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect();
-  });
+  })
+  .catch(console.error);

@@ -1,3 +1,4 @@
+/* eslint-disable */
 const { PrismaClient } = require('@prisma/client');
 const fs = require('fs');
 const prisma = new PrismaClient();
@@ -23,6 +24,9 @@ async function runAdvancedTests() {
   let globalFailed = 0;
   let reportLines = [];
 
+  /**
+   * Logs test reports
+   */
   function logReport(section, testName, expected, actual, pass) {
     if (pass) {
       console.log(`✅ PASS: [${section}] ${testName}`);
@@ -37,6 +41,9 @@ async function runAdvancedTests() {
   }
 
   // --- Helpers ---
+  /**
+   * Helper to register and login a test user
+   */
   async function registerAndLogin(prefix) {
     const email = `${prefix}_${Date.now()}@example.com`;
     const pwd = "SecurePassword123!";
@@ -73,6 +80,9 @@ async function runAdvancedTests() {
 
   const baseAddress = { fullName: "T", phone: "1", addressLine1: "1", city: "c", state: "s", postalCode: "1", country: "IN" };
 
+  /**
+   * Helper to ensure cart item exists
+   */
   async function ensureCartItem(cartId, product, quantity) {
     const unitPrice = product.price || 1000;
     const subtotal = Number(unitPrice) * quantity;

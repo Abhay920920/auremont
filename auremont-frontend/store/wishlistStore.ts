@@ -30,7 +30,7 @@ export const useWishlistStore = create<WishlistState>((set, get) => ({
   error: null,
 
   fetchWishlist: async (userId: string) => {
-    const token = useAuthStore.getState().token;
+    const { token } = useAuthStore.getState();
     if (!userId || !token) {
       set({ items: [] });
       return;

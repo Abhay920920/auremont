@@ -5,10 +5,16 @@ import { JwtService } from '@nestjs/jwt';
 export const ROLES_KEY = 'admin_roles';
 export const Roles = (...roles: string[]) => SetMetadata(ROLES_KEY, roles);
 
+/**
+ * Admin authorization guard
+ */
 @Injectable()
 export class AdminAuthGuard implements CanActivate {
   constructor(private jwtService: JwtService, private reflector: Reflector) {}
 
+  /**
+   * Checks if admin can activate route
+   */
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);

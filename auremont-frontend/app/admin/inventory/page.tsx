@@ -55,14 +55,15 @@ export default function AdminInventoryPage() {
       
       // Optimistic update
       setProducts(products.map(p => 
-        p.id === selectedProduct.id 
+        (p.id === selectedProduct.id 
           ? { ...p, stockQty: p.stockQty + qtyNum } 
-          : p
+          : p)
       ));
       
       setIsModalOpen(false);
     } catch (err) {
       console.error("Failed to adjust stock", err);
+      // eslint-disable-next-line no-alert
       alert("Failed to adjust stock. Please try again.");
     }
   };

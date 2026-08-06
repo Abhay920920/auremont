@@ -47,6 +47,7 @@ export default function ProductCard({ product }: { product: Product }) {
                     addWishlist(user.id, product.id);
                   }
                 } else {
+                  // eslint-disable-next-line no-alert
                   alert('Please log in to save to your wishlist.');
                 }
             }}
