@@ -9,7 +9,7 @@ export default function Icon() {
     (
       <div
         style={{
-          fontSize: 22,
+          fontSize: 16,
           background: '#0A0A0A',
           width: '100%',
           height: '100%',
@@ -19,10 +19,11 @@ export default function Icon() {
           color: '#D4AF37',
           fontFamily: 'serif',
           fontWeight: 'bold',
-          borderRadius: 4
+          borderRadius: 6,
+          border: '1px solid rgba(212, 175, 55, 0.4)'
         }}
       >
-        A
+        RN
       </div>
     ),
     { ...size }

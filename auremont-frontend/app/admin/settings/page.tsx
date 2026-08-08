@@ -9,13 +9,13 @@ export default function AdminSettingsPage() {
   const [success, setSuccess] = useState(false);
 
   const [form, setForm] = useState({
-    storeName: "AUREMONT",
-    contactEmail: "concierge@auremont.com",
+    storeName: "RARE NUTS",
+    contactEmail: "concierge@rarenuts.com",
     taxRate: "18",
     currency: "USD",
     shippingFee: "25.00",
     freeShippingThreshold: "500",
-    orderPrefix: "AUR-",
+    orderPrefix: "RN-",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

@@ -85,7 +85,7 @@ export default function GiftBoxBuilder() {
     ALMOND_VARIETIES[0],
     ALMOND_VARIETIES[1],
   ]);
-  const [engravingText, setEngravingText] = useState("AUREMONT RESERVE");
+  const [engravingText, setEngravingText] = useState("RARE NUTS RESERVE");
   const [selectedSeal, setSelectedSeal] = useState(WAX_SEALS[0]);
   const [addingToCart, setAddingToCart] = useState(false);
 
@@ -342,7 +342,7 @@ export default function GiftBoxBuilder() {
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
               <div>
                 <h3 className="font-serif text-2xl md:text-3xl text-primaryText mb-2">Bespoke Laser Engraving</h3>
-                <p className="text-secondaryText text-sm font-light">Enter custom initials, family crest monogram, or personal gift message to be laser-engraved in 24k gold leaf on the box lid.</p>
+                <p className="text-secondaryText text-sm font-light font-light">Enter custom initials, family crest monogram, or personal gift message to be laser-engraved in 24k gold leaf on the box lid.</p>
               </div>
 
               <div className="space-y-4 bg-secondaryBg p-6 border border-divider">
@@ -354,7 +354,7 @@ export default function GiftBoxBuilder() {
                   maxLength={24}
                   value={engravingText}
                   onChange={(e) => setEngravingText(e.target.value.toUpperCase())}
-                  placeholder="E.G. AUREMONT 2026"
+                  placeholder="E.G. RARE NUTS 2026"
                   className="w-full h-14 bg-background border border-divider px-4 font-serif text-xl tracking-widest text-primaryText outline-none focus:border-luxuryGold transition-colors uppercase"
                 />
                 <p className="text-[10px] text-mutedText italic">

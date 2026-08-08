@@ -39,6 +39,7 @@ test.describe('Reliability: Inventory Concurrency', () => {
 
     // ── 0. PRE-SET SESSION FLAGS & MOCKS ────────────────────────────────────
     await page.addInitScript(() => {
+      sessionStorage.setItem('rarenuts_splash', 'true');
       sessionStorage.setItem('auremont_splash', 'true');
       (window as any).Razorpay = function(options: any) {
         return { open: () => {}, on: () => {} };
@@ -105,7 +106,7 @@ test.describe('Reliability: Inventory Concurrency', () => {
 
     // ── 5. FILL SHIPPING FORM ────────────────────────────────────────────────
     await expect(page.locator('input[name="email"]')).toBeVisible({ timeout: 10000 });
-    await page.locator('input[name="email"]').fill('race_condition@auremont.com');
+    await page.locator('input[name="email"]').fill('race_condition@rarenuts.com');
     await page.locator('input[name="fullName"]').fill('Tester User');
     await page.locator('input[name="phone"]').fill('9876543210');
     await page.locator('input[name="addressLine1"]').fill('123 Test Street');

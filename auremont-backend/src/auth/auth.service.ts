@@ -19,12 +19,12 @@ export class AuthService implements OnModuleInit {
       const testPassword = await bcrypt.hash('password123', 10);
 
       await this.prisma.user.upsert({
-        where: { email: 'admin@auremont.com' },
+        where: { email: 'admin@rarenuts.com' },
         update: { passwordHash: adminPassword, role: 'admin' },
         create: {
-          firstName: 'Auremont',
+          firstName: 'RARE NUTS',
           lastName: 'Concierge',
-          email: 'admin@auremont.com',
+          email: 'admin@rarenuts.com',
           passwordHash: adminPassword,
           role: 'admin',
           emailVerified: true,

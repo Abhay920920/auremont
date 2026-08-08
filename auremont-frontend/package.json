@@ -10,7 +10,9 @@
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:seo": "playwright test tests/e2e/seo_audit.spec.ts",
+    "seo:pre-deploy": "node scripts/seo-pre-deploy-check.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.0",

@@ -2,11 +2,11 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Deleting all users except admin@auremont.com...');
+  console.log('Deleting all users except admin@rarenuts.com...');
   const result = await prisma.user.deleteMany({
     where: {
       email: {
-        not: 'admin@auremont.com'
+        not: 'admin@rarenuts.com'
       }
     }
   });

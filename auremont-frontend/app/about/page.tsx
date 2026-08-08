@@ -41,7 +41,7 @@ export default function AboutPage() {
           <div className="relative w-full h-full">
             <Image 
               src="/images/our_story_orchard.png" 
-              alt="Auremont Almond Orchard" 
+              alt="RARE NUTS Almond Orchard" 
               fill
               className="object-cover"
               priority
@@ -100,7 +100,7 @@ export default function AboutPage() {
             <h2 className="text-4xl md:text-5xl font-serif text-primaryText">Rooted in <span className="text-luxuryGold italic">California Soil</span></h2>
             <div className="space-y-6 text-secondaryText text-lg leading-relaxed font-light">
               <p>
-                Founded in the sun-drenched valleys of California, Auremont began with a singular vision: to elevate the humble almond into an unparalleled luxury experience. For over three generations, our family-owned orchards have cultivated a rare varietal of almond, celebrated for its buttery texture, delicate sweetness, and immaculate profile.
+                Founded in the sun-drenched valleys of California, RARE NUTS began with a singular vision: to elevate the humble almond into an unparalleled luxury experience. For over three generations, our family-owned orchards have cultivated a rare varietal of almond, celebrated for its buttery texture, delicate sweetness, and immaculate profile.
               </p>
               <p>
                 We believe that true luxury takes time. Our trees are nurtured slowly, watered by Sierra Nevada snowmelt, and harvested at the precise moment of peak maturity.
@@ -146,7 +146,7 @@ export default function AboutPage() {
                 Sourcing the finest almonds is only the beginning. Our master roasters employ proprietary, small-batch roasting techniques passed down through generations. Each batch is roasted slowly over sustainably sourced almond wood, ensuring an even, golden perfection that preserves the nut's essential oils and natural vitality.
               </p>
               <p>
-                From the initial sorting to the final dusting of artisanal sea salt, every step of the Auremont process is executed by hand. We reject automation in favor of human intuition and uncompromising craftsmanship.
+                From the initial sorting to the final dusting of artisanal sea salt, every step of the RARE NUTS process is executed by hand. We reject automation in favor of human intuition and uncompromising craftsmanship.
               </p>
             </div>
           </motion.div>
@@ -164,10 +164,10 @@ export default function AboutPage() {
             <h2 className="text-4xl md:text-5xl font-serif text-primaryText">A Promise to the <span className="text-luxuryGold italic">Earth</span></h2>
             <div className="space-y-6 text-secondaryText text-lg leading-relaxed font-light">
               <p>
-                Luxury should never come at the expense of our planet. Auremont operates on a closed-loop sustainability model. We utilize advanced micro-irrigation to conserve water, power our facilities with 100% renewable solar energy, and package our collections in fully recyclable, bespoke materials. 
+                Luxury should never come at the expense of our planet. RARE NUTS operates on a closed-loop sustainability model. We utilize advanced micro-irrigation to conserve water, power our facilities with 100% renewable solar energy, and package our collections in fully recyclable, bespoke materials. 
               </p>
               <p>
-                When you choose Auremont, you are choosing a brand that respects the earth as much as it respects the palate.
+                When you choose RARE NUTS, you are choosing a brand that respects the earth as much as it respects the palate.
               </p>
             </div>
             <div className="pt-8">

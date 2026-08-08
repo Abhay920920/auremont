@@ -40,7 +40,7 @@ export const useCurrencyStore = create<CurrencyStore>()(
       },
     }),
     {
-      name: 'auremont-currency-storage',
+      name: 'rarenuts-currency-storage',
     }
   )
 );

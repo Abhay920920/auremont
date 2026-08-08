@@ -11,7 +11,7 @@ export default function FAQPage() {
             <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-medium text-luxuryGold mb-2">Where do your almonds come from?</h3>
-                <p className="text-secondaryText leading-relaxed">All Auremont almonds are exclusively grown in our family-owned orchards in California's Central Valley, ensuring absolute traceability and quality control.</p>
+                <p className="text-secondaryText leading-relaxed">All RARE NUTS almonds are exclusively grown in our family-owned orchards in California's Central Valley, ensuring absolute traceability and quality control.</p>
               </div>
               <div>
                 <h3 className="text-lg font-medium text-luxuryGold mb-2">Are your products organic?</h3>
@@ -30,7 +30,7 @@ export default function FAQPage() {
             <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-medium text-luxuryGold mb-2">Do you ship internationally?</h3>
-                <p className="text-secondaryText leading-relaxed">Yes, Auremont ships globally. International shipping rates are calculated dynamically at checkout based on destination and weight via our DHL Express integration.</p>
+                <p className="text-secondaryText leading-relaxed">Yes, RARE NUTS ships globally. International shipping rates are calculated dynamically at checkout based on destination and weight via our DHL Express integration.</p>
               </div>
               <div>
                 <h3 className="text-lg font-medium text-luxuryGold mb-2">Can I include a gift message?</h3>

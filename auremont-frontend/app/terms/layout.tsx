@@ -4,14 +4,14 @@ import JsonLd from '@/components/JsonLd';
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service | Auremont',
-  description: 'Terms and conditions for using the Auremont luxury boutique.',
+  title: 'Terms of Service | RARE NUTS',
+  description: 'Terms and conditions for using the RARE NUTS luxury boutique.',
   alternates: {
     canonical: `${siteUrl}/terms`,
   },
   openGraph: {
-    title: 'Terms of Service | Auremont',
-    description: 'Terms and conditions for using the Auremont luxury boutique.',
+    title: 'Terms of Service | RARE NUTS',
+    description: 'Terms and conditions for using the RARE NUTS luxury boutique.',
     url: `${siteUrl}/terms`,
   },
 };

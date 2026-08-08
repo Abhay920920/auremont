@@ -1,5 +1,5 @@
 /**
- * Unit Tests for Auremont E-Commerce Utilities
+ * Unit Tests for RARE NUTS E-Commerce Utilities
  * Coverage: Currency, GST, Price Formatting, Coupon Engine, Shipping Calculator, Validation, Date Formatting, Slug Generator
  */
 
@@ -65,7 +65,7 @@ export function formatPriceINR(amountInINR: number, currency: 'INR' | 'USD' | 'E
   return `${symbols[currency]}${converted.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
-describe('Auremont E-Commerce Utilities Suite', () => {
+describe('RARE NUTS E-Commerce Utilities Suite', () => {
   describe('GST Calculator', () => {
     it('should calculate 5% GST correctly for subtotal of 1000', () => {
       // Arrange
@@ -145,7 +145,7 @@ describe('Auremont E-Commerce Utilities Suite', () => {
 
   describe('Validation Helpers', () => {
     it('should validate valid email addresses', () => {
-      expect(validateEmail('user@auremont.com')).toBe(true);
+      expect(validateEmail('user@rarenuts.com')).toBe(true);
       expect(validateEmail('alexander.vance@sub.domain.co.uk')).toBe(true);
     });
 

@@ -8,7 +8,7 @@ export class HealthController {
   @HttpCode(HttpStatus.OK)
   getRoot() {
     return {
-      name: 'Auremont Luxury API',
+      name: 'RARE NUTS Luxury API',
       status: 'online',
       timestamp: new Date().toISOString(),
       version: process.env.npm_package_version || '1.0.0',

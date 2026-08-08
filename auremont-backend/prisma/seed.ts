@@ -230,8 +230,8 @@ async function main() {
     create: {
       title: 'The Art of Slow Roasting: Preserving Aromatic Oils',
       slug: 'art-of-slow-roasting',
-      content: 'True luxury requires patience. Unlike high-heat industrial processing, Auremont slow-roasts our Nonpareil California almonds at low temperatures. This gentle technique locks in essential vitamin E and natural nut oils while developing a crisp, buttery aromatic crunch.',
-      authorName: 'Auremont Botanical Masters',
+      content: 'True luxury requires patience. Unlike high-heat industrial processing, RARE NUTS slow-roasts our Nonpareil California almonds at low temperatures. This gentle technique locks in essential vitamin E and natural nut oils while developing a crisp, buttery aromatic crunch.',
+      authorName: 'RARE NUTS Botanical Masters',
       authorRole: 'Master Roaster',
       coverImage: '/images/roasted-almonds-jar.png',
       published: true,
@@ -240,13 +240,13 @@ async function main() {
   });
 
   await prisma.blog.upsert({
-    where: { slug: 'heritage-of-auremont-unboxing' },
+    where: { slug: 'heritage-of-rarenuts-unboxing' },
     update: { published: true, publishedAt: new Date() },
     create: {
       title: 'Handcrafted Mahogany & Velvet: The Heritage Unboxing',
-      slug: 'heritage-of-auremont-unboxing',
-      content: 'A gift from Auremont is designed to leave a lasting impression. Every wooden box is carved from solid mahogany wood, polished with natural oils, and lined with custom gold velvet to protect our extra-large almonds.',
-      authorName: 'Auremont Design Studio',
+      slug: 'heritage-of-rarenuts-unboxing',
+      content: 'A gift from RARE NUTS is designed to leave a lasting impression. Every wooden box is carved from solid mahogany wood, polished with natural oils, and lined with custom gold velvet to protect our extra-large almonds.',
+      authorName: 'RARE NUTS Design Studio',
       authorRole: 'Creative Director',
       coverImage: '/images/royal-almonds-wooden-box.png',
       published: true,
@@ -275,8 +275,8 @@ async function main() {
     create: {
       title: 'Bespoke Pairing: Reserve Almonds with Vintage Champagne',
       slug: 'bespoke-pairing-guide',
-      content: 'Elevate your sensory experience. Our sommelier shares why Auremont slow-roasted sea salt almonds complement Blanc de Blancs Champagne, vintage Chardonnay, and aged artisanal cheeses.',
-      authorName: 'Auremont Sommelier',
+      content: 'Elevate your sensory experience. Our sommelier shares why RARE NUTS slow-roasted sea salt almonds complement Blanc de Blancs Champagne, vintage Chardonnay, and aged artisanal cheeses.',
+      authorName: 'RARE NUTS Sommelier',
       authorRole: 'Culinary Advisor',
       coverImage: '/images/roasted-almonds-jar.png',
       published: true,
@@ -289,15 +289,15 @@ async function main() {
   const testPassword = await bcrypt.hash('password123', 10);
 
   await prisma.user.upsert({
-    where: { email: 'admin@auremont.com' },
+    where: { email: 'admin@rarenuts.com' },
     update: {
       passwordHash: adminPassword,
       role: Role.admin,
     },
     create: {
-      firstName: 'Auremont',
+      firstName: 'RARE NUTS',
       lastName: 'Concierge',
-      email: 'admin@auremont.com',
+      email: 'admin@rarenuts.com',
       passwordHash: adminPassword,
       role: Role.admin,
       emailVerified: true,
@@ -336,7 +336,7 @@ async function main() {
     },
   });
 
-  console.log('Seed completed successfully! Test users created: example@gmail.com, admin@example.com, admin@auremont.com');
+  console.log('Seed completed successfully! Test users created: example@gmail.com, admin@example.com, admin@rarenuts.com');
 }
 
 main()

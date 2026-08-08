@@ -10,7 +10,7 @@ export default function Testimonials() {
       title: "Executive Chef"
     },
     {
-      quote: "Auremont elevates the humble almond into a true luxury experience. The wooden box makes a perfect corporate gift.",
+      quote: "RARE NUTS elevates the humble almond into a true luxury experience. The wooden box makes a perfect corporate gift.",
       author: "James T.",
       title: "CEO, TechVentures"
     },

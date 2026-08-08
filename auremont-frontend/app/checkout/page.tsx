@@ -169,7 +169,7 @@ export default function CheckoutPage() {
       key: keyId,
       amount: paymentSession.amount,
       currency: currency || paymentSession.currency || 'INR',
-      name: 'AUREMONT',
+      name: 'RARE NUTS',
       description: 'Premium California Almonds',
       order_id: paymentSession.razorpayOrderId,
       handler: async (response: any) => {
@@ -361,7 +361,7 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="p-4 border border-divider bg-background text-xs text-secondaryText leading-relaxed">
-                  <p>By clicking "Complete Purchase", you acknowledge that you have read and agree to Auremont's <Link href="/terms" className="text-luxuryGold underline hover:text-goldHover" target="_blank">Terms of Service</Link> and <Link href="/privacy-policy" className="text-luxuryGold underline hover:text-goldHover" target="_blank">Privacy Policy</Link>.</p>
+                  <p>By clicking "Complete Purchase", you acknowledge that you have read and agree to RARE NUTS's <Link href="/terms" className="text-luxuryGold underline hover:text-goldHover" target="_blank">Terms of Service</Link> and <Link href="/privacy-policy" className="text-luxuryGold underline hover:text-goldHover" target="_blank">Privacy Policy</Link>.</p>
                 </div>
 
                 <button 
@@ -467,7 +467,7 @@ export default function CheckoutPage() {
               <p className="flex items-center justify-center gap-2">
                 <ShieldCheck size={14} /> 256-Bit Encryption
               </p>
-              <p>Auremont Quality Guarantee</p>
+              <p>RARE NUTS Quality Guarantee</p>
             </div>
           </div>
         </div>

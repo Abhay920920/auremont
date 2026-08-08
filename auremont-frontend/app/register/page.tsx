@@ -45,7 +45,7 @@ export default function Register() {
     <div className="min-h-[80vh] flex items-center justify-center px-6 pt-36 pb-16">
       <div className="w-full max-w-md card space-y-8">
         <div className="text-center space-y-2">
-          <h1 className="text-4xl font-serif text-luxuryGold">Join AUREMONT</h1>
+          <h1 className="text-4xl font-serif text-luxuryGold">Join RARE NUTS</h1>
           <p className="text-mutedText">Create your exclusive account</p>
         </div>
 

@@ -50,7 +50,7 @@ describe('Controllers E2E & HTTP Pipeline Suite (Supertest)', () => {
 
   describe('POST /auth/register Mass Assignment Protection', () => {
     it('should strip or reject role: admin field (Mass Assignment Defense)', async () => {
-      const testEmail = `test_security_${Date.now()}@auremont.com`;
+      const testEmail = `test_security_${Date.now()}@rarenuts.com`;
       const res = await request(app.getHttpServer())
         .post('/auth/register')
         .send({

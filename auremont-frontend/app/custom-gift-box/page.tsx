@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Bespoke Gift Box Builder | Auremont",
+  title: "Bespoke Gift Box Builder | RARE NUTS",
   description: "Handcraft your personalized luxury almond gift set. Choose your mahogany box finish, reserve almond fillings, 24k gold laser engraving, and custom wax seal.",
 };
 

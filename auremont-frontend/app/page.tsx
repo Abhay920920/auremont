@@ -1,7 +1,7 @@
 import CinematicHero from "@/components/home/CinematicHero";
 import FeaturedCollections from "@/components/home/FeaturedCollections";
 import BestSellers from "@/components/home/BestSellers";
-import WhyAuremont from "@/components/home/WhyAuremont";
+import WhyRareNuts from "@/components/home/WhyRareNuts";
 import PackagingShowcase from "@/components/home/PackagingShowcase";
 import BrandStory from "@/components/home/BrandStory";
 import Testimonials from "@/components/home/Testimonials";
@@ -87,7 +87,7 @@ export default async function Home() {
     <main className="w-full bg-background overflow-hidden">
       <CinematicHero />
       <FeaturedCollections products={products} />
-      <WhyAuremont />
+      <WhyRareNuts />
       <BestSellers products={products} />
       <BrandStory />
       <PackagingShowcase />

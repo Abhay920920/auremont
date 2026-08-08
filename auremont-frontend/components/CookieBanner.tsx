@@ -7,14 +7,14 @@ export default function CookieBanner() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const consent = localStorage.getItem("auremont_cookie_consent");
+    const consent = localStorage.getItem("rarenuts_cookie_consent") || localStorage.getItem("auremont_cookie_consent");
     if (!consent) {
       setTimeout(() => setIsVisible(true), 2000);
     }
   }, []);
 
   const accept = () => {
-    localStorage.setItem("auremont_cookie_consent", "true");
+    localStorage.setItem("rarenuts_cookie_consent", "true");
     setIsVisible(false);
   };
 

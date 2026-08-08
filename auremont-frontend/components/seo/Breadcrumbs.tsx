@@ -14,7 +14,7 @@ interface BreadcrumbsProps {
 }
 
 export default function Breadcrumbs({ items }: BreadcrumbsProps) {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://auremont.com';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.com';
 
   // Construct JSON-LD
   const breadcrumbListSchema = {

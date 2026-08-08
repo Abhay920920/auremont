@@ -20,7 +20,7 @@ const FEATURED_STORIES: Blog[] = [
     id: "featured-1",
     title: "The Art of Slow Roasting: Perfection in Every Kernel",
     slug: "art-of-slow-roasting",
-    content: "Discover how Auremont master artisans slowly roast hand-selected California almonds in micro-batches to unlock deep aromatic notes and unmatched crunch.",
+    content: "Discover how RARE NUTS master artisans slowly roast hand-selected California almonds in micro-batches to unlock deep aromatic notes and unmatched crunch.",
     coverImage: "/images/roasted-almonds-jar.png",
     publishedAt: new Date().toISOString()
   },
@@ -68,7 +68,7 @@ export default function JournalPage() {
     <div className="w-full bg-background pt-32 pb-24 min-h-screen">
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-serif text-luxuryGold mb-6 tracking-tight uppercase">The Auremont Journal</h1>
+          <h1 className="text-4xl md:text-5xl font-serif text-luxuryGold mb-6 tracking-tight uppercase">The RARE NUTS Journal</h1>
           <p className="text-secondaryText text-lg max-w-2xl mx-auto font-light leading-relaxed">
             Discover stories about our craft, the provenance of our ingredients, and the inspiration behind our collections.
           </p>
@@ -100,7 +100,7 @@ export default function JournalPage() {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-luxuryGold/40">
-                      <span className="font-serif italic text-2xl">Auremont</span>
+                      <span className="font-serif italic text-2xl">RARE NUTS</span>
                     </div>
                   )}
                 </div>

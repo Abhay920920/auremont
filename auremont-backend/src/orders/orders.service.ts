@@ -57,7 +57,7 @@ export class OrdersService {
     // Resolve or create user ID for guest orders
     let effectiveUserId = userId;
     if (!effectiveUserId) {
-      const email = guestEmail || `guest_${Date.now()}@auremont.com`;
+      const email = guestEmail || `guest_${Date.now()}@rarenuts.com`;
       let guestUser = await this.prisma.user.findUnique({ where: { email } });
       if (!guestUser) {
         const nameParts = (address.fullName || 'Guest Customer').trim().split(' ');

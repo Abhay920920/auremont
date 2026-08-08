@@ -12,6 +12,7 @@ import MegaNavigation from "./MegaNavigation";
 import SearchDrawer from "./SearchDrawer";
 import CartDrawer from "./cart/CartDrawer";
 import MobileNavDrawer from "./MobileNavDrawer";
+import SquirrelLogo from "@/components/ui/SquirrelLogo";
 
 import { useCurrencyStore, CurrencyCode } from "@/store/currencyStore";
 
@@ -70,11 +71,11 @@ export default function Header() {
 
           {/* Logo Center */}
           <div 
-            className="flex-1 flex justify-center text-2xl md:text-5xl font-serif text-luxuryGold tracking-widest uppercase"
+            className="flex-1 flex justify-center py-1"
             onMouseEnter={() => setIsMegaNavOpen(false)}
           >
-            <Link href="/" className="hover:text-goldHover transition-colors drop-shadow-md">
-              Auremont
+            <Link href="/" className="hover:opacity-90 transition-opacity">
+              <SquirrelLogo size={36} variant="full" />
             </Link>
           </div>
 

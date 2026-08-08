@@ -90,6 +90,43 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'auremont-rose.vercel.app',
+          },
+        ],
+        destination: 'https://rarenuts.in/:path*',
+        permanent: true,
+      },
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'www.rarenuts.in',
+          },
+        ],
+        destination: 'https://rarenuts.in/:path*',
+        permanent: true,
+      },
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'rarenuts.com',
+          },
+        ],
+        destination: 'https://rarenuts.in/:path*',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

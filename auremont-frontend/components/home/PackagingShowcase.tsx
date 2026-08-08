@@ -106,8 +106,8 @@ export default function PackagingShowcase() {
           className="relative aspect-[4/5] bg-secondaryBg border border-luxuryGold/50 group overflow-hidden rounded-card shadow-[0_15px_50px_rgba(0,0,0,0.6)]"
         >
           <Image 
-            src="/images/auremont-packaging-showcase.jpg" 
-            alt="Auremont Packaging Suite Showcase" 
+            src="/images/rarenuts-packaging-showcase.png" 
+            alt="RARE NUTS Packaging Suite Showcase" 
             fill 
             className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-[1.5s] filter brightness-105"
           />
@@ -116,7 +116,7 @@ export default function PackagingShowcase() {
               <Sparkles size={16} />
               <span className="text-[9px] uppercase tracking-ultra font-medium">Complete Brand Vision</span>
             </div>
-            <h3 className="font-serif text-xl sm:text-2xl text-primaryText mb-1">Auremont Packaging Suite</h3>
+            <h3 className="font-serif text-xl sm:text-2xl text-primaryText mb-1">RARE NUTS Packaging Suite</h3>
             <p className="text-[11px] uppercase tracking-wider text-luxuryGold font-mono mb-2">10-Shot Photography Collage</p>
             <p className="text-secondaryText text-xs font-light leading-relaxed">
               Every detail—from the tactile dewy texture to the custom gold foil leaf work—reflects our commitment to uncompromising elegance.

@@ -50,7 +50,7 @@ export default function PrivacyPolicyPage() {
               <li>Object to or restrict the processing of your data</li>
               <li>Data portability</li>
             </ul>
-            <p className="mt-4">To exercise any of these rights, please email us at <span className="text-luxuryGold">privacy@auremont.com</span>. We will respond within 30 days.</p>
+            <p className="mt-4">To exercise any of these rights, please email us at <span className="text-luxuryGold">privacy@rarenuts.com</span>. We will respond within 30 days.</p>
           </section>
 
           <section>

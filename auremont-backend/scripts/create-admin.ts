@@ -4,7 +4,7 @@ import * as bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
-  const email = 'admin@auremont.com';
+  const email = 'admin@rarenuts.com';
   const password = process.env.ADMIN_PASSWORD;
   if (!password) {
     throw new Error('ADMIN_PASSWORD environment variable is required to create an admin.');
@@ -18,7 +18,7 @@ async function main() {
       role: 'admin',
     },
     create: {
-      firstName: 'Auremont',
+      firstName: 'RARE NUTS',
       lastName: 'Admin',
       email,
       phone: '+1234567890',

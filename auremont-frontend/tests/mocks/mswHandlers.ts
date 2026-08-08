@@ -32,7 +32,7 @@ export const mockUser = {
   id: 'user-001-uuid',
   firstName: 'Alexander',
   lastName: 'Vance',
-  email: 'alexander.vance@auremont.com',
+  email: 'alexander.vance@rarenuts.com',
   phone: '+919876543210',
   role: 'customer',
 };

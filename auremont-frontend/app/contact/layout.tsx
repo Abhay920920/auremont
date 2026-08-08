@@ -5,14 +5,14 @@ import React from 'react';
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
 export const metadata: Metadata = {
-  title: 'Contact Us | Auremont',
-  description: 'Get in touch with Auremont for support, corporate inquiries, or questions about our luxury almonds.',
+  title: 'Contact Us | RARE NUTS',
+  description: 'Get in touch with RARE NUTS for concierge support, corporate inquiries, or questions about our luxury curations.',
   alternates: {
     canonical: `${siteUrl}/contact`,
   },
   openGraph: {
-    title: 'Contact Us | Auremont',
-    description: 'Get in touch with Auremont for support, corporate inquiries, or questions about our luxury almonds.',
+    title: 'Contact Us | RARE NUTS',
+    description: 'Get in touch with RARE NUTS for support, corporate inquiries, or questions about our luxury curations.',
     url: `${siteUrl}/contact`,
   },
 };
@@ -23,12 +23,12 @@ export default function ContactLayout({ children }: { children: React.ReactNode 
     "@type": "ContactPage",
     "mainEntity": {
       "@type": "Organization",
-      "name": "Auremont",
+      "name": "RARE NUTS",
       "contactPoint": {
         "@type": "ContactPoint",
         "telephone": "+91-REPLACE-WITH-REAL-NUMBER",
         "contactType": "customer service",
-        "email": "concierge@auremont.com"
+        "email": "concierge@rarenuts.com"
       }
     }
   };

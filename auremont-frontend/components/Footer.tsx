@@ -5,28 +5,32 @@ import Link from "next/link";
 import { ArrowRight, Instagram, Twitter, Facebook, Check } from "lucide-react";
 import api from "@/lib/axios";
 
+import SquirrelLogo from "@/components/ui/SquirrelLogo";
+
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || !email.includes("@")) return;
+
     setStatus('loading');
+    setErrorMessage("");
+
     try {
-      // Post to contact API with newsletter subject
-      await api.post('/contact', {
-        name: 'Newsletter Subscriber',
+      await api.post('/newsletter/subscribe', { 
         email,
-        subject: 'The Inner Circle Subscription',
-        message: 'Request to join Auremont Inner Circle newsletter.'
+        message: 'Request to join RARE NUTS Inner Circle newsletter.'
       });
       setStatus('success');
       setMessage("Welcome to The Inner Circle.");
       setEmail("");
     } catch (err: any) {
-      // Fallback success feedback for user UX even if API is offline
+      console.warn("Newsletter submission endpoint failed, providing client graceful fallback", err);
+      // Client fallback for seamless UX even if offline
       setStatus('success');
       setMessage("Welcome to The Inner Circle.");
       setEmail("");
@@ -39,9 +43,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-24 mb-20 md:mb-24">
           
           <div className="md:col-span-5 space-y-6">
-            <h3 className="font-serif text-3xl md:text-4xl text-luxuryGold tracking-ultra uppercase">Auremont</h3>
+            <div className="flex items-center gap-4">
+              <SquirrelLogo size={52} variant="badge" />
+            </div>
             <p className="text-secondaryText text-sm sm:text-base max-w-md leading-relaxed font-light">
-              Purveyors of the finest California Almonds. Hand-selected, slow-roasted, and presented with supreme elegance for those who appreciate true botanical craftsmanship.
+              <span className="text-luxuryGold font-serif italic block mb-1">Rare by Nature, Chosen by Those Who Know the Difference</span>
+              Purveyors of exceptionally sourced premium nuts. Hand-selected, slow-roasted, and presented with supreme elegance for those who appreciate true botanical craftsmanship.
             </p>
             <div className="pt-2 flex gap-6 text-secondaryText">
               <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-luxuryGold transition-colors" aria-label="Instagram">
@@ -115,7 +122,7 @@ export default function Footer() {
         </div>
 
         <div className="pt-8 border-t border-divider flex flex-col md:flex-row justify-between items-center gap-4 text-[9px] text-mutedText uppercase tracking-ultra">
-          <p>&copy; {new Date().getFullYear()} AUREMONT. ALL RIGHTS RESERVED.</p>
+          <p>&copy; {new Date().getFullYear()} RARE NUTS. ALL RIGHTS RESERVED.</p>
           <div className="flex gap-6 sm:gap-8">
             <span>256-Bit Encryption</span>
             <span>Global Concierge Shipping</span>

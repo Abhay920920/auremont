@@ -243,9 +243,9 @@ export default function OrderDetailPage() {
         `}} />
         <div className="flex justify-between items-start border-b border-divider pb-8 mb-8">
           <div>
-            <h1 className="text-3xl font-serif tracking-widest uppercase text-luxuryGold mb-1">AUREMONT</h1>
+            <h1 className="text-3xl font-serif tracking-widest uppercase text-luxuryGold mb-1">RARE NUTS</h1>
             <p className="text-xs text-secondaryText">Premium California Almonds</p>
-            <p className="text-xs text-secondaryText mt-2">Auremont Private Limited<br/>Corporate Towers, BKC, Mumbai, MH 400051<br/>concierge@auremont.com</p>
+            <p className="text-xs text-secondaryText mt-2">RARE NUTS Private Limited<br/>Corporate Towers, BKC, Mumbai, MH 400051<br/>concierge@rarenuts.com</p>
           </div>
           <div className="text-right max-w-[50%]">
             <h2 className="text-2xl font-serif text-primaryText uppercase mb-4">Invoice</h2>
@@ -327,7 +327,7 @@ export default function OrderDetailPage() {
 
         <div className="mt-16 pt-8 border-t border-divider text-center text-[10px] text-mutedText">
           <p className="font-serif tracking-widest text-primaryText mb-1 text-xs">THANK YOU FOR YOUR BUSINESS</p>
-          <p>For any questions regarding this invoice, please contact support at support@auremont.com</p>
+          <p>For any questions regarding this invoice, please contact support at support@rarenuts.com</p>
         </div>
       </div>
     </div>

@@ -14,7 +14,7 @@ export default function LifestyleGallery() {
   return (
     <section className="w-full py-24 md:py-super bg-secondaryBg border-t border-divider overflow-hidden">
       <div className="max-w-[2000px] mx-auto px-6 md:px-12 mb-16 text-center">
-        <h4 className="text-luxuryGold uppercase tracking-superwide text-xs mb-4">#AuremontLifestyle</h4>
+        <h4 className="text-luxuryGold uppercase tracking-superwide text-xs mb-4">#RareNutsLifestyle</h4>
         <h2 className="text-3xl md:text-4xl font-serif text-primaryText">Follow the Journey</h2>
       </div>
 
@@ -35,7 +35,7 @@ export default function LifestyleGallery() {
               className="object-cover group-hover:scale-105 transition-transform duration-700" 
             />
             <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-              <span className="text-luxuryGold font-serif text-2xl">@Auremont</span>
+              <span className="text-luxuryGold font-serif text-2xl">@RareNuts</span>
             </div>
           </motion.div>
         ))}

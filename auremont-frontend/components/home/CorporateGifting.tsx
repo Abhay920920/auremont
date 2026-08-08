@@ -20,7 +20,7 @@ export default function CorporateGifting() {
         >
           <Image 
             src="/images/royal-almonds-wooden-box.png" 
-            alt="Auremont Executive Corporate Gifting" 
+            alt="RARE NUTS Executive Corporate Gifting" 
             fill 
             className="object-cover object-center group-hover:scale-105 transition-transform duration-[2s] filter brightness-105"
           />

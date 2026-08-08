@@ -6,7 +6,7 @@ export default function ShippingPage() {
         
         <div className="prose prose-invert prose-gold max-w-none text-secondaryText">
           <p className="text-lg leading-relaxed text-primaryText mb-8">
-            Every Auremont order is handled with white-glove precision. To ensure your luxury almonds arrive in pristine condition, we partner exclusively with premium couriers.
+            Every RARE NUTS order is handled with white-glove precision. To ensure your luxury almonds arrive in pristine condition, we partner exclusively with premium couriers.
           </p>
           
           <h2 className="text-2xl font-serif text-luxuryGold mt-8 mb-4">Domestic Delivery (United States)</h2>

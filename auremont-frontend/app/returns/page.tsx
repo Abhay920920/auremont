@@ -6,10 +6,10 @@ export default function ReturnsPage() {
         
         <div className="prose prose-invert prose-gold max-w-none text-secondaryText">
           <p className="text-lg leading-relaxed text-primaryText mb-8">
-            At Auremont, we hold our products to the absolute highest standard of luxury and culinary excellence. Our commitment to your satisfaction is paramount.
+            At RARE NUTS, we hold our products to the absolute highest standard of luxury and culinary excellence. Our commitment to your satisfaction is paramount.
           </p>
           
-          <h2 className="text-2xl font-serif text-luxuryGold mt-8 mb-4">The Auremont Guarantee</h2>
+          <h2 className="text-2xl font-serif text-luxuryGold mt-8 mb-4">The RARE NUTS Guarantee</h2>
           <p className="mb-6">
             Due to the perishable nature of our artisanal food products, we generally do not accept returns. However, if your order arrives damaged, defective, or fails to meet our stringent quality standards, we will gladly arrange for a complimentary replacement or a full refund within 14 days of delivery.
           </p>
@@ -17,7 +17,7 @@ export default function ReturnsPage() {
           <h2 className="text-2xl font-serif text-luxuryGold mt-8 mb-4">Reporting an Issue</h2>
           <p className="mb-4">To initiate a replacement or refund request, please contact our concierge team:</p>
           <ul className="list-disc pl-6 mb-8 space-y-2">
-            <li>Email: concierge@auremont.com</li>
+            <li>Email: concierge@rarenuts.com</li>
             <li>Please include your order number and photographic evidence of the issue.</li>
             <li>Our concierge will respond within 12 hours to resolve the matter via our white-glove service.</li>
           </ul>

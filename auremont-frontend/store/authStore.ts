@@ -34,7 +34,7 @@ export const useAuthStore = create<AuthState>()(
       logout: () => set({ user: null, token: null, refreshToken: null }),
     }),
     {
-      name: 'auremont-auth',
+      name: 'rarenuts-auth',
     }
   )
 );

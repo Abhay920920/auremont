@@ -19,7 +19,7 @@ export default function GiftBoxesPage() {
           <div className="h-96 rounded-2xl border border-luxuryGold/20 overflow-hidden relative shadow-2xl">
             <Image 
               src="/images/royal-almonds-wooden-box.png"
-              alt="Auremont Luxury Presentation Box"
+              alt="RARE NUTS Luxury Presentation Box"
               fill
               className="object-cover"
               priority
@@ -29,7 +29,7 @@ export default function GiftBoxesPage() {
           <div className="space-y-6">
             <h2 className="text-3xl font-serif text-primaryText">An Unforgettable Reveal</h2>
             <p className="text-secondaryText leading-relaxed">
-              Every Auremont gift box is a testament to our dedication to presentation. Crafted from sustainably sourced European oak, our presentation cases feature brass hinges, a magnetic closure, and our signature gold-embossed crest. 
+              Every RARE NUTS gift box is a testament to our dedication to presentation. Crafted from sustainably sourced European oak, our presentation cases feature brass hinges, a magnetic closure, and our signature gold-embossed crest. 
             </p>
             <p className="text-secondaryText leading-relaxed">
               Inside, the almonds rest in custom-molded velvet-lined compartments, preserving their integrity and delivering an auditory snap upon opening that signifies absolute freshness.

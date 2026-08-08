@@ -11,7 +11,7 @@ interface Packaging3DViewerProps {
   defaultText?: string;
 }
 
-export default function Packaging3DViewer({ isOpen, onClose, defaultText = "AUREMONT RESERVE" }: Packaging3DViewerProps) {
+export default function Packaging3DViewer({ isOpen, onClose, defaultText = "RARE NUTS RESERVE" }: Packaging3DViewerProps) {
   const [activeMaterial, setActiveMaterial] = useState<'mahogany' | 'glass'>('mahogany');
   const [rotationAngle, setRotationAngle] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -78,7 +78,7 @@ export default function Packaging3DViewer({ isOpen, onClose, defaultText = "AURE
               >
                 <Image 
                   src={activeMaterial === 'mahogany' ? '/images/royal-almonds-wooden-box.png' : '/images/roasted-almonds-jar.png'}
-                  alt="Auremont 3D Vessel Packaging"
+                  alt="RARE NUTS 3D Vessel Packaging"
                   fill
                   className="object-contain filter brightness-105 contrast-105 pointer-events-none drop-shadow-[0_20px_50px_rgba(0,0,0,0.9)]"
                 />
@@ -87,7 +87,7 @@ export default function Packaging3DViewer({ isOpen, onClose, defaultText = "AURE
                 {activeMaterial === 'mahogany' && (
                   <div className="absolute top-[38%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none px-4 w-[60%]">
                     <p className="font-serif text-[10px] sm:text-xs text-[#D4AF37] tracking-ultra uppercase font-medium drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] border-b border-luxuryGold/30 pb-0.5 inline-block">
-                      {engravingText || "AUREMONT RESERVE"}
+                      {engravingText || "RARE NUTS RESERVE"}
                     </p>
                   </div>
                 )}

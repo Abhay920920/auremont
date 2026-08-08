@@ -12,23 +12,23 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in'),
   title: {
-    template: "%s | Auremont",
-    default: "Auremont | Premium California Almonds",
+    template: "%s | RARE NUTS",
+    default: "RARE NUTS | Premium Nuts & Luxury Gifting",
   },
-  description: "Luxury California Almonds crafted for those who appreciate the finest. 100% natural, premium quality.",
+  description: "Discover RARE NUTS — premium nuts and exceptional almonds curated for discerning customers, luxury gifting and corporate occasions. Crafted with uncompromising attention to quality and presentation.",
   openGraph: {
-    title: "Auremont | Premium California Almonds",
-    description: "Luxury California Almonds crafted for those who appreciate the finest. 100% natural, premium quality.",
-    url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
-    siteName: 'Auremont',
+    title: "RARE NUTS | Premium Nuts & Luxury Gifting",
+    description: "Discover RARE NUTS — premium nuts and exceptional almonds curated for discerning customers, luxury gifting and corporate occasions. Crafted with uncompromising attention to quality and presentation.",
+    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in',
+    siteName: 'RARE NUTS',
     images: [
       {
-        url: '/images/og-auremont.png',
+        url: '/images/og-rarenuts.png',
         width: 1200,
         height: 630,
-        alt: 'Auremont — Premium California Almonds',
+        alt: 'RARE NUTS — Exceptional by Nature',
       },
     ],
     locale: 'en_US',
@@ -36,12 +36,12 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Auremont | Premium California Almonds",
-    description: "Luxury California Almonds crafted for those who appreciate the finest.",
-    images: ['/images/og-auremont.png'],
+    title: "RARE NUTS | Premium Nuts & Luxury Gifting",
+    description: "Discover RARE NUTS — premium nuts and exceptional almonds curated for discerning customers, luxury gifting and corporate occasions. Crafted with uncompromising attention to quality and presentation.",
+    images: ['/images/og-rarenuts.png'],
   },
   alternates: {
-    canonical: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+    canonical: process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in',
   }
 };
 
@@ -54,7 +54,7 @@ import CookieBanner from "@/components/CookieBanner";
 import CustomCursor from "@/components/ui/CustomCursor";
 import TransitionProvider from "@/components/providers/TransitionProvider";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in';
 
 const organizationSchema = {
   "@context": "https://schema.org",
@@ -62,12 +62,14 @@ const organizationSchema = {
     {
       "@type": "Organization",
       "@id": `${siteUrl}/#organization`,
-      "name": "Auremont",
+      "name": "RARE NUTS",
+      "legalName": "RARE NUTS Private Limited",
       "url": siteUrl,
-      "logo": `${siteUrl}/images/og-auremont.png`,
+      "logo": `${siteUrl}/images/og-rarenuts.png`,
+      "description": "Luxury gourmet nuts and premium gifting brand.",
       "contactPoint": {
         "@type": "ContactPoint",
-        "telephone": "+91-REPLACE-WITH-REAL-NUMBER",
+        "email": "concierge@rarenuts.com",
         "contactType": "customer service"
       }
     },
@@ -75,7 +77,7 @@ const organizationSchema = {
       "@type": "WebSite",
       "@id": `${siteUrl}/#website`,
       "url": siteUrl,
-      "name": "Auremont",
+      "name": "RARE NUTS",
       "publisher": {
         "@id": `${siteUrl}/#organization`
       },

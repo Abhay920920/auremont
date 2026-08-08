@@ -187,7 +187,7 @@ export default function AccountDashboard() {
           <div>
              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-luxuryGold/30 bg-luxuryGold/10 mb-3">
                <span className="w-1.5 h-1.5 rounded-full bg-luxuryGold animate-ping" />
-               <span className="text-[9px] uppercase tracking-ultra text-luxuryGold font-medium">Auremont Reserve Member</span>
+               <span className="text-[9px] uppercase tracking-ultra text-luxuryGold font-medium">RARE NUTS Reserve Member</span>
              </div>
              <h1 className="text-3xl sm:text-5xl font-serif text-primaryText tracking-tight">Welcome, {user.firstName}</h1>
              <p className="text-secondaryText mt-2 uppercase tracking-ultra text-[10px]">Your private concierge membership portal, order vault, and saved privileges.</p>

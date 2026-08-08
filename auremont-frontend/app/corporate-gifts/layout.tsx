@@ -1,31 +1,19 @@
-import { Metadata } from 'next';
-import JsonLd from '@/components/JsonLd';
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Corporate Gifting | Auremont Luxury Almonds',
-  description: 'Elevate your corporate gifting with bespoke almond assortments in luxury wooden boxes.',
-  alternates: {
-    canonical: `${siteUrl}/corporate-gifts`,
-  },
+  title: 'Luxury Corporate Gifting & Executive Gifts | RARE NUTS',
+  description: 'Elevate executive relationships with RARE NUTS luxury corporate gifts. Custom-engraved wooden chests, bespoke client hampers, and employee appreciation gifting across India.',
   openGraph: {
-    title: 'Corporate Gifting | Auremont Luxury Almonds',
-    description: 'Elevate your corporate gifting with bespoke almond assortments.',
-    url: `${siteUrl}/corporate-gifts`,
+    title: 'Luxury Corporate Gifting & Executive Gifts | RARE NUTS',
+    description: 'Elevate executive relationships with RARE NUTS luxury corporate gifts. Custom-engraved wooden chests, bespoke client hampers, and employee appreciation gifting across India.',
+    url: 'https://rarenuts.in/corporate-gifts',
+    images: [{ url: '/images/og-rarenuts.png', width: 1200, height: 630, alt: 'RARE NUTS Executive Corporate Gifting' }],
+  },
+  alternates: {
+    canonical: 'https://rarenuts.in/corporate-gifts',
   },
 };
 
-export default function CorporateGiftsLayout({ children }: { children: React.ReactNode }) {
-  const schema = {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "mainEntity": { "@type": "ItemList", "itemListElement": [] }
-  };
-  return (
-    <>
-      <JsonLd data={schema} />
-      {children}
-    </>
-  );
+export default function CorporateGiftingLayout({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
 }

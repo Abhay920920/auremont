@@ -4,14 +4,14 @@ import JsonLd from '@/components/JsonLd';
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
 export const metadata: Metadata = {
-  title: 'Frequently Asked Questions | Auremont',
-  description: 'Find answers to common questions about Auremont luxury almonds, sourcing, shipping, and corporate gifting.',
+  title: 'Frequently Asked Questions | RARE NUTS',
+  description: 'Find answers to common questions about RARE NUTS luxury curations, sourcing, shipping, and corporate gifting.',
   alternates: {
     canonical: `${siteUrl}/faq`,
   },
   openGraph: {
-    title: 'Frequently Asked Questions | Auremont',
-    description: 'Find answers to common questions about Auremont luxury almonds.',
+    title: 'Frequently Asked Questions | RARE NUTS',
+    description: 'Find answers to common questions about RARE NUTS luxury curations.',
     url: `${siteUrl}/faq`,
   },
 };

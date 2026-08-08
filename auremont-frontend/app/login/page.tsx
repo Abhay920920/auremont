@@ -50,7 +50,7 @@ export default function Login() {
       <div className="w-full max-w-md card space-y-8">
         <div className="text-center space-y-2">
           <h1 className="text-4xl font-serif text-luxuryGold">Welcome Back</h1>
-          <p className="text-mutedText">Log in to your AUREMONT account</p>
+          <p className="text-mutedText">Log in to your RARE NUTS account</p>
         </div>
 
         {error && (

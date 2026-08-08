@@ -62,7 +62,7 @@ export default function OrderHistoryTab({ orders, loadingOrders }: OrderHistoryT
                         Insured Dispatch
                       </span>
                     </div>
-                    <p className="text-[10px] text-secondaryText tracking-ultra uppercase mt-1">Placed on {new Date(order.createdAt).toLocaleDateString()} &bull; Tracking ID: AUR-TRK-{order.id.slice(0, 6).toUpperCase()}</p>
+                    <p className="text-[10px] text-secondaryText tracking-ultra uppercase mt-1">Placed on {new Date(order.createdAt).toLocaleDateString()} &bull; Tracking ID: RN-TRK-{order.id.slice(0, 6).toUpperCase()}</p>
                   </div>
                   <div className="text-left md:text-right">
                     <p className="font-serif text-2xl text-luxuryGold" suppressHydrationWarning>{formatPrice(order.total)}</p>
@@ -106,7 +106,7 @@ export default function OrderHistoryTab({ orders, loadingOrders }: OrderHistoryT
                   <p className="text-[10px] font-medium uppercase tracking-ultra text-secondaryText">Reserved Harvest Items:</p>
                   {order.items.map((item: any) => (
                     <div key={item.id} className="flex justify-between items-center text-xs bg-background p-3.5 border border-divider rounded-card">
-                      <span className="text-primaryText font-serif text-sm">{item.quantity} × {item.product?.name || item.productName || 'Auremont Reserve Almonds'}</span>
+                      <span className="text-primaryText font-serif text-sm">{item.quantity} × {item.product?.name || item.productName || 'RARE NUTS Reserve Almonds'}</span>
                       <span className="text-luxuryGold font-serif text-sm" suppressHydrationWarning>{formatPrice(item.subtotal)}</span>
                     </div>
                   ))}

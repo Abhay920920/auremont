@@ -31,12 +31,12 @@ export default function ReserveTierCard({ orderCount = 5 }: { orderCount?: numbe
                 {tier.name}
               </span>
             </div>
-            <h3 className="font-serif text-2xl text-primaryText mt-1">Auremont Reserve Privileges</h3>
+            <h3 className="font-serif text-2xl text-primaryText mt-1">RARE NUTS Reserve Privileges</h3>
           </div>
         </div>
         <div className="text-left sm:text-right">
           <span className="text-[10px] uppercase tracking-ultra text-mutedText block">Member ID</span>
-          <span className="font-mono text-xs text-luxuryGold tracking-widest">AUR-RSV-88209</span>
+          <span className="font-mono text-xs text-luxuryGold tracking-widest">RN-RSV-88209</span>
         </div>
       </div>
 

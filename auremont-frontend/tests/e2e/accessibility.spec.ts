@@ -28,9 +28,10 @@ const MOCK_CART = {
   }]
 };
 
-test.describe('AUREMONT WCAG 2.1 AA Accessibility & ARIA Audit Suite', () => {
+test.describe('RARE NUTS WCAG 2.1 AA Accessibility & ARIA Audit Suite', () => {
   test.beforeEach(async ({ page }) => {
     await page.addInitScript(() => {
+      sessionStorage.setItem('rarenuts_splash', 'true');
       sessionStorage.setItem('auremont_splash', 'true');
     });
   });

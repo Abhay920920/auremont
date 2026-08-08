@@ -5,6 +5,8 @@
   "scripts": {
     "build": "cd auremont-frontend && npm run build",
     "dev": "cd auremont-frontend && npm run dev",
-    "start": "cd auremont-frontend && npm run start"
+    "start": "cd auremont-frontend && npm run start",
+    "dev:backend": "cd auremont-backend && npm run dev",
+    "build:backend": "cd auremont-backend && npm run build"
   }
 }

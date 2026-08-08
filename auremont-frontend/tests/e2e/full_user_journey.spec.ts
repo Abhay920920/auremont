@@ -7,7 +7,7 @@ const MOCK_USER = {
   id: 'mock-user-1',
   firstName: 'Alexander',
   lastName: 'Vance',
-  email: 'alexander.vance@auremont.com',
+  email: 'alexander.vance@rarenuts.com',
   phone: '+919876543210',
 };
 
@@ -28,11 +28,12 @@ const MOCK_ORDER_RESPONSE = {
   }
 };
 
-test.describe('AUREMONT End-to-End E2E Full User Journey', () => {
+test.describe('RARE NUTS End-to-End E2E Full User Journey', () => {
   test('Complete E2E Journey: Register -> Login -> Catalog Browse -> Add to Cart -> Apply Coupon -> Checkout -> Order Creation', async ({ page }) => {
     
     // ── 0. PRE-SET SESSION FLAGS & MOCKS ────────────────────────────────────
     await page.addInitScript(() => {
+      sessionStorage.setItem('rarenuts_splash', 'true');
       sessionStorage.setItem('auremont_splash', 'true');
       (window as any).Razorpay = function(options: any) {
         return { open: () => {}, on: () => {} };
@@ -121,11 +122,11 @@ test.describe('AUREMONT End-to-End E2E Full User Journey', () => {
 
     // Step 1: Open Homepage
     await page.goto('/');
-    await expect(page).toHaveTitle(/Auremont/i);
+    await expect(page).toHaveTitle(/RARE NUTS/i);
 
     // Step 2: Navigate to Register Page & Register New User
     await page.goto('/register');
-    const testEmail = `e2e_user_${Date.now()}@auremont.com`;
+    const testEmail = `e2e_user_${Date.now()}@rarenuts.com`;
     
     await page.fill('input[name="firstName"]', 'Alexander');
     await page.fill('input[name="lastName"]', 'Vance');

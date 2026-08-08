@@ -33,7 +33,7 @@ export default function WhyAuremont() {
             Botanical Standards
           </span>
           <h2 className="text-3xl sm:text-5xl font-serif text-primaryText tracking-tight">
-            The Auremont Distinction
+            The RARE NUTS Distinction
           </h2>
         </div>
 

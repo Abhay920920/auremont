@@ -35,7 +35,7 @@ export default function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; 
             className="fixed top-0 left-0 w-[85%] max-w-[320px] h-full bg-background border-r border-divider z-[100] shadow-2xl flex flex-col"
           >
             <div className="flex justify-between items-center p-6 border-b border-divider pt-safe-top">
-              <span className="font-serif text-2xl text-luxuryGold tracking-widest uppercase">Auremont</span>
+              <span className="font-serif text-2xl text-luxuryGold tracking-widest uppercase">RARE NUTS</span>
               <button 
                 onClick={onClose}
                 aria-label="Close menu"

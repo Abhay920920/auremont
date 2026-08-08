@@ -112,7 +112,7 @@ export default function AdminNewBlogPage() {
             </div>
             <div className="space-y-2">
               <label className="text-sm uppercase tracking-widest text-secondaryText">Canonical URL</label>
-              <input type="text" name="canonicalUrl" value={form.canonicalUrl} onChange={handleChange} placeholder="https://auremont.com/journal/..." className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors" />
+              <input type="text" name="canonicalUrl" value={form.canonicalUrl} onChange={handleChange} placeholder="https://rarenuts.com/journal/..." className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors" />
             </div>
           </div>
           <div className="space-y-2">

@@ -4,13 +4,13 @@ import JsonLd from '@/components/JsonLd';
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
 export const metadata: Metadata = {
-  title: 'Shipping Policy | Auremont',
+  title: 'Shipping Policy | RARE NUTS',
   description: 'Information regarding our luxury shipping options, international delivery, and handling of delicate products.',
   alternates: {
     canonical: `${siteUrl}/shipping`,
   },
   openGraph: {
-    title: 'Shipping Policy | Auremont',
+    title: 'Shipping Policy | RARE NUTS',
     description: 'Information regarding our luxury shipping options.',
     url: `${siteUrl}/shipping`,
   },

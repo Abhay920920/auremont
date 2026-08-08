@@ -45,11 +45,12 @@ const MOCK_ADMIN_METRICS = {
   lowStockProducts: 3
 };
 
-test.describe('AUREMONT Visual Regression & Snapshot Test Suite', () => {
+test.describe('RARE NUTS Visual Regression & Snapshot Test Suite', () => {
 
   test.beforeEach(async ({ page }) => {
     // 1. Bypass Splash Overlay
     await page.addInitScript(() => {
+      sessionStorage.setItem('rarenuts_splash', 'true');
       sessionStorage.setItem('auremont_splash', 'true');
     });
 

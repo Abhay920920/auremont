@@ -49,7 +49,7 @@ export default function AdminDashboardPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-serif text-luxuryGold mb-2">Dashboard Overview</h1>
-        <p className="text-secondaryText">Welcome to the Auremont control center.</p>
+        <p className="text-secondaryText">Welcome to the RARE NUTS control center.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

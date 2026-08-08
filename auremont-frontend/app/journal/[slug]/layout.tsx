@@ -13,8 +13,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     if (!res.ok) throw new Error('Blog not found');
     const blog = await res.json();
     
-    const imageUrl = blog.imageUrl || '/images/og-auremont.png';
-    const plainTextDescription = blog.content ? blog.content.replace(/<[^>]+>/g, '').substring(0, 160) : `Read ${blog.title} at Auremont Journal.`;
+    const imageUrl = blog.imageUrl || '/images/og-rarenuts.png';
+    const plainTextDescription = blog.content ? blog.content.replace(/<[^>]+>/g, '').substring(0, 160) : `Read ${blog.title} at RARE NUTS Journal.`;
 
     return {
       title: blog.seoTitle || blog.title,
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         type: 'article',
         publishedTime: blog.createdAt,
         modifiedTime: blog.updatedAt,
-        authors: [blog.authorName || (blog.author?.firstName ? `${blog.author.firstName} ${blog.author.lastName}` : 'Auremont Editorial')],
+        authors: [blog.authorName || (blog.author?.firstName ? `${blog.author.firstName} ${blog.author.lastName}` : 'RARE NUTS Editorial')],
         images: [
           {
             url: blog.ogImageUrl || imageUrl,
@@ -63,7 +63,7 @@ export default async function JournalArticleLayout({ children, params }: { child
     const res = await fetch(`${apiUrl}/blogs/${slug}`, { next: { revalidate: 60 } });
     if (res.ok) {
       const blog = await res.json();
-      const imageUrl = blog.imageUrl || `${siteUrl}/images/og-auremont.png`;
+      const imageUrl = blog.imageUrl || `${siteUrl}/images/og-rarenuts.png`;
       
       articleJsonLd = {
         "@context": "https://schema.org",
@@ -75,16 +75,16 @@ export default async function JournalArticleLayout({ children, params }: { child
         "dateModified": blog.updatedAt || blog.createdAt,
         "author": [{
           "@type": "Person",
-          "name": blog.authorName || (blog.author?.firstName ? `${blog.author.firstName} ${blog.author.lastName}` : 'Auremont Editorial'),
+          "name": blog.authorName || (blog.author?.firstName ? `${blog.author.firstName} ${blog.author.lastName}` : 'RARE NUTS Editorial'),
           "jobTitle": blog.authorRole || undefined,
           "url": `${siteUrl}/about`
         }],
         "publisher": {
           "@type": "Organization",
-          "name": "Auremont",
+          "name": "RARE NUTS",
           "logo": {
             "@type": "ImageObject",
-            "url": `${siteUrl}/images/og-auremont.png`
+            "url": `${siteUrl}/images/og-rarenuts.png`
           }
         },
         "mainEntityOfPage": {

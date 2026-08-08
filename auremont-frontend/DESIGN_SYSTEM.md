@@ -1,7 +1,7 @@
-# Auremont Design System
+# RARE NUTS Design System
 
 ## Core Philosophy
-Auremont's design system is built upon the principles of restraint, elegance, and extreme high quality. 
+RARE NUTS's design system is built upon the principles of restraint, elegance, and extreme high quality. 
 
 - **Luxury**: No visual clutter. Every element must justify its existence.
 - **Timeless**: Avoiding trendy design choices in favor of classic layouts.

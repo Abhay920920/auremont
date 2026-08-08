@@ -58,16 +58,19 @@ export default function CinematicHero() {
             >
               <Sparkles size={13} className="text-luxuryGold" />
               <span className="text-[10px] uppercase tracking-ultra text-luxuryGold font-medium">
-                California Reserve Harvest 2026 · Limited Yield
+                RARE NUTS · California Reserve Harvest 2026
               </span>
             </motion.div>
             
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl xl:text-[88px] font-serif text-primaryText tracking-tight leading-[0.98] drop-shadow-2xl">
-              The Pinnacle of <br className="hidden sm:inline" />
-              <span className="text-luxuryGold italic font-light">Botanical Craft</span>
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl xl:text-[80px] font-serif text-primaryText tracking-tight leading-[0.98] drop-shadow-2xl">
+              Exceptional Nuts. <br className="hidden sm:inline" />
+              <span className="text-luxuryGold font-serif font-light text-2xl sm:text-4xl lg:text-5xl block mt-3">
+                Chosen with Discernment.
+              </span>
             </h1>
 
             <p className="text-sm sm:text-base lg:text-lg text-secondaryText font-light max-w-xl leading-relaxed tracking-wide">
+              <span className="text-luxuryGold font-serif italic block text-lg mb-1">Exceptional by Nature. Distinct by Choice.</span>
               Hand-selected Extra Large California Almonds, slow-roasted to peak crispness and presented in bespoke velvet-lined mahogany vessels.
             </p>
 
@@ -104,7 +107,7 @@ export default function CinematicHero() {
             >
               <Image 
                 src="/images/royal-almonds-wooden-box.png" 
-                alt="Auremont Royal Almonds Wooden Vessel" 
+                alt="RARE NUTS Royal Almonds Wooden Vessel" 
                 fill 
                 priority
                 sizes="(max-width: 768px) 100vw, 50vw"

@@ -52,7 +52,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="text-sm uppercase tracking-widest text-secondaryText mb-1">Email</h3>
-                  <a href="mailto:concierge@auremont.com" className="text-primaryText hover:text-luxuryGold transition-colors text-lg">concierge@auremont.com</a>
+                  <a href="mailto:concierge@rarenuts.com" className="text-primaryText hover:text-luxuryGold transition-colors text-lg">concierge@rarenuts.com</a>
                 </div>
               </div>
               
@@ -73,7 +73,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="text-sm uppercase tracking-widest text-secondaryText mb-1">Headquarters</h3>
-                  <p className="text-primaryText text-lg">Auremont Private Limited<br/>Corporate Towers, Bandra Kurla Complex<br/>Mumbai, MH 400051</p>
+                  <p className="text-primaryText text-lg">RARE NUTS Private Limited<br/>Corporate Towers, Bandra Kurla Complex<br/>Mumbai, MH 400051</p>
                 </div>
               </div>
             </div>

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Auremont Database Automated Backup Script
+# RARE NUTS Database Automated Backup Script
 # Should be executed via cron job (e.g., daily at 2:00 AM)
 
 set -e
@@ -22,7 +22,7 @@ docker exec $DB_CONTAINER pg_dump -U "$DB_USER" "$DB_NAME" -F c > "$BACKUP_DIR/d
 # Compress and Encrypt the backup (simulated GPG for DevSecOps best practices)
 # In production, ensure the public key is trusted: gpg --import pubkey.asc
 gzip "$BACKUP_DIR/db_backup_$DATE.dump"
-# gpg --encrypt --recipient admin@auremont.com "$BACKUP_DIR/db_backup_$DATE.dump.gz"
+# gpg --encrypt --recipient admin@rarenuts.com "$BACKUP_DIR/db_backup_$DATE.dump.gz"
 # rm "$BACKUP_DIR/db_backup_$DATE.dump.gz"
 
 echo "[$(date)] Backup completed successfully: $BACKUP_DIR/db_backup_$DATE.dump.gz"

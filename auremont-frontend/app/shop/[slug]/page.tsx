@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     if (res && res.ok) {
       const product = await res.json();
       return {
-        title: `${product.name} | Auremont`,
+        title: `${product.name} | RARE NUTS`,
         description: product.shortDescription,
         openGraph: {
           title: product.name,
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     : 'Product';
 
   return {
-    title: `${formattedName} | Auremont`,
+    title: `${formattedName} | RARE NUTS`,
     description: 'Curated California almonds, handcrafted for ultimate taste.',
   };
 }

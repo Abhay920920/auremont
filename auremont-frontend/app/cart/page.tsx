@@ -64,7 +64,7 @@ export default function CartPage() {
                     <Link href={`/shop/${item.product?.slug}`} className="w-24 md:w-32 aspect-[4/5] bg-secondaryBg relative flex-shrink-0 ml-8 md:ml-12 border border-divider overflow-hidden group-hover:border-luxuryGold transition-colors">
                         <Image 
                           src={item.product?.thumbnailUrl || '/images/california-almonds-250g.png'} 
-                          alt={item.product?.name || 'Auremont Product'} 
+                          alt={item.product?.name || 'RARE NUTS Product'} 
                           fill 
                           className="object-cover group-hover:scale-105 transition-transform duration-700" 
                         />
@@ -141,7 +141,7 @@ export default function CartPage() {
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 24 16" fill="currentColor"><rect width="24" height="16" rx="2" fill="#E5E7EB"/><circle cx="10" cy="8" r="4" fill="#EF4444"/><circle cx="14" cy="8" r="4" fill="#F59E0B"/></svg>
                     <span className="uppercase tracking-widest text-primaryText">Razorpay Secure</span>
                   </div>
-                  <span className="uppercase tracking-widest">Auremont Quality Guarantee</span>
+                  <span className="uppercase tracking-widest">RARE NUTS Quality Guarantee</span>
                </div>
              </div>
           </div>

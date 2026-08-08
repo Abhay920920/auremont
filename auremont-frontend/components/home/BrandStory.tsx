@@ -22,10 +22,10 @@ export default function BrandStory() {
               A Legacy of <br /> Uncompromising <br/> Quality.
             </h2>
             <p className="text-secondaryText text-lg font-light leading-relaxed">
-              We believe that true luxury lies in the details. From the fertile valleys of California to the bespoke wooden boxes that grace your table, every step of the Auremont journey is defined by obsession and craftsmanship.
+              We believe that true luxury lies in the details. From the fertile valleys of California to the bespoke wooden boxes that grace your table, every step of the RARE NUTS journey is defined by obsession and craftsmanship.
             </p>
             <p className="text-secondaryText text-lg font-light leading-relaxed">
-              Our founders traveled the world to find the perfect almond, one that combined size, texture, and a rich flavor profile unmatched by any other.
+              We don't simply sell nuts. We curate exceptional nuts for people who recognize quality. Rare by Nature, Chosen by Those Who Know the Difference.
             </p>
             <div className="pt-8">
               <Link href="/about" className="luxury-button-outline">
@@ -44,14 +44,14 @@ export default function BrandStory() {
             <div className="w-full aspect-[4/3] relative border border-divider overflow-hidden group">
               <Image 
                 src="/images/roasted-almonds-jar.png" 
-                alt="Auremont Craftsmanship" 
+                alt="RARE NUTS Craftsmanship" 
                 fill 
                 className="object-cover group-hover:scale-105 transition-transform duration-[2s]"
               />
             </div>
             <div className="absolute -bottom-12 -left-12 w-48 h-64 bg-background border border-divider hidden lg:block overflow-hidden p-2 z-10">
               <div className="w-full h-full border border-divider/50 flex items-center justify-center text-luxuryGold font-serif text-6xl">
-                A.
+                R.
               </div>
             </div>
           </motion.div>

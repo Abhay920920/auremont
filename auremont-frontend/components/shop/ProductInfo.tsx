@@ -25,7 +25,7 @@ export default function ProductInfo({ product, reviews, avgRating }: { product: 
 
   const displayPrice = product.salePrice ? Number(product.salePrice) : Number(product.price);
   const originalPrice = product.salePrice ? Number(product.price) : null;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://auremont.com';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.com';
 
   const productSchema = {
     "@context": "https://schema.org",
@@ -36,7 +36,7 @@ export default function ProductInfo({ product, reviews, avgRating }: { product: 
     "sku": product.sku || product.id,
     "brand": {
       "@type": "Brand",
-      "name": "Auremont"
+      "name": "RARE NUTS"
     },
     "offers": {
       "@type": "Offer",
@@ -48,7 +48,7 @@ export default function ProductInfo({ product, reviews, avgRating }: { product: 
       "availability": product.stockQty > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       "seller": {
         "@type": "Organization",
-        "name": "Auremont"
+        "name": "RARE NUTS"
       }
     },
     ...(reviews.length > 0 && {
