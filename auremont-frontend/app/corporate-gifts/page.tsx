@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Breadcrumbs from '@/components/seo/Breadcrumbs';
 import JsonLd from '@/components/JsonLd';
 import SquirrelLogo from '@/components/ui/SquirrelLogo';
-import { Award, Briefcase, Users, Sparkles, Box, ShieldCheck, Mail, ArrowRight } from 'lucide-react';
+import { Award, Briefcase, Users, Sparkles, Box, ShieldCheck, Mail, ArrowRight, PackageCheck } from 'lucide-react';
 
 export default function CorporateGiftsPage() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.com';
