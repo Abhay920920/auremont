@@ -105,8 +105,8 @@ export default function Header() {
             className="flex-1 flex justify-center"
             onMouseEnter={() => setIsMegaNavOpen(false)}
           >
-            <Link href="/" className="hover:opacity-90 transition-opacity">
-              <SquirrelLogo size={28} variant="full" className="md:w-8 md:h-8" />
+            <Link href="/" className="hover:opacity-90 transition-opacity flex items-center justify-center">
+              <SquirrelLogo size={28} variant="header" />
             </Link>
           </div>
 
