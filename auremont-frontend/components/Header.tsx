@@ -48,12 +48,12 @@ export default function Header() {
 
   return (
     <>
-      {/* ─── Single unified fixed header: announcement + nav + mobile currency ─── */}
+      {/* ─── Single unified fixed header ─── */}
       <header
-        className={`w-full fixed top-0 left-0 right-0 z-[70] transition-all duration-300 ${
+        className={`w-full fixed top-0 left-0 right-0 z-[70] transition-all duration-300 bg-background/95 backdrop-blur-xl border-b border-divider/50 shadow-sm ${
           isScrolled || isMegaNavOpen
-            ? "bg-background/90 backdrop-blur-xl border-b border-divider/50 shadow-sm"
-            : "bg-transparent"
+            ? "md:bg-background/90 md:backdrop-blur-xl md:border-b md:border-divider/50 md:shadow-sm"
+            : "md:bg-transparent md:border-b-0 md:shadow-none"
         }`}
       >
         {/* ── Row 1: Announcement Bar ─────────────────────────────────────────── */}
@@ -64,33 +64,33 @@ export default function Header() {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="w-full bg-secondaryBg border-b border-divider/60 flex items-center justify-center py-2 px-4 relative overflow-hidden"
+              className="w-full bg-secondaryBg border-b border-divider/60 flex items-center justify-center py-1.5 px-4 relative overflow-hidden"
             >
-              <p className="text-[10px] md:text-[11px] uppercase tracking-widest text-primaryText font-medium text-center pr-8">
+              <p className="text-[9px] md:text-[11px] uppercase tracking-widest text-primaryText font-medium text-center pr-6 truncate">
                 Complimentary shipping on all orders over ₹2000
               </p>
               <button
                 onClick={() => setShowAnnouncement(false)}
-                className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-secondaryText hover:text-primaryText transition-colors"
+                className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-secondaryText hover:text-primaryText transition-colors"
                 aria-label="Close announcement"
               >
-                <X size={13} />
+                <X size={12} />
               </button>
             </motion.div>
           )}
         </AnimatePresence>
 
         {/* ── Row 2: Main Nav ──────────────────────────────────────────────────── */}
-        <div className="max-w-[2000px] mx-auto px-4 md:px-12 flex justify-between items-center h-16 md:h-20">
+        <div className="max-w-[2000px] mx-auto px-4 md:px-12 flex justify-between items-center h-14 md:h-20">
 
           {/* Mobile Hamburger (Left) */}
           <div className="flex-1 flex md:hidden justify-start items-center">
             <button
               onClick={() => setIsMobileNavOpen(true)}
               aria-label="Menu"
-              className="w-11 h-11 flex items-center justify-start text-primaryText hover:text-luxuryGold transition-colors"
+              className="w-10 h-10 flex items-center justify-start text-primaryText hover:text-luxuryGold transition-colors"
             >
-              <Menu size={22} />
+              <Menu size={20} />
             </button>
           </div>
 
@@ -106,13 +106,13 @@ export default function Header() {
             onMouseEnter={() => setIsMegaNavOpen(false)}
           >
             <Link href="/" className="hover:opacity-90 transition-opacity">
-              <SquirrelLogo size={32} variant="full" />
+              <SquirrelLogo size={28} variant="full" className="md:w-8 md:h-8" />
             </Link>
           </div>
 
           {/* Nav Right */}
           <div
-            className="flex flex-1 gap-3 sm:gap-5 items-center justify-end text-[13px] tracking-widest uppercase text-primaryText font-medium"
+            className="flex flex-1 gap-2 sm:gap-5 items-center justify-end text-[13px] tracking-widest uppercase text-primaryText font-medium"
             onMouseEnter={() => setIsMegaNavOpen(false)}
           >
             {/* Currency Dropdown (Desktop Only) */}
@@ -131,10 +131,10 @@ export default function Header() {
 
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="w-10 h-10 flex items-center justify-center hover:text-luxuryGold transition-colors"
+              className="w-9 h-9 flex items-center justify-center hover:text-luxuryGold transition-colors"
               aria-label="Search"
             >
-              <Search size={19} />
+              <Search size={18} />
             </button>
 
             <div className="hidden md:block">
@@ -155,18 +155,18 @@ export default function Header() {
 
             <button
               onClick={() => setIsCartOpen(true)}
-              className="w-10 h-10 flex items-center justify-end md:justify-center luxury-link pb-1 md:w-auto md:h-auto md:gap-1.5"
+              className="w-9 h-9 flex items-center justify-end md:justify-center luxury-link pb-1 md:w-auto md:h-auto md:gap-1.5"
               aria-label="Cart"
             >
               <span className="hidden md:inline">Cart</span>
               <span className="md:hidden relative">
-                <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
                   <path d="M3 6h18"/>
                   <path d="M16 10a4 4 0 0 1-8 0"/>
                 </svg>
                 {mounted && (items?.length || 0) > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-luxuryGold text-background text-[10px] w-4 h-4 flex items-center justify-center rounded-full font-bold">
+                  <span className="absolute -top-1.5 -right-1.5 bg-luxuryGold text-background text-[9px] w-4 h-4 flex items-center justify-center rounded-full font-bold">
                     {items.length}
                   </span>
                 )}
@@ -176,21 +176,6 @@ export default function Header() {
               )}
             </button>
           </div>
-        </div>
-
-        {/* ── Row 3: Mobile Currency Strip ─────────────────────────────────────── */}
-        <div className="md:hidden w-full py-1.5 px-6 flex justify-end items-center border-t border-divider/20 bg-background/70 backdrop-blur-md">
-          <span className="text-[9px] uppercase tracking-ultra text-secondaryText font-light mr-1.5">Currency:</span>
-          <select
-            value={mounted ? currency : "INR"}
-            onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
-            className="bg-secondaryBg border border-luxuryGold/40 text-luxuryGold text-[9px] uppercase tracking-ultra px-2 py-0.5 rounded-full outline-none cursor-pointer"
-          >
-            <option value="INR" className="bg-background text-primaryText">INR (₹)</option>
-            <option value="USD" className="bg-background text-primaryText">USD ($)</option>
-            <option value="EUR" className="bg-background text-primaryText">EUR (€)</option>
-            <option value="GBP" className="bg-background text-primaryText">GBP (£)</option>
-          </select>
         </div>
 
         <MegaNavigation isOpen={isMegaNavOpen} onMouseLeave={() => setIsMegaNavOpen(false)} />
