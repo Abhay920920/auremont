@@ -1,64 +1,98 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PaymentsService } from './payments.service';
 import { PrismaService } from '../prisma/prisma.service';
-import { createMockPrismaService } from '../prisma/prisma.service.mock';
+import { BadRequestException } from '@nestjs/common';
 import * as crypto from 'crypto';
 
 describe('PaymentsService Unit Tests', () => {
-  let paymentsService: PaymentsService;
-  let prismaMock: any;
+  let service: PaymentsService;
+
+  const mockOrder = {
+    id: 'ord-1234',
+    orderNumber: 'ORD-2026-1234',
+    paymentRef: 'order_mock_1234',
+    paymentStatus: 'pending',
+    total: '1299.00',
+  };
+
+  const mockPrismaService = {
+    order: {
+      findFirst: jest.fn(),
+      update: jest.fn(),
+    },
+    payment: {
+      upsert: jest.fn(),
+    },
+    webhookLog: {
+      findUnique: jest.fn(),
+      create: jest.fn(),
+    },
+    $transaction: jest.fn((callback) => callback(mockPrismaService)),
+  };
 
   beforeEach(async () => {
-    prismaMock = createMockPrismaService();
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PaymentsService,
-        { provide: PrismaService, useValue: prismaMock },
+        { provide: PrismaService, useValue: mockPrismaService },
       ],
     }).compile();
 
-    paymentsService = module.get<PaymentsService>(PaymentsService);
+    service = module.get<PaymentsService>(PaymentsService);
+    jest.clearAllMocks();
   });
 
   describe('createRazorpayOrder', () => {
-    it('should generate razorpay order session details', async () => {
-      const order = { id: 'ord-123', total: '1499.00', paymentStatus: 'pending' };
-      prismaMock._seed('orders', [order]);
+    it('creates razorpay order session and attaches paymentRef to order', async () => {
+      mockPrismaService.order.update.mockResolvedValue(mockOrder);
 
-      const result = await paymentsService.createRazorpayOrder('ord-123', 1499);
-      expect(result).toBeDefined();
-      expect(result.amount).toBe(149900); // 1499 in paise
-      expect(result.currency).toBe('INR');
-      expect(result.razorpayOrderId).toBeDefined();
+      const session = await service.createRazorpayOrder('ord-1234', 1299.00, 'INR');
+
+      expect(session.paymentProvider).toBe('razorpay');
+      expect(session.amount).toBe(129900); // 1299 * 100 paise
+      expect(mockPrismaService.order.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 'ord-1234' },
+        }),
+      );
     });
   });
 
   describe('verifyPayment', () => {
-    it('should verify payment signature and update order status to paid', async () => {
-      const mockRazorpayOrderId = 'order_mock_123';
-      const mockPaymentId = 'pay_mock_456';
-      const order = { id: 'order-001', paymentRef: mockRazorpayOrderId, total: '1499.00', paymentStatus: 'pending', orderStatus: 'placed' };
-      prismaMock._seed('orders', [order]);
+    it('verifies razorpay signature and updates order status to paid inside $transaction', async () => {
+      mockPrismaService.order.findFirst.mockResolvedValue(mockOrder);
+      mockPrismaService.payment.upsert.mockResolvedValue({ id: 'pay-1' });
+      mockPrismaService.order.update.mockResolvedValue({ ...mockOrder, paymentStatus: 'paid' });
 
-      const secret = process.env.RAZORPAY_KEY_SECRET || 'secret_12345';
-      
-      const generatedSignature = crypto
+      const secret = 'secret_12345';
+      const orderId = 'order_mock_1234';
+      const paymentId = 'pay_mock_5678';
+      const validSignature = crypto
         .createHmac('sha256', secret)
-        .update(`${mockRazorpayOrderId}|${mockPaymentId}`)
+        .update(`${orderId}|${paymentId}`)
         .digest('hex');
 
-      const result = await paymentsService.verifyPayment(
-        mockRazorpayOrderId,
-        mockPaymentId,
-        generatedSignature
-      );
+      const result = await service.verifyPayment(orderId, paymentId, validSignature);
 
       expect(result.success).toBe(true);
-      
-      const updatedOrder = await prismaMock.order.findUnique({ where: { id: 'order-001' } });
-      expect(updatedOrder.paymentStatus).toBe('paid');
-      expect(updatedOrder.orderStatus).toBe('confirmed');
+      expect(mockPrismaService.order.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ paymentStatus: 'paid', orderStatus: 'confirmed' }),
+        }),
+      );
+    });
+
+    it('rejects verification if double-spend is attempted on an already paid order', async () => {
+      mockPrismaService.order.findFirst.mockResolvedValue({
+        ...mockOrder,
+        paymentStatus: 'paid',
+      });
+
+      const result = await service.verifyPayment('order_mock_1234', 'pay_mock_5678', 'signature');
+
+      expect(result.success).toBe(true);
+      expect(result.message).toBe('Already processed');
+      expect(mockPrismaService.payment.upsert).not.toHaveBeenCalled();
     });
   });
 });

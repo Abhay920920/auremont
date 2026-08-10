@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
 import { CartService } from './cart.service';
+import { CartRecoveryService } from './cart-recovery.service';
 import { OptionalJwtAuthGuard } from '../auth/optional-jwt-auth.guard';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { GetUser } from '../auth/get-user.decorator';
@@ -10,13 +11,21 @@ import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 @Controller('cart')
 @UseGuards(OptionalJwtAuthGuard)
 export class CartController {
-  constructor(private readonly cartService: CartService) {}
+  constructor(
+    private readonly cartService: CartService,
+    private readonly cartRecoveryService: CartRecoveryService,
+  ) {}
 
   @Get()
   async getCart(@Query('cartId') cartId?: string, @GetUser() user?: any) {
     // If we have an authenticated user, we fetch their cart
     const userId = user?.id;
     return this.cartService.getCart(cartId, userId);
+  }
+
+  @Post('recovery')
+  async triggerCartRecovery() {
+    return this.cartRecoveryService.processAbandonedCarts();
   }
 
   @Post('items')

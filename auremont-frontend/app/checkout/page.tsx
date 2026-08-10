@@ -50,6 +50,13 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     setMounted(true);
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const recoverId = params.get('recover');
+      if (recoverId) {
+        useCartStore.setState({ cartId: recoverId });
+      }
+    }
     fetchCart();
     if (user) {
       setAddress(prev => ({ 
