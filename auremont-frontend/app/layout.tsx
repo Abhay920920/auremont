@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Cormorant_Garamond } from "next/font/google";
 import Script from "next/script";
+import { Suspense } from "react";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -124,7 +125,9 @@ export default function RootLayout({
         <WebSiteSchema />
       </head>
       <body className={`${inter.variable} ${cormorant.variable} font-sans bg-background text-primaryText min-h-screen antialiased flex flex-col overflow-x-hidden selection:bg-luxuryGold/30 selection:text-luxuryGold print:bg-background print:text-primaryText pb-16 md:pb-0`}>
-        <PageProgressLoader />
+        <Suspense fallback={null}>
+          <PageProgressLoader />
+        </Suspense>
         <EntranceSplash />
         <div className="print:hidden">
           <FilmGrain />
