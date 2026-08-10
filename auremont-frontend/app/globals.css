@@ -12,6 +12,9 @@ html {
   scroll-behavior: smooth;
   overflow-x: hidden;
   width: 100%;
+  -webkit-text-size-adjust: 100%;
+  -moz-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -19,12 +22,33 @@ body {
   background: rgb(var(--background-start-rgb));
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   overflow-x: hidden;
   width: 100%;
   /* Safe area padding for mobile notches/home bars */
   padding-bottom: env(safe-area-inset-bottom);
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Fluid Responsive Image & Media Scaling */
+img, svg, video, canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Performance Optimizations: GPU Hardware Acceleration & Offscreen Render Deferral */
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.defer-render {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 500px;
 }
 
 /* Fix Webkit Autofill background on dark mode */
