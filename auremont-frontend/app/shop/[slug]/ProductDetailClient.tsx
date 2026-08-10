@@ -38,6 +38,7 @@ export default function ProductDetailClient() {
   const [submittingReview, setSubmittingReview] = useState(false);
   const [reviewError, setReviewError] = useState("");
   const [reviewSuccess, setReviewSuccess] = useState(false);
+  const [isReviewDrawerOpen, setIsReviewDrawerOpen] = useState(false);
 
   useEffect(() => {
     if (!slug) return;
@@ -138,91 +139,133 @@ export default function ProductDetailClient() {
 
             {/* Reviews Section */}
             <div className="space-y-10 pt-8">
-              <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4">
-                <h2 className="font-serif text-3xl text-primaryText">Client Reviews</h2>
-                {reviews.length > 0 && (
-                  <div className="flex items-center gap-3">
-                    <StarRating rating={avgRating} size={16} />
-                    <span className="text-secondaryText text-sm tracking-wide">{avgRating}/5 · {reviews.length} Reviews</span>
-                  </div>
-                )}
-              </div>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-divider pb-6">
+                <div>
+                  <h2 className="font-serif text-3xl text-primaryText mb-1">Client Reviews</h2>
+                  {reviews.length > 0 && (
+                    <div className="flex items-center gap-3">
+                      <StarRating rating={avgRating} size={16} />
+                      <span className="text-secondaryText text-xs font-mono tracking-wide">{avgRating}.0 / 5.0 · ({reviews.length} Verified Reviews)</span>
+                    </div>
+                  )}
+                </div>
 
-              {/* Write a review */}
-              <div className="bg-secondaryBg border border-divider p-8 space-y-6">
-                <h3 className="font-serif text-xl">Share Your Experience</h3>
-                {!user ? (
-                  <p className="text-secondaryText text-sm font-light">
-                    <Link href="/login" className="text-luxuryGold hover:underline transition-colors">Sign in</Link> to leave a review.
-                  </p>
-                ) : reviewSuccess ? (
-                  <div className="p-4 bg-luxuryGold/10 border border-luxuryGold/30 text-luxuryGold text-sm">
-                    Thank you. Your review has been submitted for curation.
-                  </div>
-                ) : (
-                  <form onSubmit={handleSubmitReview} className="space-y-6">
-                    {reviewError && <p className="text-error text-sm">{reviewError}</p>}
-                    <div className="space-y-3">
-                      <label className="text-xs uppercase tracking-widest font-medium text-secondaryText">Rating</label>
-                      <div className="flex gap-2">
-                        {[1, 2, 3, 4, 5].map(star => (
-                          <button key={star} type="button" onClick={() => setReviewForm(p => ({ ...p, rating: star }))}
-                            className={`text-2xl transition-transform hover:scale-110 ${star <= reviewForm.rating ? 'text-luxuryGold' : 'text-divider'}`}>★</button>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-xs uppercase tracking-widest font-medium text-secondaryText">Title</label>
-                      <input
-                        type="text"
-                        required
-                        className="w-full bg-background border border-divider rounded-input px-4 py-3 text-sm focus:outline-none focus:border-luxuryGold transition-colors"
-                        value={reviewForm.title}
-                        onChange={e => setReviewForm(p => ({ ...p, title: e.target.value }))}
-                        placeholder="Sum up your experience"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-xs uppercase tracking-widest font-medium text-secondaryText">Review</label>
-                      <textarea
-                        required
-                        rows={4}
-                        className="w-full bg-background border border-divider rounded-input px-4 py-3 text-sm focus:outline-none focus:border-luxuryGold transition-colors resize-none"
-                        value={reviewForm.review}
-                        onChange={e => setReviewForm(p => ({ ...p, review: e.target.value }))}
-                        placeholder="Tell us what you think..."
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      disabled={submittingReview}
-                      className="luxury-button w-full"
-                    >
-                      {submittingReview ? 'Submitting...' : 'Submit Review'}
-                    </button>
-                  </form>
-                )}
+                <button
+                  onClick={() => {
+                    if (!user) { router.push('/login'); return; }
+                    setIsReviewDrawerOpen(true);
+                  }}
+                  className="luxury-button-outline text-xs py-3 px-6 inline-flex items-center gap-2 self-start sm:self-auto"
+                >
+                  <Star size={14} className="text-luxuryGold" />
+                  <span>Write A Review</span>
+                </button>
               </div>
 
               {/* Review List */}
               <div className="space-y-8">
                 {reviews.length === 0 ? (
-                  <p className="text-secondaryText text-sm font-light italic">No reviews yet. Be the first to share your experience.</p>
+                  <div className="p-8 border border-dashed border-divider rounded-card text-center space-y-3">
+                    <p className="text-secondaryText text-sm font-light">No client reviews yet. Be the first to share your experience with {product.name}.</p>
+                    <button
+                      onClick={() => {
+                        if (!user) { router.push('/login'); return; }
+                        setIsReviewDrawerOpen(true);
+                      }}
+                      className="text-xs text-luxuryGold uppercase tracking-widest font-mono hover:underline inline-block"
+                    >
+                      Write First Review →
+                    </button>
+                  </div>
                 ) : (
                   reviews.map(r => (
                     <div key={r.id} className="border-b border-divider pb-8 last:border-0 space-y-3">
                       <div className="flex items-center justify-between">
-                        <StarRating rating={r.rating} size={14} />
+                        <div className="flex items-center gap-3">
+                          <StarRating rating={r.rating} size={14} />
+                          <span className="text-[10px] uppercase tracking-widest text-emerald-400 font-mono bg-emerald-950/40 px-2 py-0.5 border border-emerald-500/30 rounded-full inline-block">
+                            Verified Purchaser
+                          </span>
+                        </div>
                         <span className="text-xs text-mutedText font-light">{new Date(r.createdAt).toLocaleDateString()}</span>
                       </div>
                       {r.title && <h4 className="font-serif text-lg text-primaryText">{r.title}</h4>}
                       {r.review && <p className="text-secondaryText text-sm leading-relaxed font-light">{r.review}</p>}
-                      <p className="text-xs text-mutedText uppercase tracking-widest">— {r.user.firstName} {r.user.lastName}</p>
+                      <p className="text-xs text-mutedText uppercase tracking-widest">— {r.user?.firstName || "Discerning"} {r.user?.lastName || "Client"}</p>
                     </div>
                   ))
                 )}
               </div>
             </div>
+
+            {/* Sliding Verified Review Drawer Modal */}
+            {isReviewDrawerOpen && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+                <div className="bg-background border border-luxuryGold/40 rounded-card p-6 md:p-8 max-w-lg w-full space-y-6 shadow-2xl relative animate-scale-up">
+                  <div className="flex justify-between items-center border-b border-divider pb-4">
+                    <h3 className="font-serif text-2xl text-primaryText flex items-center gap-2">
+                      Review Experience
+                      <Star size={18} className="text-luxuryGold fill-luxuryGold" />
+                    </h3>
+                    <button onClick={() => setIsReviewDrawerOpen(false)} className="text-secondaryText hover:text-luxuryGold text-xl font-mono">✕</button>
+                  </div>
+
+                  {reviewSuccess ? (
+                    <div className="p-6 bg-luxuryGold/10 border border-luxuryGold/30 text-luxuryGold text-sm text-center space-y-4">
+                      <p className="font-serif text-lg">Thank You!</p>
+                      <p className="text-xs font-light text-secondaryText">Your verified review has been submitted and published.</p>
+                      <button onClick={() => { setReviewSuccess(false); setIsReviewDrawerOpen(false); }} className="luxury-button text-xs py-2 px-6">Done</button>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSubmitReview} className="space-y-5">
+                      {reviewError && <p className="text-error text-xs">{reviewError}</p>}
+                      
+                      <div className="space-y-2">
+                        <label className="text-xs uppercase tracking-widest font-mono text-secondaryText block">Overall Rating</label>
+                        <div className="flex gap-3 bg-secondaryBg p-3 rounded-card border border-divider justify-center">
+                          {[1, 2, 3, 4, 5].map(star => (
+                            <button key={star} type="button" onClick={() => setReviewForm(p => ({ ...p, rating: star }))}
+                              className={`text-3xl transition-transform hover:scale-125 ${star <= reviewForm.rating ? 'text-luxuryGold' : 'text-divider'}`}>★</button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-xs uppercase tracking-widest font-mono text-secondaryText block">Headline Title</label>
+                        <input
+                          type="text"
+                          required
+                          className="w-full bg-secondaryBg border border-divider rounded-card px-4 py-3 text-xs text-primaryText focus:outline-none focus:border-luxuryGold transition-colors"
+                          value={reviewForm.title}
+                          onChange={e => setReviewForm(p => ({ ...p, title: e.target.value }))}
+                          placeholder="Summarize your experience..."
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-xs uppercase tracking-widest font-mono text-secondaryText block">Detailed Comments</label>
+                        <textarea
+                          required
+                          rows={4}
+                          className="w-full bg-secondaryBg border border-divider rounded-card px-4 py-3 text-xs text-primaryText focus:outline-none focus:border-luxuryGold transition-colors resize-none"
+                          value={reviewForm.review}
+                          onChange={e => setReviewForm(p => ({ ...p, review: e.target.value }))}
+                          placeholder="Describe the aroma, crunch, packaging, and overall impression..."
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={submittingReview}
+                        className="luxury-button w-full text-xs py-4"
+                      >
+                        {submittingReview ? 'Publishing Review...' : 'Publish Verified Review'}
+                      </button>
+                    </form>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

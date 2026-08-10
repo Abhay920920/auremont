@@ -60,6 +60,7 @@ import CookieBanner from "@/components/CookieBanner";
 import CustomCursor from "@/components/ui/CustomCursor";
 import TransitionProvider from "@/components/providers/TransitionProvider";
 import MobileBottomBar from "@/components/mobile/MobileBottomBar";
+import ConciergeChatWidget from "@/components/concierge/ConciergeChatWidget";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in';
 
@@ -126,6 +127,7 @@ export default function RootLayout({
           </TransitionProvider>
         </StorefrontWrapper>
 
+        <ConciergeChatWidget />
         <MobileBottomBar />
         <CookieBanner />
       </body>
