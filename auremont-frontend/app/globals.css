@@ -108,6 +108,14 @@ select:-webkit-autofill:active {
   .luxury-button {
     @apply uppercase tracking-widest text-xs font-semibold px-8 py-4 bg-luxuryGold text-background hover:bg-goldHover hover:shadow-lg active:scale-95 transition-all duration-300;
   }
+
+  .skeleton-pulse {
+    @apply bg-secondaryBg animate-pulse rounded;
+  }
+
+  .smooth-gpu-hover {
+    @apply transition-all duration-300 ease-out gpu-accelerated hover:scale-[1.02] active:scale-[0.98];
+  }
   
   .luxury-button-outline {
     @apply uppercase tracking-widest text-xs font-semibold px-8 py-4 bg-transparent border border-divider text-primaryText hover:border-luxuryGold hover:text-luxuryGold active:scale-95 transition-all duration-300;

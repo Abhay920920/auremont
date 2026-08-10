@@ -14,7 +14,7 @@ export default function WhyRareNuts() {
     {
       badge: "CRAFT ROAST",
       icon: <ShieldCheck size={28} strokeWidth={1} />,
-      title: "Masterfully Slow-Roasting",
+      title: "Masterfully Slow-Roasted",
       description: "Our small-batch roasting preserves essential natural nutrient oils while developing crisp, buttery aromatic depth."
     },
     {
@@ -43,20 +43,18 @@ export default function WhyRareNuts() {
               key={idx}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: idx * 0.15 }}
-              className="p-8 md:p-10 rounded-card bg-secondaryBg/40 border border-luxuryGold/20 hover:border-luxuryGold/50 transition-all duration-300 flex flex-col items-center text-center group"
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, delay: idx * 0.15, ease: [0.16, 1, 0.3, 1] }}
+              className="flex flex-col items-center text-center p-8 bg-secondaryBg border border-luxuryGold/20 rounded-card shadow-[0_10px_35px_rgba(0,0,0,0.6)] group hover:border-luxuryGold/50 transition-all"
             >
-              <div className="w-16 h-16 rounded-full bg-luxuryGold/10 border border-luxuryGold/30 flex items-center justify-center text-luxuryGold mb-6 group-hover:scale-110 transition-transform duration-300">
-                {reason.icon}
-              </div>
-              <span className="text-[9px] uppercase tracking-widest text-luxuryGold font-medium mb-2">
+              <span className="text-[9px] uppercase tracking-ultra text-luxuryGold font-medium mb-6">
                 {reason.badge}
               </span>
-              <h3 className="text-xl font-serif text-primaryText mb-3">
-                {reason.title}
-              </h3>
-              <p className="text-secondaryText text-sm font-light leading-relaxed">
+              <div className="text-luxuryGold mb-6 group-hover:scale-110 transition-transform duration-500 bg-background/80 p-4 rounded-full border border-divider">
+                {reason.icon}
+              </div>
+              <h3 className="font-serif text-xl sm:text-2xl text-primaryText mb-3">{reason.title}</h3>
+              <p className="text-secondaryText text-xs sm:text-sm leading-relaxed font-light">
                 {reason.description}
               </p>
             </motion.div>

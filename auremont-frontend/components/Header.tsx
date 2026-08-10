@@ -34,7 +34,7 @@ export default function Header() {
   useEffect(() => {
     setMounted(true);
     fetchCart();
-    if (user) {
+    if (user && useAuthStore.getState().token) {
       fetchWishlist(user.id);
     }
     
@@ -65,8 +65,10 @@ export default function Header() {
             </button>
           </div>
 
-          {/* Desktop Nav Left - Intentionally Empty as per request */}
-          <nav className="hidden md:flex flex-1 gap-10 text-[13px] tracking-widest uppercase items-center text-primaryText font-medium">
+          {/* Desktop Nav Left */}
+          <nav className="hidden md:flex flex-1 gap-8 text-[11px] tracking-widest uppercase items-center text-primaryText font-medium">
+            <Link href="/shop" className="hover:text-luxuryGold transition-colors">Shop</Link>
+            <Link href="/custom-gift-box" className="hover:text-luxuryGold transition-colors">Bespoke</Link>
           </nav>
 
           {/* Logo Center */}

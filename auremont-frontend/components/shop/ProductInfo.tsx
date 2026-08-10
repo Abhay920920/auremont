@@ -95,6 +95,16 @@ export default function ProductInfo({ product, reviews, avgRating }: { product: 
         )}
       </div>
       
+      {/* Volume Discount Tier Pill */}
+      <div className="p-3 bg-secondaryBg border border-luxuryGold/30 rounded-card flex items-center justify-between">
+        <span className="text-[10px] uppercase tracking-wider text-primaryText font-mono">
+          🎁 Buy 2+ Units: <strong className="text-luxuryGold">10% Extra Volume Discount</strong> Auto-Applied
+        </span>
+        <span className="text-[9px] uppercase tracking-ultra text-luxuryGold font-mono bg-luxuryGold/10 px-2 py-0.5 border border-luxuryGold/20 rounded">
+          Vault Special
+        </span>
+      </div>
+
       <div className="flex items-center gap-2">
         <div className={`w-1.5 h-1.5 rounded-full ${product.stockQty > 0 ? 'bg-luxuryGold animate-ping' : 'bg-red-500'}`} />
         <span className="text-[10px] tracking-ultra uppercase text-secondaryText">

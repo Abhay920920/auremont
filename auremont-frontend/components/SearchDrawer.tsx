@@ -100,11 +100,28 @@ export default function SearchDrawer({ isOpen, onClose }: { isOpen: boolean; onC
                       className="grid grid-cols-1 md:grid-cols-2 gap-12"
                     >
                        <div>
-                          <h4 className="text-[11px] uppercase tracking-widest text-secondaryText mb-6">Popular Searches</h4>
-                          <ul className="space-y-4">
-                            <li><button onClick={() => setQuery("Roasted")} className="text-primaryText hover:text-luxuryGold transition-colors text-lg font-serif">Roasted Almonds</button></li>
-                            <li><button onClick={() => setQuery("Raw")} className="text-primaryText hover:text-luxuryGold transition-colors text-lg font-serif">Raw California Almonds</button></li>
-                            <li><button onClick={() => setQuery("Gift")} className="text-primaryText hover:text-luxuryGold transition-colors text-lg font-serif">Gift Boxes</button></li>
+                          <h4 className="text-[11px] uppercase tracking-widest text-secondaryText mb-4">Popular Searches</h4>
+                          <div className="flex flex-wrap gap-2 mb-6">
+                            {[
+                              { label: "Raw Almonds", q: "Raw" },
+                              { label: "Sea Salt Roast", q: "Sea Salt" },
+                              { label: "Mahogany Box", q: "Wooden Box" },
+                              { label: "Window Pouch", q: "Window" },
+                              { label: "Unboxing Set", q: "Unboxing" },
+                            ].map((chip) => (
+                              <button
+                                key={chip.q}
+                                onClick={() => setQuery(chip.q)}
+                                className="px-3.5 py-1.5 bg-secondaryBg border border-luxuryGold/30 text-luxuryGold hover:bg-luxuryGold hover:text-background text-xs rounded-full transition-all font-mono uppercase tracking-wider"
+                              >
+                                {chip.label}
+                              </button>
+                            ))}
+                          </div>
+                          <ul className="space-y-3">
+                            <li><button onClick={() => setQuery("Roasted")} className="text-primaryText hover:text-luxuryGold transition-colors text-lg font-serif">Roasted Almonds Collection</button></li>
+                            <li><button onClick={() => setQuery("Raw")} className="text-primaryText hover:text-luxuryGold transition-colors text-lg font-serif">California Reserve Raw Almonds</button></li>
+                            <li><button onClick={() => setQuery("Gift")} className="text-primaryText hover:text-luxuryGold transition-colors text-lg font-serif">Bespoke Gift Boxes</button></li>
                           </ul>
                        </div>
                        <div>

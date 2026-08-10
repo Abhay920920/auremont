@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Package, Truck, CheckCircle } from "lucide-react";
+import { Package, Truck, CheckCircle, FileText } from "lucide-react";
 import { useCurrencyStore } from "@/store/currencyStore";
+import OrderInvoiceModal from "./OrderInvoiceModal";
 
 interface OrderHistoryTabProps {
   orders: any[];
@@ -10,6 +12,7 @@ interface OrderHistoryTabProps {
 export default function OrderHistoryTab({ orders, loadingOrders }: OrderHistoryTabProps) {
   const router = useRouter();
   const { formatPrice } = useCurrencyStore();
+  const [selectedInvoiceOrder, setSelectedInvoiceOrder] = useState<any>(null);
 
   const getDispatchSteps = (status: string) => {
     const s = (status || '').toLowerCase();
@@ -103,7 +106,15 @@ export default function OrderHistoryTab({ orders, loadingOrders }: OrderHistoryT
 
                 {/* Purchased Items List */}
                 <div className="space-y-3 pt-4 border-t border-divider/60">
-                  <p className="text-[10px] font-medium uppercase tracking-ultra text-secondaryText">Reserved Harvest Items:</p>
+                  <div className="flex justify-between items-center">
+                    <p className="text-[10px] font-medium uppercase tracking-ultra text-secondaryText">Reserved Harvest Items:</p>
+                    <button
+                      onClick={() => setSelectedInvoiceOrder(order)}
+                      className="px-3 py-1 bg-luxuryGold/10 border border-luxuryGold/30 text-luxuryGold hover:bg-luxuryGold hover:text-background text-[10px] rounded transition-all font-mono uppercase tracking-wider flex items-center gap-1.5"
+                    >
+                      <FileText size={12} /> View Tax Invoice
+                    </button>
+                  </div>
                   {order.items.map((item: any) => (
                     <div key={item.id} className="flex justify-between items-center text-xs bg-background p-3.5 border border-divider rounded-card">
                       <span className="text-primaryText font-serif text-sm">{item.quantity} × {item.product?.name || item.productName || 'RARE NUTS Reserve Almonds'}</span>
@@ -117,6 +128,13 @@ export default function OrderHistoryTab({ orders, loadingOrders }: OrderHistoryT
           })}
         </div>
       )}
+
+      {/* Invoice Modal */}
+      <OrderInvoiceModal
+        isOpen={!!selectedInvoiceOrder}
+        onClose={() => setSelectedInvoiceOrder(null)}
+        order={selectedInvoiceOrder}
+      />
     </div>
   );
 }

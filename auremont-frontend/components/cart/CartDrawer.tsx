@@ -59,6 +59,23 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-6 scrollbar-hide">
+              {items.length > 0 && (
+                <div className="mb-6 p-4 bg-secondaryBg border border-luxuryGold/30 rounded-card space-y-2">
+                  <div className="flex justify-between items-center text-[10px] font-mono uppercase tracking-wider">
+                    <span className="text-primaryText">
+                      {subtotal >= 1500 ? "✨ Free Velvet Vault Packaging Unlocked!" : `Add ${formatPrice(1500 - subtotal)} for Free Velvet Packaging`}
+                    </span>
+                    <span className="text-luxuryGold font-bold">{Math.min(100, Math.round((subtotal / 1500) * 100))}%</span>
+                  </div>
+                  <div className="w-full bg-background h-1.5 rounded-full overflow-hidden border border-divider">
+                    <div 
+                      className="bg-gradient-to-r from-luxuryGold via-goldHover to-goldDark h-full transition-all duration-500 rounded-full"
+                      style={{ width: `${Math.min(100, Math.round((subtotal / 1500) * 100))}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+
               {items.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
                   <ShoppingBag size={48} strokeWidth={0.5} className="text-divider mb-4" />

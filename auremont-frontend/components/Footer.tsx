@@ -47,7 +47,7 @@ export default function Footer() {
               <SquirrelLogo size={52} variant="badge" />
             </div>
             <p className="text-secondaryText text-sm sm:text-base max-w-md leading-relaxed font-light">
-              <span className="text-luxuryGold font-serif italic block mb-1">Rare by Nature, Chosen by Those Who Know the Difference</span>
+              <span className="text-luxuryGold font-serif italic block mb-1">Exceptional by Nature. Distinct by Choice.</span>
               Purveyors of exceptionally sourced premium nuts. Hand-selected, slow-roasted, and presented with supreme elegance for those who appreciate true botanical craftsmanship.
             </p>
             <div className="pt-2 flex gap-6 text-secondaryText">

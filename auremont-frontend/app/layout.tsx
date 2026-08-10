@@ -70,6 +70,8 @@ import CustomCursor from "@/components/ui/CustomCursor";
 import TransitionProvider from "@/components/providers/TransitionProvider";
 import MobileBottomBar from "@/components/mobile/MobileBottomBar";
 import ConciergeChatWidget from "@/components/concierge/ConciergeChatWidget";
+import PageProgressLoader from "@/components/providers/PageProgressLoader";
+import WebSiteSchema from "@/components/seo/WebSiteSchema";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in';
 
@@ -119,8 +121,10 @@ export default function RootLayout({
     <html lang="en" dir="ltr">
       <head>
         <JsonLd data={organizationSchema} />
+        <WebSiteSchema />
       </head>
       <body className={`${inter.variable} ${cormorant.variable} font-sans bg-background text-primaryText min-h-screen antialiased flex flex-col overflow-x-hidden selection:bg-luxuryGold/30 selection:text-luxuryGold print:bg-background print:text-primaryText pb-16 md:pb-0`}>
+        <PageProgressLoader />
         <EntranceSplash />
         <div className="print:hidden">
           <FilmGrain />

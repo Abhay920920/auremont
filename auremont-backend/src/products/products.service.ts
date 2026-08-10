@@ -84,8 +84,9 @@ export class ProductsService {
   }
 
   async findBySlug(slug: string): Promise<Product | null> {
-    return this.prisma.product.findUnique({
-      where: { slug },
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
+    return this.prisma.product.findFirst({
+      where: isUuid ? { OR: [{ id: slug }, { slug }] } : { slug },
       include: {
         images: true,
         attributes: true,

@@ -33,8 +33,8 @@ export default function SquirrelLogo({ variant = "full", className = "", size = 
           <span className="font-serif text-luxuryGold tracking-ultra uppercase block font-bold text-lg md:text-xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
             RARE NUTS
           </span>
-          <span className="text-[10px] md:text-xs text-secondaryText tracking-widest uppercase block font-light mt-0.5">
-            rare by nature
+          <span className="text-[9px] md:text-[11px] text-secondaryText tracking-widest uppercase block font-light mt-0.5">
+            Exceptional by Nature. Distinct by Choice.
           </span>
         </div>
       )}

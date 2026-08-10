@@ -21,7 +21,8 @@ export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    if (!user || !token) {
+    const currentToken = token || useAuthStore.getState().token;
+    if (!user || !currentToken) {
       setNotifications([]);
       return;
     }

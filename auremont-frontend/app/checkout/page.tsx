@@ -216,9 +216,10 @@ export default function CheckoutPage() {
     setError("");
 
     try {
+      const randomUuid = typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).substring(2)}`;
       const idempotencyKey =
         window.sessionStorage.getItem('checkout_idempotency_key') ||
-        `${Date.now()}-${crypto.randomUUID()}`;
+        `${Date.now()}-${randomUuid}`;
       window.sessionStorage.setItem('checkout_idempotency_key', idempotencyKey);
 
       const { email: addrEmail, ...cleanAddress } = address;

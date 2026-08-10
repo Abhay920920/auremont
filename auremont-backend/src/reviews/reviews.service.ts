@@ -25,7 +25,7 @@ export class ReviewsService {
         rating: data.rating,
         title: data.title,
         review: data.review,
-        status: 'pending',
+        status: 'approved',
       },
     });
   }
