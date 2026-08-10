@@ -1,11 +1,11 @@
-"use client";
-
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import Link from "next/link";
 import { Star, Rotate3d } from "lucide-react";
-import FlavorRadarChart from "./FlavorRadarChart";
-import Packaging3DViewer from "./Packaging3DViewer";
 import { useCurrencyStore } from "@/store/currencyStore";
+
+const FlavorRadarChart = dynamic(() => import("./FlavorRadarChart"), { ssr: false });
+const Packaging3DViewer = dynamic(() => import("./Packaging3DViewer"), { ssr: false });
 
 function StarRating({ rating, size = 16 }: { rating: number; size?: number }) {
   return (
@@ -25,7 +25,7 @@ export default function ProductInfo({ product, reviews, avgRating }: { product: 
 
   const displayPrice = product.salePrice ? Number(product.salePrice) : Number(product.price);
   const originalPrice = product.salePrice ? Number(product.price) : null;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.com';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in';
 
   const productSchema = {
     "@context": "https://schema.org",

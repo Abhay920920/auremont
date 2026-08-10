@@ -1,8 +1,10 @@
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Package, Truck, CheckCircle, FileText } from "lucide-react";
 import { useCurrencyStore } from "@/store/currencyStore";
-import OrderInvoiceModal from "./OrderInvoiceModal";
+
+const OrderInvoiceModal = dynamic(() => import("./OrderInvoiceModal"), { ssr: false });
 
 interface OrderHistoryTabProps {
   orders: any[];
