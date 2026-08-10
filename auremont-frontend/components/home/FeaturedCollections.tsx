@@ -6,8 +6,8 @@ import { motion } from "framer-motion";
 import AddToCartButton from "@/components/AddToCartButton";
 import { useCurrencyStore } from "@/store/currencyStore";
 
-export default function FeaturedCollections({ products }: { products: any[] }) {
-  const featured = products.slice(0, 3);
+export default function FeaturedCollections({ products }: { products?: any[] }) {
+  const featured = (products || []).slice(0, 3);
   const { formatPrice } = useCurrencyStore();
   
   return (

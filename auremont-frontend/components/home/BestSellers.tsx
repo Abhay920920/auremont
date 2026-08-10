@@ -7,8 +7,8 @@ import { Star } from "lucide-react";
 import AddToCartButton from "@/components/AddToCartButton";
 import { useCurrencyStore } from "@/store/currencyStore";
 
-export default function BestSellers({ products }: { products: any[] }) {
-  const bestSellers = products.slice(0, 4);
+export default function BestSellers({ products }: { products?: any[] }) {
+  const bestSellers = (products || []).slice(0, 4);
   const { formatPrice } = useCurrencyStore();
   
   return (

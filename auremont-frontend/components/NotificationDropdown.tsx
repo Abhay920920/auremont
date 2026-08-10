@@ -95,7 +95,14 @@ export default function NotificationDropdown() {
                     </div>
                     <p className="text-xs text-secondaryText mb-2 leading-relaxed">{notification.message}</p>
                     <p className="text-[10px] uppercase tracking-wider text-mutedText">
-                      {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
+                      {(() => {
+                        try {
+                          const date = new Date(notification.createdAt);
+                          return isNaN(date.getTime()) ? "" : formatDistanceToNow(date, { addSuffix: true });
+                        } catch {
+                          return "";
+                        }
+                      })()}
                     </p>
                   </div>
                 ))}
