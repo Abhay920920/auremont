@@ -27,7 +27,7 @@ export default function CartPage() {
 
   if (safeItems.length === 0) {
     return (
-      <div className="w-full min-h-[60vh] flex flex-col items-center justify-center px-6 py-24 text-center space-y-8 bg-background pt-40">
+      <div className="w-full min-h-[60vh] flex flex-col items-center justify-center px-6 py-24 text-center space-y-8 bg-background pt-32">
         <h1 className="text-4xl md:text-5xl font-serif text-primaryText">Your Cart is Empty</h1>
         <p className="text-secondaryText text-lg max-w-md">The collection awaits. Discover our exclusive curations of premium almonds.</p>
         <Link href="/shop" className="luxury-button mt-4">Return to Collection</Link>
@@ -36,7 +36,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="w-full bg-background min-h-screen pt-40 pb-24 md:pb-super">
+    <div className="w-full bg-background min-h-screen pt-32 pb-24 md:pb-super">
       <div className="max-w-[1400px] mx-auto px-6 md:px-12">
         <h1 className="text-4xl md:text-5xl font-serif text-primaryText mb-16 text-center">Shopping Bag</h1>
         

@@ -32,7 +32,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="w-full bg-background pt-40 md:pt-32 pb-24 md:pb-super relative overflow-hidden min-h-screen">
+    <div className="w-full bg-background pt-32 pb-24 md:pb-super relative overflow-hidden min-h-screen">
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 md:gap-24">
           

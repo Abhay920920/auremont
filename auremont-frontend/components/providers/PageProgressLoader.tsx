@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 export default function PageProgressLoader() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
 
@@ -24,7 +23,7 @@ export default function PageProgressLoader() {
       clearTimeout(timer1);
       clearTimeout(timer2);
     };
-  }, [pathname, searchParams]);
+  }, [pathname]);
 
   if (!loading && progress === 0) return null;
 

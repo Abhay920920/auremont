@@ -180,7 +180,7 @@ export default function AccountDashboard() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-background pt-40 md:pt-32 pb-24 md:pb-super">
+    <div className="w-full min-h-screen bg-background pt-32 pb-24 md:pb-super">
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 space-y-12">
         
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-divider pb-8 gap-4">

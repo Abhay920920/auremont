@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function CustomGiftBoxPage() {
   return (
-    <div className="w-full bg-background min-h-screen pt-36 pb-24">
+    <div className="w-full bg-background min-h-screen pt-32 pb-24">
       {/* Header */}
       <div className="max-w-[1800px] mx-auto px-6 md:px-12">
         <Breadcrumbs items={[

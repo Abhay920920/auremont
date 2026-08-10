@@ -62,7 +62,7 @@ export default function Shop() {
   };
 
   return (
-    <div className="w-full bg-background pt-40 md:pt-32 pb-16 md:pb-super min-h-screen">
+    <div className="w-full bg-background pt-32 pb-16 md:pb-super min-h-screen">
       
       {/* Header Section */}
       <div className="max-w-[2000px] mx-auto px-6 md:px-12 mb-8 md:mb-24">

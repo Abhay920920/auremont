@@ -114,7 +114,7 @@ export default function CheckoutPage() {
 
   if (!mounted || (cartLoading && safeItems.length === 0)) {
     return (
-      <div className="w-full min-h-[60vh] flex flex-col items-center justify-center bg-background pt-40">
+      <div className="w-full min-h-[60vh] flex flex-col items-center justify-center bg-background pt-32">
         <div className="w-10 h-10 border border-luxuryGold border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -122,7 +122,7 @@ export default function CheckoutPage() {
 
   if (safeItems.length === 0 && !cartLoading && !successMessage && !isSuccessRef.current) {
     return (
-      <div className="w-full min-h-[60vh] flex flex-col items-center justify-center px-6 py-24 text-center space-y-8 bg-background pt-40">
+      <div className="w-full min-h-[60vh] flex flex-col items-center justify-center px-6 py-24 text-center space-y-8 bg-background pt-32">
         <h1 className="text-4xl md:text-5xl font-serif text-primaryText">Your Cart is Empty</h1>
         <button onClick={() => router.push('/shop')} className="luxury-button mt-4">Return to Collection</button>
       </div>
@@ -263,7 +263,7 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="w-full bg-background min-h-screen pt-40 pb-24 md:pb-super animate-fade-in">
+    <div className="w-full bg-background min-h-screen pt-32 pb-24 md:pb-super animate-fade-in">
       {/* Success overlay */}
       {(successMessage || isSuccessRef.current) && (
         <div className="fixed inset-0 bg-background/90 backdrop-blur-md z-50 flex items-center justify-center animate-fade-in">

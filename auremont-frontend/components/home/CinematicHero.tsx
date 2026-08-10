@@ -32,7 +32,7 @@ export default function CinematicHero() {
   return (
     <section 
       onMouseMove={handleMouseMove}
-      className="relative w-full min-h-[100dvh] flex flex-col justify-between overflow-hidden bg-background pt-40 pb-12 lg:pt-44 lg:pb-16"
+      className="relative w-full min-h-[100dvh] flex flex-col justify-between overflow-hidden bg-background pt-36 pb-12 md:pt-40 md:pb-16"
     >
       {/* Background Ambient Lighting & Radial Vignette */}
       <div className="absolute inset-0 w-full h-full -z-10 bg-[#050505] overflow-hidden">

@@ -65,7 +65,6 @@ import JsonLd from "@/components/JsonLd";
 import FilmGrain from "@/components/FilmGrain";
 import EntranceSplash from "@/components/EntranceSplash";
 import StorefrontWrapper from "@/components/StorefrontWrapper";
-import AnnouncementBar from "@/components/AnnouncementBar";
 import CookieBanner from "@/components/CookieBanner";
 import CustomCursor from "@/components/ui/CustomCursor";
 import TransitionProvider from "@/components/providers/TransitionProvider";
@@ -148,8 +147,6 @@ export default function RootLayout({
             `,
           }}
         />
-        
-        <AnnouncementBar />
         
         <CustomCursor />
         <StorefrontWrapper>

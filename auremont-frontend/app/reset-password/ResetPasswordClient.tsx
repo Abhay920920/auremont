@@ -2,11 +2,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import api from "@/lib/axios";
 
 export default function ResetPasswordClient() {
-  const searchParams = useSearchParams();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [token, setToken] = useState("");
@@ -17,11 +16,14 @@ export default function ResetPasswordClient() {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    const e = searchParams.get("email");
-    const t = searchParams.get("token");
-    if (e) setEmail(e);
-    if (t) setToken(t);
-  }, [searchParams]);
+    if (typeof window !== "undefined") {
+      const searchParams = new URLSearchParams(window.location.search);
+      const e = searchParams.get("email");
+      const t = searchParams.get("token");
+      if (e) setEmail(e);
+      if (t) setToken(t);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

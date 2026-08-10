@@ -93,13 +93,15 @@ select:-webkit-autofill:active {
     padding-bottom: max(env(safe-area-inset-bottom), 1.5rem);
   }
 
-  /* Universal page top offset — clears fixed header + announcement bar on all screen sizes */
+  /* Universal page top offset — clears unified fixed header (announcement + nav + currency strip) */
+  /* Mobile total: ~32px announce + 64px nav + 28px currency = ~124px → pt-32 (128px) ✓ */
+  /* Desktop total: ~32px announce + 80px nav = ~112px → pt-32 (128px) ✓ */
   .page-top {
-    @apply pt-40 md:pt-32;
+    @apply pt-32;
   }
-  /* For full-viewport hero sections that need even more clearance on mobile */
+  /* For hero sections needing extra visual breathing room */
   .hero-top {
-    @apply pt-44 md:pt-36;
+    @apply pt-36 md:pt-40;
   }
 
   .glass {
