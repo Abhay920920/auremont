@@ -45,7 +45,7 @@ export default function GiftingPage() {
     <>
       <JsonLd data={giftingFaqSchema} />
       
-      <main className="min-h-screen bg-background text-primaryText pt-24 md:pt-32 pb-24 px-6 md:px-12 max-w-[1800px] mx-auto">
+      <main className="min-h-screen bg-background text-primaryText pt-40 md:pt-32 pb-24 px-6 md:px-12 max-w-[1800px] mx-auto">
         <Breadcrumbs items={[{ label: "Home", url: "/" }, { label: "Gifting", url: "/gifting" }]} />
 
         {/* Hero Section */}

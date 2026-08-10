@@ -29,6 +29,7 @@ export default function Header() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [headerTop, setHeaderTop] = useState(0);
 
   // Prevent hydration mismatch for zustand persist
   useEffect(() => {
@@ -38,18 +39,34 @@ export default function Header() {
       fetchWishlist(user.id);
     }
     
+    // Calculate dynamic top offset based on announcement bar height
+    const updateHeaderTop = () => {
+      const bar = document.querySelector('.announcement-bar') as HTMLElement | null;
+      setHeaderTop(bar ? bar.getBoundingClientRect().height : 0);
+    };
+
+    updateHeaderTop();
+    // Re-measure when announcement bar animates in/out
+    const resizeObserver = new ResizeObserver(updateHeaderTop);
+    const bar = document.querySelector('.announcement-bar');
+    if (bar) resizeObserver.observe(bar);
+
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      resizeObserver.disconnect();
+    };
   }, [fetchCart, fetchWishlist, user]);
 
   return (
     <>
       <header 
-        className={`w-full fixed top-0 left-0 z-50 transition-all duration-500 pt-safe-top ${
-          isScrolled || isMegaNavOpen ? 'pb-4 glass' : 'pb-6 md:pb-8 md:pt-8 bg-transparent border-b-transparent'
+        style={{ top: headerTop }}
+        className={`w-full fixed left-0 z-[70] transition-all duration-500 pt-safe-top ${
+          isScrolled || isMegaNavOpen ? 'pb-4 glass' : 'pb-4 md:pb-8 md:pt-8 bg-transparent border-b-transparent'
         }`}
       >
         <div className="max-w-[2000px] mx-auto px-4 md:px-12 flex justify-between items-center relative">

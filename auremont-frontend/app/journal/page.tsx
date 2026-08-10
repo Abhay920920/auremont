@@ -65,7 +65,7 @@ export default function JournalPage() {
   const displayBlogs = blogs.length > 0 ? blogs : FEATURED_STORIES;
 
   return (
-    <div className="w-full bg-background pt-32 pb-24 min-h-screen">
+    <div className="w-full bg-background pt-40 md:pt-32 pb-24 min-h-screen">
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-serif text-luxuryGold mb-6 tracking-tight uppercase">The RARE NUTS Journal</h1>

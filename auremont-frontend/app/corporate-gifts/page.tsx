@@ -14,7 +14,7 @@ export default function CorporateGiftsPage() {
 
   return (
     <>
-      <main className="w-full bg-background pt-24 md:pt-32 pb-24 min-h-screen text-primaryText px-6 md:px-12 max-w-[1800px] mx-auto">
+      <main className="w-full bg-background pt-40 md:pt-32 pb-24 min-h-screen text-primaryText px-6 md:px-12 max-w-[1800px] mx-auto">
         <Breadcrumbs items={[{ label: "Home", url: "/" }, { label: "Corporate Gifting" }]} />
 
         {/* Hero Header */}

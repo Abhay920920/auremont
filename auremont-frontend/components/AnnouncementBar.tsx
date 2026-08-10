@@ -16,7 +16,7 @@ export default function AnnouncementBar() {
         animate={{ height: "auto", opacity: 1 }}
         exit={{ height: 0, opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="w-full bg-secondaryBg border-b border-divider flex items-center justify-center py-2 px-4 relative z-[60]"
+        className="w-full bg-secondaryBg border-b border-divider flex items-center justify-center py-2 px-4 relative z-[65] announcement-bar"
       >
         <p className="text-[11px] uppercase tracking-widest text-primaryText font-medium text-center">
           Complimentary shipping on all orders over ₹2000

@@ -1,6 +1,6 @@
 export default function ReturnsPage() {
   return (
-    <div className="w-full bg-background pt-32 pb-24 min-h-screen">
+    <div className="w-full bg-background pt-40 md:pt-32 pb-24 min-h-screen">
       <div className="max-w-4xl mx-auto px-6">
         <h1 className="text-4xl font-serif text-luxuryGold mb-12 capitalize text-center">Return & Exchange Policy</h1>
         

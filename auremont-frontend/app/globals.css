@@ -93,6 +93,15 @@ select:-webkit-autofill:active {
     padding-bottom: max(env(safe-area-inset-bottom), 1.5rem);
   }
 
+  /* Universal page top offset — clears fixed header + announcement bar on all screen sizes */
+  .page-top {
+    @apply pt-40 md:pt-32;
+  }
+  /* For full-viewport hero sections that need even more clearance on mobile */
+  .hero-top {
+    @apply pt-44 md:pt-36;
+  }
+
   .glass {
     @apply bg-background/70 backdrop-blur-xl border-b border-divider/50;
   }

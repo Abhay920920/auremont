@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export default function GiftBoxesPage() {
   return (
-    <div className="w-full bg-background pt-32 pb-24 min-h-screen">
+    <div className="w-full bg-background pt-40 md:pt-32 pb-24 min-h-screen">
       <div className="max-w-5xl mx-auto px-6">
         
         {/* Header */}
