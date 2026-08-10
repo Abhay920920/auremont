@@ -77,6 +77,10 @@ const nextConfig = {
           {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=(), browsing-topics=()'
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=31536000; includeSubDomains; preload'
           }
         ]
       }
@@ -89,43 +93,6 @@ const nextConfig = {
         hostname: '**',
       },
     ],
-  },
-  async redirects() {
-    return [
-      {
-        source: '/:path*',
-        has: [
-          {
-            type: 'host',
-            value: 'auremont-rose.vercel.app',
-          },
-        ],
-        destination: 'https://rarenuts.in/:path*',
-        permanent: true,
-      },
-      {
-        source: '/:path*',
-        has: [
-          {
-            type: 'host',
-            value: 'www.rarenuts.in',
-          },
-        ],
-        destination: 'https://rarenuts.in/:path*',
-        permanent: true,
-      },
-      {
-        source: '/:path*',
-        has: [
-          {
-            type: 'host',
-            value: 'rarenuts.com',
-          },
-        ],
-        destination: 'https://rarenuts.in/:path*',
-        permanent: true,
-      },
-    ];
   },
 };
 

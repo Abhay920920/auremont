@@ -106,9 +106,21 @@ select:-webkit-autofill:active {
   .mask-delay-1 { animation-delay: 0.2s; }
   .mask-delay-2 { animation-delay: 0.4s; }
   .mask-delay-3 { animation-delay: 0.6s; }
+  /* Gold Leaf Shimmer Effect */
+  .gold-shimmer {
+    background: linear-gradient(90deg, #D4AF37 0%, #FFF3B0 50%, #D4AF37 100%);
+    background-size: 200% 100%;
+    animation: goldShimmer 3s infinite linear;
+  }
 }
 
 @keyframes slideUpMask {
   0% { transform: translateY(100%); }
   100% { transform: translateY(0); }
 }
+
+@keyframes goldShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+

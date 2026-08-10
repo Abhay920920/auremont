@@ -235,6 +235,20 @@ export class OrdersService {
         data: inventoryLogs.map((log) => ({ ...log, referenceId: createdOrder.id })),
       });
 
+      // Write outbox event for guaranteed async processing (email notification, invoice generation)
+      await (tx as any).outboxEvent.create({
+        data: {
+          eventType: 'order_created',
+          payload: {
+            orderId: createdOrder.id,
+            orderNumber: createdOrder.orderNumber,
+            userId: effectiveUserId,
+            total: createdOrder.total.toString(),
+            guestEmail,
+          },
+        },
+      });
+
       return createdOrder;
     }, { maxWait: 5000, timeout: 10000 });
   }

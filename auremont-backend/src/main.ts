@@ -35,6 +35,7 @@ async function bootstrap() {
         origin.includes('localhost') ||
         (frontendUrl && origin.startsWith(frontendUrl)) ||
         /\.vercel\.app$/.test(origin) ||
+        /\.rarenuts\.in$/.test(origin) ||
         /\.rarenuts\.com$/.test(origin) ||
         /\.auremont\.com$/.test(origin);
       if (isAllowed) {

@@ -7,6 +7,8 @@ import JsonLd from '@/components/JsonLd';
 import SquirrelLogo from '@/components/ui/SquirrelLogo';
 import { Award, Briefcase, Users, Sparkles, Box, ShieldCheck, Mail, ArrowRight, PackageCheck } from 'lucide-react';
 
+import CorporateQuoteEstimator from "@/components/corporate/CorporateQuoteEstimator";
+
 export default function CorporateGiftsPage() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.com';
 
@@ -44,7 +46,7 @@ export default function CorporateGiftsPage() {
               <span className="text-luxuryGold font-serif italic text-2xl tracking-widest block">Executive Distinction</span>
               <span className="text-xs uppercase tracking-widest text-secondaryText">Bespoke Corporate Curation</span>
             </div>
-            <Link href="/contact" className="px-8 py-3 bg-luxuryGold text-black font-medium tracking-widest text-xs uppercase hover:bg-goldHover transition-colors">
+            <Link href="#quote-estimator" className="px-8 py-3 bg-luxuryGold text-black font-medium tracking-widest text-xs uppercase hover:bg-goldHover transition-colors">
               Request Corporate Catalog
             </Link>
           </div>
@@ -123,6 +125,11 @@ export default function CorporateGiftsPage() {
             </div>
           </div>
         </section>
+
+        {/* Interactive Corporate Bulk Quote Estimator */}
+        <div id="quote-estimator">
+          <CorporateQuoteEstimator />
+        </div>
 
         {/* CTA Contact Inquiry */}
         <section className="text-center border-t border-divider pt-16 max-w-3xl mx-auto space-y-6">
