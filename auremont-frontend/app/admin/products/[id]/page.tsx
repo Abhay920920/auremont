@@ -179,9 +179,50 @@ export default function AdminEditProductPage() {
               <input type="number" name="weightGrams" value={form.weightGrams} onChange={handleChange} required min="1" className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors" />
             </div>
             <div className="space-y-2 col-span-2">
-              <label className="text-sm uppercase tracking-widest text-secondaryText">Thumbnail URL</label>
+              <label className="text-sm uppercase tracking-widest text-secondaryText">Thumbnail Image URL</label>
               <input type="text" name="thumbnailUrl" value={form.thumbnailUrl} onChange={handleChange} className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors" />
             </div>
+          </div>
+
+          {/* Quick Image Presets & Live Preview */}
+          <div className="pt-4 border-t border-divider space-y-4">
+            <label className="text-xs uppercase tracking-widest text-luxuryGold font-medium block">
+              1-Click RARE NUTS Image Presets
+            </label>
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+              {[
+                { name: "250g Pouch", url: "/images/california-almonds-250g.png" },
+                { name: "500g Jar", url: "/images/roasted-almonds-jar.png" },
+                { name: "1kg Wooden Box", url: "/images/royal-almonds-wooden-box.png" },
+                { name: "Window Pouch", url: "/images/almonds-pouch-window.png" },
+                { name: "Luxury Gift Set", url: "/images/luxury-gift-box-unboxing.png" },
+              ].map((preset) => (
+                <button
+                  key={preset.url}
+                  type="button"
+                  onClick={() => setForm({ ...form, thumbnailUrl: preset.url })}
+                  className={`p-2 border text-center rounded-xl text-xs font-serif transition-all flex flex-col items-center gap-1 ${
+                    form.thumbnailUrl === preset.url
+                      ? "border-luxuryGold bg-luxuryGold/10 text-luxuryGold"
+                      : "border-divider bg-background text-secondaryText hover:border-luxuryGold/40"
+                  }`}
+                >
+                  <img src={preset.url} alt={preset.name} className="w-12 h-14 object-cover rounded-md" />
+                  <span>{preset.name}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Live Image Preview Card */}
+            {form.thumbnailUrl && (
+              <div className="p-4 bg-background border border-divider rounded-xl flex items-center gap-4 mt-2">
+                <img src={form.thumbnailUrl} alt="Live Preview" className="w-16 h-20 object-cover border border-luxuryGold/40 rounded-lg shadow-md" />
+                <div>
+                  <span className="text-xs uppercase tracking-widest text-luxuryGold block font-medium">Live Storefront Image Preview</span>
+                  <p className="text-xs text-secondaryText line-clamp-1 font-mono">{form.thumbnailUrl}</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

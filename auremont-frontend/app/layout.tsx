@@ -12,6 +12,12 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'RARE NUTS',
+  },
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in'),
   title: {
     template: "%s | RARE NUTS",
@@ -53,6 +59,7 @@ import AnnouncementBar from "@/components/AnnouncementBar";
 import CookieBanner from "@/components/CookieBanner";
 import CustomCursor from "@/components/ui/CustomCursor";
 import TransitionProvider from "@/components/providers/TransitionProvider";
+import MobileBottomBar from "@/components/mobile/MobileBottomBar";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in';
 
@@ -103,7 +110,7 @@ export default function RootLayout({
       <head>
         <JsonLd data={organizationSchema} />
       </head>
-      <body className={`${inter.variable} ${cormorant.variable} font-sans bg-background text-primaryText min-h-screen antialiased flex flex-col overflow-x-hidden selection:bg-luxuryGold/30 selection:text-luxuryGold print:bg-background print:text-primaryText`}>
+      <body className={`${inter.variable} ${cormorant.variable} font-sans bg-background text-primaryText min-h-screen antialiased flex flex-col overflow-x-hidden selection:bg-luxuryGold/30 selection:text-luxuryGold print:bg-background print:text-primaryText pb-16 md:pb-0`}>
         <EntranceSplash />
         <div className="print:hidden">
           <FilmGrain />
@@ -119,6 +126,7 @@ export default function RootLayout({
           </TransitionProvider>
         </StorefrontWrapper>
 
+        <MobileBottomBar />
         <CookieBanner />
       </body>
     </html>

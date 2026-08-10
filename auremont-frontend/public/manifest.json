@@ -1,0 +1,25 @@
+{
+  "name": "RARE NUTS — Luxury Gourmet Almonds & Bespoke Gifting",
+  "short_name": "RARE NUTS",
+  "description": "Purveyors of exceptionally sourced California almonds, slow-roasted artisanal roasts, and bespoke luxury gifting.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#D4AF37",
+  "orientation": "portrait-primary",
+  "categories": ["shopping", "lifestyle", "food"],
+  "icons": [
+    {
+      "src": "/images/rarenuts-gold-squirrel-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/rarenuts-gold-squirrel-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
