@@ -40,8 +40,8 @@ export default function StickyPurchasePanel({ product }: { product: any }) {
         </button>
       </div>
 
-      {/* Mobile Sticky Add To Cart Bar */}
-      <div className="fixed bottom-0 left-0 w-full bg-background/90 backdrop-blur-md border-t border-divider p-4 pb-safe-bottom lg:hidden z-50 animate-slide-up shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+      {/* Mobile Sticky Add To Cart Bar positioned cleanly above mobile navigation bar */}
+      <div className="fixed bottom-14 md:bottom-0 left-0 w-full bg-background/95 backdrop-blur-md border-t border-divider px-4 py-2.5 lg:hidden z-40 animate-slide-up shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
         <div className="flex items-center justify-between gap-4 max-w-7xl mx-auto">
           <div className="hidden sm:block">
             <p className="text-sm font-serif text-primaryText truncate">{product.name}</p>

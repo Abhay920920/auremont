@@ -7,11 +7,14 @@ import { createMockPrismaService } from '../prisma/prisma.service.mock';
 import { ConflictException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
+import { MailService } from './mail.service';
+
 describe('AuthService Unit Tests', () => {
   let authService: AuthService;
   let prismaMock: any;
   let usersServiceMock: any;
   let jwtServiceMock: any;
+  let mailServiceMock: any;
 
   beforeEach(async () => {
     prismaMock = createMockPrismaService();
@@ -23,6 +26,10 @@ describe('AuthService Unit Tests', () => {
       sign: jest.fn().mockReturnValue('mock_token_jwt'),
       verify: jest.fn().mockReturnValue({ sub: 'user-001', email: 'test@auremont.com' }),
     };
+    mailServiceMock = {
+      sendPasswordResetEmail: jest.fn().mockResolvedValue(true),
+      sendEmail: jest.fn().mockResolvedValue({ success: true }),
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -30,6 +37,7 @@ describe('AuthService Unit Tests', () => {
         { provide: UsersService, useValue: usersServiceMock },
         { provide: PrismaService, useValue: prismaMock },
         { provide: JwtService, useValue: jwtServiceMock },
+        { provide: MailService, useValue: mailServiceMock },
       ],
     }).compile();
 
@@ -105,6 +113,29 @@ describe('AuthService Unit Tests', () => {
           password: 'pass',
         })
       ).rejects.toThrow(ConflictException);
+    });
+  });
+
+  describe('forgotPassword & resetPassword', () => {
+    it('should generate reset token, update user and dispatch reset email', async () => {
+      const user = { id: 'user-001', email: 'test@auremont.com', firstName: 'Alexander' };
+      usersServiceMock.findByEmail.mockResolvedValue(user);
+      prismaMock._seed('users', [user]);
+
+      const res = await authService.forgotPassword('test@auremont.com');
+      expect(res.message).toContain('reset link has been sent');
+      expect(mailServiceMock.sendPasswordResetEmail).toHaveBeenCalledWith(
+        'test@auremont.com',
+        expect.any(String),
+        'Alexander',
+      );
+    });
+
+    it('should securely handle nonexistent email without revealing user existence', async () => {
+      usersServiceMock.findByEmail.mockResolvedValue(null);
+      const res = await authService.forgotPassword('unknown@auremont.com');
+      expect(res.message).toContain('reset link has been sent');
+      expect(mailServiceMock.sendPasswordResetEmail).not.toHaveBeenCalled();
     });
   });
 });

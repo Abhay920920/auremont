@@ -39,6 +39,7 @@ if (!process.env.VERCEL) {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  outputFileTracingRoot: path.join(__dirname, '..'),
   typescript: {
     ignoreBuildErrors: true,
   },

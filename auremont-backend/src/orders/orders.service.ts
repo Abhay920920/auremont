@@ -272,7 +272,7 @@ export class OrdersService {
       return await this.payments.createRazorpayOrder(orderId, amount);
     } catch (err) {
       // Log but don't fail the checkout — order is already created
-      console.error('Payment initialization failed:', err.message);
+      console.error('Payment initialization failed:', (err as any).message);
       return null;
     }
   }

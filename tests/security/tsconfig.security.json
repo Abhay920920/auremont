@@ -1,0 +1,16 @@
+{
+  "extends": "../../auremont-backend/tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "../../",
+    "baseUrl": "../../auremont-backend",
+    "paths": {
+      "src/*": ["src/*"]
+    },
+    "typeRoots": [
+      "../../auremont-backend/node_modules/@types"
+    ],
+    "types": ["jest", "node"],
+    "moduleResolution": "node"
+  },
+  "include": ["../../auremont-backend/src/**/*.ts", "**/*.ts", "../integration/**/*.ts", "../concurrency/**/*.ts", "../failure-injection/**/*.ts"]
+}

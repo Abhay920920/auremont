@@ -3,6 +3,7 @@
 import { useState } from "react";
 import api from "@/lib/axios";
 import Link from "next/link";
+import SquirrelLogo from "@/components/ui/SquirrelLogo";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -26,10 +27,13 @@ export default function ForgotPassword() {
   return (
     <div className="min-h-[70vh] flex items-center justify-center bg-secondaryBg px-6 pt-32 pb-16">
       <div className="card w-full max-w-md space-y-6">
-        <h1 className="font-serif text-3xl text-center">Reset Password</h1>
-        <p className="text-secondaryText text-sm text-center">
-          Enter your email address and we'll send you a link to reset your password.
-        </p>
+        <div className="flex flex-col items-center text-center space-y-2">
+          <SquirrelLogo size={48} variant="icon" />
+          <h1 className="font-serif text-3xl text-luxuryGold">Reset Password</h1>
+          <p className="text-secondaryText text-sm">
+            Enter your email address and we'll send you a link to reset your password.
+          </p>
+        </div>
         
         {msg && (
           <div className="p-3 bg-luxuryGold/10 text-luxuryGold rounded text-sm text-center">

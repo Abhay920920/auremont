@@ -31,7 +31,7 @@ export default function MegaNavigation({ isOpen, onMouseLeave }: { isOpen: boole
                <ul className="space-y-4">
                  <li><Link href="/custom-gift-box" className="text-luxuryGold hover:underline transition-colors font-serif text-xl">Bespoke Gift Builder</Link></li>
                  <li><Link href="/about" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-xl">Our Heritage</Link></li>
-                 <li><Link href="/process" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-xl">The Craftsmanship</Link></li>
+                 <li><Link href="/pairing" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-xl">Pairing Guide</Link></li>
                  <li><Link href="/journal" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-xl">Journal</Link></li>
                </ul>
              </div>

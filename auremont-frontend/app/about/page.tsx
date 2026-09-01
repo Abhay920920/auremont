@@ -4,28 +4,21 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
+import SquirrelLogo from "@/components/ui/SquirrelLogo";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
+};
 
 export default function AboutPage() {
-  const [mounted, setMounted] = useState(false);
-  
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   const { scrollYProgress } = useScroll();
   const yHero = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-
-  const fadeUp = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
-  };
-
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
-  };
-
-  if (!mounted) return null;
 
   return (
     <div className="w-full bg-background min-h-screen overflow-hidden">
@@ -189,6 +182,20 @@ export default function AboutPage() {
               </div>
             </div>
           </motion.div>
+        </motion.section>
+
+        {/* Section 4: Brand Seal & Heritage Emblem */}
+        <motion.section
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={fadeUp}
+          className="text-center py-16 border-t border-divider flex flex-col items-center justify-center space-y-4"
+        >
+          <SquirrelLogo size={96} variant="full" />
+          <p className="text-secondaryText text-sm max-w-md font-light italic mt-2">
+            "Every kernel certified to the highest botanical reserve standards."
+          </p>
         </motion.section>
 
       </div>

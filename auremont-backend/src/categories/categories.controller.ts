@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Body, UseGuards, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { CategoriesService } from './categories.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -13,16 +14,28 @@ export class CategoriesController {
   // ── PUBLIC ─────────────────────────────────────────────────────────────────
 
   @Get()
-  async getAllCategories() { return this.categoriesService.getAllCategories(); }
+  async getAllCategories(@Res({ passthrough: true }) res: Response) {
+    res.setHeader('Cache-Control', 'public, max-age=120, stale-while-revalidate=600');
+    return this.categoriesService.getAllCategories();
+  }
 
   @Get('collections/all')
-  async getAllCollections() { return this.categoriesService.getAllCollections(); }
+  async getAllCollections(@Res({ passthrough: true }) res: Response) {
+    res.setHeader('Cache-Control', 'public, max-age=120, stale-while-revalidate=600');
+    return this.categoriesService.getAllCollections();
+  }
 
   @Get('collections/:slug')
-  async getCollection(@Param('slug') slug: string) { return this.categoriesService.getCollectionBySlug(slug); }
+  async getCollection(@Param('slug') slug: string, @Res({ passthrough: true }) res: Response) {
+    res.setHeader('Cache-Control', 'public, max-age=120, stale-while-revalidate=600');
+    return this.categoriesService.getCollectionBySlug(slug);
+  }
 
   @Get(':slug')
-  async getCategory(@Param('slug') slug: string) { return this.categoriesService.getCategoryBySlug(slug); }
+  async getCategory(@Param('slug') slug: string, @Res({ passthrough: true }) res: Response) {
+    res.setHeader('Cache-Control', 'public, max-age=120, stale-while-revalidate=600');
+    return this.categoriesService.getCategoryBySlug(slug);
+  }
 
   // ── ADMIN: CATEGORIES ─────────────────────────────────────────────────────
 

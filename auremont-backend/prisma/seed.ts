@@ -336,7 +336,38 @@ async function main() {
     },
   });
 
-  console.log('Seed completed successfully! Test users created: example@gmail.com, admin@example.com, admin@rarenuts.com');
+  // 6. Create Coupons
+  await prisma.coupon.upsert({
+    where: { code: 'AUREMONT10' },
+    update: { status: true, startDate: new Date('2025-01-01'), endDate: new Date('2030-12-31') },
+    create: {
+      code: 'AUREMONT10',
+      type: 'percentage',
+      value: 10,
+      minimumOrder: 500,
+      maxDiscount: 500,
+      startDate: new Date('2025-01-01'),
+      endDate: new Date('2030-12-31'),
+      status: true,
+    },
+  });
+
+  await prisma.coupon.upsert({
+    where: { code: 'LUXURY500' },
+    update: { status: true, startDate: new Date('2025-01-01'), endDate: new Date('2030-12-31') },
+    create: {
+      code: 'LUXURY500',
+      type: 'flat',
+      value: 500,
+      minimumOrder: 2000,
+      maxDiscount: 500,
+      startDate: new Date('2025-01-01'),
+      endDate: new Date('2030-12-31'),
+      status: true,
+    },
+  });
+
+  console.log('Seed completed successfully! Test users & coupons created.');
 }
 
 main()

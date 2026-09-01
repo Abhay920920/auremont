@@ -11,6 +11,7 @@ export default function Shop() {
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   // Filter States
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -19,39 +20,47 @@ export default function Shop() {
   const [totalPages, setTotalPages] = useState(1);
   const productsPerPage = 9;
 
+  // Fetch categories once on initial mount
   useEffect(() => {
-    const fetchData = async () => {
+    let isMounted = true;
+    api.get('/categories')
+      .then(res => {
+        if (isMounted) setCategories(res.data?.data || res.data || []);
+      })
+      .catch(err => console.error("Failed to load categories:", err));
+    return () => { isMounted = false; };
+  }, []);
+
+  // Fetch products whenever filters or pagination change
+  useEffect(() => {
+    let isMounted = true;
+    const fetchProducts = async () => {
       setLoading(true);
+      setError(null);
       try {
-        const [productsRes, categoriesRes] = await Promise.all([
-          api.get('/products', {
-            params: {
-              categoryId: activeCategory || undefined,
-              sort: sortBy,
-              page: currentPage,
-              limit: productsPerPage
-            }
-          }),
-          api.get('/categories').catch(() => ({ data: { data: [
-            { id: '1', name: 'Raw Almonds' },
-            { id: '2', name: 'Roasted Almonds' },
-            { id: '3', name: 'Flavored Editions' },
-            { id: '4', name: 'Gift Boxes' }
-          ]}}))
-        ]);
-        
-        const fetchedProducts = productsRes.data?.data || [];
-        
-        setProducts(fetchedProducts);
-        setTotalPages(productsRes.data?.meta?.lastPage || 1);
-        setCategories(categoriesRes.data?.data || []);
-      } catch (err) {
-        console.error("Failed to load products");
+        const productsRes = await api.get('/products', {
+          params: {
+            categoryId: activeCategory || undefined,
+            sort: sortBy,
+            page: currentPage,
+            limit: productsPerPage
+          }
+        });
+        if (isMounted) {
+          setProducts(productsRes.data?.data || []);
+          setTotalPages(productsRes.data?.meta?.lastPage || 1);
+        }
+      } catch (err: any) {
+        if (isMounted) {
+          console.error("Failed to load products from database:", err?.message || err);
+          setError("Unable to load products. Please ensure database and server are reachable.");
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
-    fetchData();
+    fetchProducts();
+    return () => { isMounted = false; };
   }, [activeCategory, sortBy, currentPage]);
 
   const currentProducts = products;

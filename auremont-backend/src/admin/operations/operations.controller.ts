@@ -7,17 +7,7 @@ import { AdminAuthGuard, Roles } from '../auth/admin-auth.guard';
 export class AdminOperationsController {
   constructor(private readonly operationsService: AdminOperationsService) {}
 
-  @Get('coupons')
-  @Roles('SUPER_ADMIN', 'ADMIN', 'MARKETING_MANAGER')
-  getCoupons() {
-    return this.operationsService.getCoupons();
-  }
 
-  @Post('coupons')
-  @Roles('SUPER_ADMIN', 'ADMIN', 'MARKETING_MANAGER')
-  createCoupon(@Body() data: any) {
-    return this.operationsService.createCoupon(data);
-  }
 
   @Get('audit-logs')
   @Roles('SUPER_ADMIN')

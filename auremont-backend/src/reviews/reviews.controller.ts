@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Patch, Query, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Patch, Query, UseGuards, ForbiddenException } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -25,7 +25,11 @@ export class ReviewsController {
   }
 
   @Get('user/:userId')
-  async getUserReviews(@Param('userId') userId: string) {
+  @UseGuards(JwtAuthGuard)
+  async getUserReviews(@Param('userId') userId: string, @GetUser() user: any) {
+    if (user.id !== userId && user.role !== 'admin') {
+      throw new ForbiddenException('You do not have permission to view these reviews');
+    }
     return this.reviewsService.getUserReviews(userId);
   }
 

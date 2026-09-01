@@ -2,7 +2,8 @@
 import { test, expect } from '@playwright/test';
 
 const CORS_HEADERS = {
-  'access-control-allow-origin': '*',
+  'access-control-allow-origin': 'http://localhost:3000',
+  'access-control-allow-credentials': 'true',
   'access-control-allow-headers': '*',
   'access-control-allow-methods': '*',
 };

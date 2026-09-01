@@ -1,11 +1,36 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
-export class CartRecoveryService {
+export class CartRecoveryService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(CartRecoveryService.name);
+  private timer: NodeJS.Timeout | null = null;
 
   constructor(private readonly prisma: PrismaService) {}
+
+  onModuleInit() {
+    // Run automated recovery check every 30 minutes in background
+    const intervalMs = parseInt(process.env.CART_RECOVERY_INTERVAL_MS || '1800000', 10);
+    this.timer = setInterval(async () => {
+      try {
+        await this.processAbandonedCarts();
+      } catch (err: any) {
+        this.logger.warn(`Automated cart recovery job encountered an error: ${err.message}`);
+      }
+    }, intervalMs);
+
+    // Unref timer so it doesn't block process exit during tests/shutdown
+    if (this.timer && typeof this.timer.unref === 'function') {
+      this.timer.unref();
+    }
+  }
+
+  onModuleDestroy() {
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+  }
 
   /**
    * Scans for active carts with items that have been idle for > 1 hour.

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
 import { CouponsService } from './coupons.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { OptionalJwtAuthGuard } from '../auth/optional-jwt-auth.guard';
@@ -14,6 +14,7 @@ export class CouponsController {
   // ── PUBLIC ─────────────────────────────────────────────────────────────────
 
   @Post('validate')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(OptionalJwtAuthGuard)
   async validateCoupon(@Body() body: { code: string; subtotal: number }, @GetUser() user?: any) {
     const coupon = await this.couponsService.validateCoupon(body.code, body.subtotal, user?.id);

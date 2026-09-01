@@ -31,6 +31,7 @@ model User {
   wishlists        Wishlist[]
   notifications    Notification[]
   auditLogs        AuditLog[]
+  adminAuditLogs   AdminAuditLog[]
 
   @@map("users")
 }
@@ -54,8 +55,6 @@ model AdminUser {
   lastLogin DateTime? @map("last_login")
   createdAt DateTime @default(now()) @map("created_at")
 
-  logs      AdminAuditLog[]
-
   @@map("admin_users")
 }
 
@@ -70,7 +69,7 @@ model AdminAuditLog {
   ipAddress   String?  @map("ip_address") @db.VarChar(45)
   createdAt   DateTime @default(now()) @map("created_at")
 
-  admin       AdminUser @relation(fields: [adminId], references: [id])
+  admin       User     @relation(fields: [adminId], references: [id])
 
   @@map("admin_audit_logs")
 }

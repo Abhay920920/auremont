@@ -61,7 +61,7 @@ export class NotificationsService {
           data: {
             retryCount: { increment: 1 },
             status: event.retryCount >= 3 ? 'failed' : 'pending',
-            error: err.message,
+            error: (err as any).message,
           },
         });
       }

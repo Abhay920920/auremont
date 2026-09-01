@@ -42,6 +42,17 @@ export class AllExceptionsFilter implements ExceptionFilter {
       return response.status(status).json(responseBody);
     }
 
+    // Check if error has status / statusCode (e.g. from body-parser 413 PayloadTooLarge)
+    const errStatus = (exception as any)?.status || (exception as any)?.statusCode;
+    if (typeof errStatus === 'number' && errStatus >= 400 && errStatus < 600) {
+      return response.status(errStatus).json({
+        statusCode: errStatus,
+        timestamp: new Date().toISOString(),
+        path: request.url,
+        message: (exception as any)?.message || 'Request error',
+      });
+    }
+
     // Non-HTTP exception — return 500, expose message in dev
     const isDev = process.env.NODE_ENV !== 'production';
     return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({

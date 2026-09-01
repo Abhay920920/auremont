@@ -21,7 +21,7 @@ import { AdminOperationsModule } from './operations/operations.module';
     AdminReviewsModule,
     AdminOperationsModule,
     JwtModule.register({
-      secret: process.env.ADMIN_JWT_SECRET || 'fallback-admin-secret-dev-only',
+      secret: process.env.JWT_SECRET || process.env.ADMIN_JWT_SECRET || 'AUREMONT_LUXURY_SECRET_KEY',
       signOptions: { expiresIn: '1d' },
     }),
   ],

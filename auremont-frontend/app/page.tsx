@@ -67,11 +67,11 @@ const FALLBACK_PRODUCTS = [
   }
 ];
 
-// Fetch products from backend with build safety fallback
+// Fetch products from backend with ISR cache (60s revalidation)
 async function getProducts() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
   try {
-    const res = await fetch(`${apiUrl}/products`, { cache: 'no-store' });
+    const res = await fetch(`${apiUrl}/products`, { next: { revalidate: 60 } });
     if (!res.ok) return FALLBACK_PRODUCTS;
     const json = await res.json();
     return json.data && json.data.length > 0 ? json.data : FALLBACK_PRODUCTS;

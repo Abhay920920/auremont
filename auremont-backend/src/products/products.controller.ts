@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, NotFoundException, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, NotFoundException, UseGuards, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { ProductsService } from './products.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -17,12 +18,14 @@ export class ProductsController {
   // ── PUBLIC ─────────────────────────────────────────────────────────────────
 
   @Get()
-  async findAll(@Query() query: any) {
+  async findAll(@Query() query: any, @Res({ passthrough: true }) res: Response) {
+    res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
     return this.productsService.findAll(query);
   }
 
   @Get(':slug')
-  async findOne(@Param('slug') slug: string) {
+  async findOne(@Param('slug') slug: string, @Res({ passthrough: true }) res: Response) {
+    res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
     const product = await this.productsService.findBySlug(slug);
     if (!product) throw new NotFoundException('Product not found');
     return product;

@@ -5,57 +5,69 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import * as crypto from 'crypto';
 
+import { MailService } from './mail.service';
+
 @Injectable()
 export class AuthService implements OnModuleInit {
   constructor(
     private usersService: UsersService,
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private mailService: MailService,
   ) {}
 
   async onModuleInit() {
+    // Only auto-seed test fixtures in non-production environments
+    if (process.env.NODE_ENV === 'production') {
+      return;
+    }
+
     try {
       const adminPassword = await bcrypt.hash('Admin@12345', 10);
       const testPassword = await bcrypt.hash('password123', 10);
 
-      await this.prisma.user.upsert({
-        where: { email: 'admin@rarenuts.com' },
-        update: { passwordHash: adminPassword, role: 'admin' },
-        create: {
-          firstName: 'RARE NUTS',
-          lastName: 'Concierge',
-          email: 'admin@rarenuts.com',
-          passwordHash: adminPassword,
-          role: 'admin',
-          emailVerified: true,
-        },
-      });
+      // Seed default dev admin only if not already existing (do not overwrite existing password)
+      const existingAdmin = await this.prisma.user.findUnique({ where: { email: 'admin@rarenuts.com' } });
+      if (!existingAdmin) {
+        await this.prisma.user.create({
+          data: {
+            firstName: 'RARE NUTS',
+            lastName: 'Concierge',
+            email: 'admin@rarenuts.com',
+            passwordHash: adminPassword,
+            role: 'admin',
+            emailVerified: true,
+          },
+        });
+      }
 
-      await this.prisma.user.upsert({
-        where: { email: 'admin@example.com' },
-        update: { passwordHash: testPassword, role: 'admin' },
-        create: {
-          firstName: 'Admin',
-          lastName: 'User',
-          email: 'admin@example.com',
-          passwordHash: testPassword,
-          role: 'admin',
-          emailVerified: true,
-        },
-      });
+      const existingTestAdmin = await this.prisma.user.findUnique({ where: { email: 'admin@example.com' } });
+      if (!existingTestAdmin) {
+        await this.prisma.user.create({
+          data: {
+            firstName: 'Admin',
+            lastName: 'User',
+            email: 'admin@example.com',
+            passwordHash: testPassword,
+            role: 'admin',
+            emailVerified: true,
+          },
+        });
+      }
 
-      await this.prisma.user.upsert({
-        where: { email: 'example@gmail.com' },
-        update: { passwordHash: testPassword, role: 'customer' },
-        create: {
-          firstName: 'Test',
-          lastName: 'Customer',
-          email: 'example@gmail.com',
-          passwordHash: testPassword,
-          role: 'customer',
-          emailVerified: true,
-        },
-      });
+      const existingCustomer = await this.prisma.user.findUnique({ where: { email: 'example@gmail.com' } });
+      if (!existingCustomer) {
+        await this.prisma.user.create({
+          data: {
+            firstName: 'Test',
+            lastName: 'Customer',
+            email: 'example@gmail.com',
+            passwordHash: testPassword,
+            role: 'customer',
+            emailVerified: true,
+          },
+        });
+      }
     } catch (e) {
       // Auto-seed on startup complete
     }
@@ -169,14 +181,12 @@ export class AuthService implements OnModuleInit {
       data: { resetToken: hashedResetToken, resetTokenExpiry: expiry }
     });
 
-    // Mock Email Sending
-    const logger = new Logger('EmailService');
-    logger.log('\n=============================================');
-    logger.log(`[MOCK EMAIL] To: ${email}`);
-    logger.log(`[MOCK EMAIL] Subject: Account Recovery Request`);
-    const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=[REDACTED_TOKEN]&email=${email}`;
-    logger.log(`[MOCK EMAIL] Body: Please click the link to recover your account: ${resetUrl}`);
-    logger.log('=============================================\n');
+    // Dispatch secure email via MailService (production SMTP or secure dev handler)
+    try {
+      await this.mailService.sendPasswordResetEmail(email, resetToken, user.firstName);
+    } catch (err: any) {
+      Logger.warn(`Failed to deliver password reset email to ${email}: ${err.message}`, 'AuthService');
+    }
 
     return { message: 'If an account exists, a reset link has been sent.' };
   }

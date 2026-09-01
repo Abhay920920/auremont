@@ -51,6 +51,11 @@ async function bootstrap() {
   
   app.use(cookieParser());
   app.use(compression());
+
+  // Security: Enforce 1MB body size limit to prevent DoS via large payloads
+  // NestExpressApplication exposes useBodyParser which respects the limit setting
+  app.useBodyParser('json', { limit: '1mb' });
+  app.useBodyParser('urlencoded', { limit: '1mb', extended: true });
   
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,

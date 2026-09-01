@@ -78,7 +78,7 @@ export default function AdminNewCouponPage() {
               <label className="text-sm uppercase tracking-widest text-secondaryText">Discount Type *</label>
               <select name="type" value={form.type} onChange={handleChange} className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors text-primaryText appearance-none">
                 <option value="percentage">Percentage (%)</option>
-                <option value="flat">Flat Amount ($)</option>
+                <option value="flat">Flat Amount (₹)</option>
               </select>
             </div>
             <div className="space-y-2">
@@ -97,11 +97,11 @@ export default function AdminNewCouponPage() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-sm uppercase tracking-widest text-secondaryText">Minimum Order Amount ($)</label>
+              <label className="text-sm uppercase tracking-widest text-secondaryText">Minimum Order Amount (₹)</label>
               <input type="number" step="0.01" name="minimumOrder" value={form.minimumOrder} onChange={handleChange} className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors text-primaryText" />
             </div>
             <div className="space-y-2">
-              <label className="text-sm uppercase tracking-widest text-secondaryText">Max Discount Amount ($)</label>
+              <label className="text-sm uppercase tracking-widest text-secondaryText">Max Discount Amount (₹)</label>
               <input type="number" step="0.01" name="maxDiscount" value={form.maxDiscount} onChange={handleChange} className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors text-primaryText" placeholder="Only applies to percentage" />
             </div>
             <div className="space-y-2">

@@ -13,6 +13,9 @@ export const createMockPrismaService = () => {
     addresses: [],
     inventoryLogs: [],
     auditLogs: [],
+    adminAuditLogs: [],
+    outboxEvents: [],
+    webhookLogs: [],
     reviews: [],
     blogs: [],
     contactMessages: [],
@@ -22,38 +25,75 @@ export const createMockPrismaService = () => {
     categories: [],
   };
 
+  const matchWhere = (item: any, where: any): boolean => {
+    if (!where) return true;
+    if (where.OR && Array.isArray(where.OR)) {
+      return where.OR.some((subWhere: any) => matchWhere(item, subWhere));
+    }
+    if (where.AND && Array.isArray(where.AND)) {
+      return where.AND.every((subWhere: any) => matchWhere(item, subWhere));
+    }
+    return Object.entries(where).every(([key, val]: [string, any]) => {
+      if (key === 'OR' || key === 'AND') return true;
+      const itemVal = item[key];
+      if (val !== null && typeof val === 'object' && !(val instanceof Date)) {
+        if ('path' in val && 'equals' in val && Array.isArray(val.path)) {
+          let target = itemVal;
+          for (const p of val.path) {
+            if (target && typeof target === 'object') {
+              target = target[p];
+            } else {
+              target = undefined;
+              break;
+            }
+          }
+          return target === val.equals;
+        }
+        if ('lte' in val) {
+          return (itemVal instanceof Date ? itemVal.getTime() : itemVal) <= (val.lte instanceof Date ? val.lte.getTime() : val.lte);
+        }
+        if ('gte' in val) {
+          return (itemVal instanceof Date ? itemVal.getTime() : itemVal) >= (val.gte instanceof Date ? val.gte.getTime() : val.gte);
+        }
+        if ('lt' in val) {
+          return (itemVal instanceof Date ? itemVal.getTime() : itemVal) < (val.lt instanceof Date ? val.lt.getTime() : val.lt);
+        }
+        if ('gt' in val) {
+          return (itemVal instanceof Date ? itemVal.getTime() : itemVal) > (val.gt instanceof Date ? val.gt.getTime() : val.gt);
+        }
+        if ('in' in val && Array.isArray(val.in)) {
+          return val.in.includes(itemVal);
+        }
+        if ('not' in val) {
+          return itemVal !== val.not;
+        }
+        if ('some' in val) {
+          return Array.isArray(itemVal) && itemVal.length > 0;
+        }
+      }
+      if (itemVal instanceof Date && val instanceof Date) {
+        return itemVal.getTime() === val.getTime();
+      }
+      return itemVal === val;
+    });
+  };
+
   const createModelDelegate = (tableName: string) => ({
     findUnique: jest.fn(async ({ where }: { where: any }) => {
       const list = mockDb[tableName] || [];
-      return list.find((item) => {
-        return Object.entries(where).every(([key, val]) => item[key] === val);
-      }) || null;
+      return list.find((item) => matchWhere(item, where)) || null;
     }),
 
     findFirst: jest.fn(async ({ where }: { where: any } = { where: undefined }) => {
       const list = mockDb[tableName] || [];
       if (!where) return list[0] || null;
-      return list.find((item) => {
-        if (where.OR && Array.isArray(where.OR)) {
-          return where.OR.some((subWhere: any) =>
-            Object.entries(subWhere).every(([k, v]) => item[k] === v)
-          );
-        }
-        return Object.entries(where).every(([key, val]) => item[key] === val);
-      }) || null;
+      return list.find((item) => matchWhere(item, where)) || null;
     }),
 
     findMany: jest.fn(async ({ where, skip, take, orderBy }: any = {}) => {
       let list = [...(mockDb[tableName] || [])];
       if (where) {
-        list = list.filter((item) => {
-          if (where.OR && Array.isArray(where.OR)) {
-            return where.OR.some((subWhere: any) =>
-              Object.entries(subWhere).every(([k, v]) => item[k] === v)
-            );
-          }
-          return Object.entries(where).every(([k, v]) => item[k] === v);
-        });
+        list = list.filter((item) => matchWhere(item, where));
       }
       if (skip) list = list.slice(skip);
       if (take) list = list.slice(0, take);
@@ -176,7 +216,9 @@ export const createMockPrismaService = () => {
     address: createModelDelegate('addresses'),
     inventoryLog: createModelDelegate('inventoryLogs'),
     auditLog: createModelDelegate('auditLogs'),
-    adminAuditLog: createModelDelegate('auditLogs'),
+    adminAuditLog: createModelDelegate('adminAuditLogs'),
+    outboxEvent: createModelDelegate('outboxEvents'),
+    webhookLog: createModelDelegate('webhookLogs'),
     review: createModelDelegate('reviews'),
     blog: createModelDelegate('blogs'),
     contactMessage: createModelDelegate('contactMessages'),

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import SquirrelLogo from "@/components/ui/SquirrelLogo";
 
 export default function BrandStory() {
   return (
@@ -49,9 +50,11 @@ export default function BrandStory() {
                 className="object-cover group-hover:scale-105 transition-transform duration-[2s]"
               />
             </div>
-            <div className="absolute -bottom-12 -left-12 w-48 h-64 bg-background border border-divider hidden lg:block overflow-hidden p-2 z-10">
-              <div className="w-full h-full border border-divider/50 flex items-center justify-center text-luxuryGold font-serif text-6xl">
-                R.
+            <div className="absolute -bottom-12 -left-12 w-48 h-64 bg-background border border-luxuryGold/40 hidden lg:block overflow-hidden p-3 z-10 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
+              <div className="w-full h-full border border-luxuryGold/30 flex flex-col items-center justify-center p-3 text-center bg-secondaryBg/80">
+                <SquirrelLogo size={72} variant="icon" />
+                <span className="font-serif text-luxuryGold tracking-[0.2em] text-[10px] uppercase font-bold mt-2">RARE NUTS</span>
+                <span className="text-[8px] text-secondaryText tracking-widest uppercase font-mono mt-0.5">Est. 2024</span>
               </div>
             </div>
           </motion.div>

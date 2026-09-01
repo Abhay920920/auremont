@@ -6,6 +6,8 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { GetUser } from './get-user.decorator';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
 import { Response, Request } from 'express';
 
 @Controller('auth')
@@ -15,8 +17,8 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @Throttle({ default: { limit: 60, ttl: 60000 } })
-  async login(@Body() body: any, @Res({ passthrough: true }) res: Response) {
-    const user = await this.authService.validateUser(body.email, body.password);
+  async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
+    const user = await this.authService.validateUser(dto.email, dto.password);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -78,8 +80,8 @@ export class AuthController {
 
   @Post('register')
   @Throttle({ default: { limit: 60, ttl: 60000 } })
-  async register(@Body() body: any, @Res({ passthrough: true }) res: Response) {
-    const result = await this.authService.register(body);
+  async register(@Body() dto: RegisterDto, @Res({ passthrough: true }) res: Response) {
+    const result = await this.authService.register(dto);
     
     const isSecure = process.env.COOKIE_SECURE === 'true' || process.env.NODE_ENV === 'production';
 

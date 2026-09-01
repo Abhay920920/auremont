@@ -112,7 +112,7 @@ export default function AdminEditCouponPage() {
             <label className="text-xs uppercase tracking-widest text-secondaryText">Discount Type</label>
             <select name="type" value={form.type} onChange={handleChange} className="w-full bg-background border border-divider px-4 py-3 rounded-xl focus:border-luxuryGold outline-none transition-colors text-primaryText">
               <option value="percentage">Percentage (%)</option>
-              <option value="fixed">Fixed Amount (₹)</option>
+              <option value="flat">Flat Amount (₹)</option>
             </select>
           </div>
           <div className="space-y-2">

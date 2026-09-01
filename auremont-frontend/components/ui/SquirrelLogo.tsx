@@ -15,19 +15,19 @@ export default function SquirrelLogo({ variant = "header", className = "", size 
     return (
       <div className={`inline-flex flex-col items-center justify-center select-none ${className}`}>
         <div 
-          className="relative flex items-center justify-center rounded-full overflow-hidden transition-transform duration-300 hover:scale-105"
-          style={{ width: size, height: size }}
+          className="relative flex items-center justify-center transition-transform duration-300 hover:scale-105"
+          style={{ width: size * 1.15, height: size }}
         >
           <Image
             src="/images/rarenuts-gold-squirrel-logo.png"
             alt="RARE NUTS"
-            width={size}
+            width={size * 1.15}
             height={size}
-            className="object-contain filter brightness-110 contrast-125 drop-shadow-[0_2px_6px_rgba(212,175,55,0.3)]"
+            className="object-contain filter drop-shadow-[0_2px_6px_rgba(212,175,55,0.4)]"
             priority
           />
         </div>
-        <span className="font-serif text-luxuryGold tracking-[0.25em] uppercase font-bold text-[11px] md:text-xs whitespace-nowrap mt-1 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+        <span className="font-serif text-luxuryGold tracking-[0.25em] uppercase font-bold text-[11px] md:text-xs whitespace-nowrap mt-0.5 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
           RARE NUTS
         </span>
       </div>
@@ -39,7 +39,7 @@ export default function SquirrelLogo({ variant = "header", className = "", size 
     return (
       <div className={`inline-flex items-center justify-center select-none ${className}`}>
         <div 
-          className="relative flex items-center justify-center rounded-full overflow-hidden transition-transform duration-300 hover:scale-105"
+          className="relative flex items-center justify-center transition-transform duration-300 hover:scale-105"
           style={{ width: size, height: size }}
         >
           <Image
@@ -47,7 +47,7 @@ export default function SquirrelLogo({ variant = "header", className = "", size 
             alt="RARE NUTS"
             width={size}
             height={size}
-            className="object-contain filter brightness-110 contrast-125 drop-shadow-[0_2px_6px_rgba(212,175,55,0.3)]"
+            className="object-contain filter drop-shadow-[0_2px_6px_rgba(212,175,55,0.4)]"
             priority
           />
         </div>
@@ -55,19 +55,19 @@ export default function SquirrelLogo({ variant = "header", className = "", size 
     );
   }
 
-  // Full variant (Emblem + Brand Name + Tagline) for Splash, Footer, Hero
+  // Full variant (Emblem + Brand Name + Tagline) for Splash, Footer, Hero, Admin
   return (
     <div className={`inline-flex flex-col items-center select-none ${className}`}>
       <div 
-        className="relative flex items-center justify-center rounded-full overflow-hidden transition-transform duration-300 hover:scale-105"
-        style={{ width: size, height: size }}
+        className="relative flex items-center justify-center transition-transform duration-300 hover:scale-105"
+        style={{ width: size * 1.2, height: size }}
       >
         <Image
           src="/images/rarenuts-gold-squirrel-logo.png"
           alt="RARE NUTS"
-          width={size}
+          width={size * 1.2}
           height={size}
-          className="object-contain filter brightness-110 contrast-125 drop-shadow-[0_2px_8px_rgba(212,175,55,0.3)]"
+          className="object-contain filter drop-shadow-[0_2px_10px_rgba(212,175,55,0.5)]"
           priority
         />
       </div>

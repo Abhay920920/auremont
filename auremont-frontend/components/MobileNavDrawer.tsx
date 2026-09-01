@@ -76,7 +76,7 @@ export default function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; 
                 <h4 className="text-[10px] uppercase tracking-widest text-secondaryText mb-4">Explore</h4>
                 <ul className="space-y-4">
                   <li><Link href="/about" onClick={onClose} className="block text-secondaryText hover:text-primaryText font-serif text-lg">Our Heritage</Link></li>
-                  <li><Link href="/process" onClick={onClose} className="block text-secondaryText hover:text-primaryText font-serif text-lg">The Craftsmanship</Link></li>
+                  <li><Link href="/pairing" onClick={onClose} className="block text-secondaryText hover:text-primaryText font-serif text-lg">Pairing Guide</Link></li>
                   <li><Link href="/journal" onClick={onClose} className="block text-secondaryText hover:text-primaryText font-serif text-lg">Journal</Link></li>
                   <li><Link href="/contact" onClick={onClose} className="block text-secondaryText hover:text-primaryText font-serif text-lg">Contact Us</Link></li>
                 </ul>

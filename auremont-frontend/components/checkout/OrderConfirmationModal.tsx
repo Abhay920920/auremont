@@ -39,9 +39,10 @@ export default function OrderConfirmationModal({
             <X size={20} />
           </button>
 
-          <div className="flex justify-center pt-2">
-            <div className="w-16 h-16 bg-luxuryGold/10 border border-luxuryGold/40 rounded-full flex items-center justify-center text-luxuryGold shadow-[0_0_30px_rgba(212,175,55,0.2)]">
-              <CheckCircle size={32} />
+          <div className="flex flex-col items-center justify-center pt-2 gap-3">
+            <SquirrelLogo size={42} variant="icon" />
+            <div className="w-12 h-12 bg-luxuryGold/10 border border-luxuryGold/40 rounded-full flex items-center justify-center text-luxuryGold shadow-[0_0_30px_rgba(212,175,55,0.2)]">
+              <CheckCircle size={26} />
             </div>
           </div>
 

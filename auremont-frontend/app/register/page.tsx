@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import api from '@/lib/axios';
 import { useAuthStore } from '@/store/authStore';
 
+import Link from 'next/link';
+import SquirrelLogo from '@/components/ui/SquirrelLogo';
+
 export default function Register() {
   const [formData, setFormData] = useState({
     firstName: '',
@@ -44,9 +47,12 @@ export default function Register() {
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-6 pt-32 pb-16">
       <div className="w-full max-w-md card space-y-8">
-        <div className="text-center space-y-2">
-          <h1 className="text-4xl font-serif text-luxuryGold">Join RARE NUTS</h1>
-          <p className="text-mutedText">Create your exclusive account</p>
+        <div className="text-center space-y-3 flex flex-col items-center">
+          <SquirrelLogo size={56} variant="icon" />
+          <div>
+            <h1 className="text-3xl md:text-4xl font-serif text-luxuryGold tracking-tight">Join RARE NUTS</h1>
+            <p className="text-mutedText text-sm mt-1">Create your exclusive account</p>
+          </div>
         </div>
 
         {error && (
@@ -114,7 +120,7 @@ export default function Register() {
         </form>
 
         <div className="text-center text-sm text-mutedText">
-          Already have an account? <a href="/login" className="text-luxuryGold hover:underline">Sign In</a>
+          Already have an account? <Link href="/login" className="text-luxuryGold hover:underline">Sign In</Link>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, Reflector } from '@nestjs/core';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuditModule } from './audit/audit.module';
 import { AuthModule } from './auth/auth.module';
@@ -43,6 +43,7 @@ import { AdminModule } from './admin/admin.module';
     NotificationsModule,
   ],
   providers: [
+    Reflector,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

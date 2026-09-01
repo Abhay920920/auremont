@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/lib/axios";
 
+import SquirrelLogo from "@/components/ui/SquirrelLogo";
+
 export default function ResetPasswordPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -63,6 +65,7 @@ export default function ResetPasswordPage() {
     return (
       <div className="min-h-[70vh] flex items-center justify-center bg-secondaryBg px-6">
         <div className="card w-full max-w-md space-y-6 text-center border border-divider p-8 rounded-2xl">
+          <SquirrelLogo size={48} variant="icon" />
           <h1 className="font-serif text-3xl text-error">Invalid Link</h1>
           <p className="text-secondaryText text-sm">
             This password reset link is invalid or missing parameters.
@@ -75,7 +78,10 @@ export default function ResetPasswordPage() {
   return (
     <div className="min-h-[70vh] flex items-center justify-center bg-secondaryBg px-6">
       <div className="card w-full max-w-md space-y-6 border border-divider p-8 rounded-2xl">
-        <h1 className="font-serif text-3xl text-center">Create New Password</h1>
+        <div className="flex flex-col items-center text-center space-y-2">
+          <SquirrelLogo size={48} variant="icon" />
+          <h1 className="font-serif text-3xl text-luxuryGold">Create New Password</h1>
+        </div>
         
         {msg && (
           <div className={`p-3 rounded-xl text-sm text-center ${success ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-error/10 text-error border border-error/20'}`}>

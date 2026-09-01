@@ -1,0 +1,17 @@
+{
+  "extends": "../auremont-backend/tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "../",
+    "baseUrl": "../auremont-backend",
+    "paths": {
+      "src/*": ["src/*"]
+    },
+    "typeRoots": [
+      "../node_modules/@types",
+      "../auremont-backend/node_modules/@types"
+    ],
+    "types": ["jest", "node", "bcrypt"],
+    "moduleResolution": "node"
+  },
+  "include": ["../auremont-backend/src/**/*.ts", "**/*.ts"]
+}

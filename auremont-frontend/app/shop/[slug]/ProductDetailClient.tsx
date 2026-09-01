@@ -48,10 +48,14 @@ export default function ProductDetailClient() {
         const rawData = prodRes.data;
         const p = (rawData && rawData.data && !Array.isArray(rawData.data)) ? rawData.data : rawData;
         setProduct(p);
-        try {
-          const rr = await api.get(`/reviews/product/${p.id}`);
-          setReviews(rr.data || []);
-        } catch { /* no reviews */ }
+        if (p?.reviews && Array.isArray(p.reviews)) {
+          setReviews(p.reviews);
+        } else if (p?.id) {
+          try {
+            const rr = await api.get(`/reviews/product/${p.id}`);
+            setReviews(rr.data || []);
+          } catch { /* no reviews */ }
+        }
       } catch (err) {
         console.error("Failed to load product", err);
       } finally {

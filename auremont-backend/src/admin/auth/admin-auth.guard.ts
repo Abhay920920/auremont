@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ForbiddenException, SetMetadata } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ForbiddenException, SetMetadata, Optional } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 
@@ -10,7 +10,14 @@ export const Roles = (...roles: string[]) => SetMetadata(ROLES_KEY, roles);
  */
 @Injectable()
 export class AdminAuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService, private reflector: Reflector) {}
+  private reflector: Reflector;
+
+  constructor(
+    private jwtService: JwtService,
+    @Optional() reflector?: Reflector,
+  ) {
+    this.reflector = reflector || new Reflector();
+  }
 
   /**
    * Checks if admin can activate route
@@ -27,7 +34,12 @@ export class AdminAuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: process.env.JWT_SECRET || 'AUREMONT_LUXURY_SECRET_KEY',
       });
-      request['admin'] = payload;
+      const adminId = payload.sub || payload.id;
+      request['admin'] = {
+        ...payload,
+        id: adminId,
+        sub: adminId,
+      };
     } catch {
       throw new UnauthorizedException('Invalid admin token');
     }

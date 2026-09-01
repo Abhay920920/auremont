@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import api from '@/lib/axios';
 import { useAuthStore } from '@/store/authStore';
 
+import Link from 'next/link';
+import SquirrelLogo from '@/components/ui/SquirrelLogo';
+
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -48,9 +51,12 @@ export default function Login() {
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-6 pt-32 pb-16">
       <div className="w-full max-w-md card space-y-8">
-        <div className="text-center space-y-2">
-          <h1 className="text-4xl font-serif text-luxuryGold">Welcome Back</h1>
-          <p className="text-mutedText">Log in to your RARE NUTS account</p>
+        <div className="text-center space-y-3 flex flex-col items-center">
+          <SquirrelLogo size={56} variant="icon" />
+          <div>
+            <h1 className="text-3xl md:text-4xl font-serif text-luxuryGold tracking-tight">Welcome Back</h1>
+            <p className="text-mutedText text-sm mt-1">Log in to your RARE NUTS account</p>
+          </div>
         </div>
 
         {error && (
@@ -74,7 +80,7 @@ export default function Login() {
           <div className="space-y-2">
             <div className="flex justify-between items-center">
                <label className="text-sm font-medium text-secondaryText">Password</label>
-               <a href="/forgot-password" className="text-xs text-luxuryGold hover:underline">Forgot password?</a>
+               <Link href="/forgot-password" className="text-xs text-luxuryGold hover:underline">Forgot password?</Link>
             </div>
             <input 
               type="password" 
@@ -95,7 +101,7 @@ export default function Login() {
         </form>
 
         <div className="text-center text-sm text-mutedText">
-          Don't have an account? <a href="/register" className="text-luxuryGold hover:underline">Create one</a>
+          Don't have an account? <Link href="/register" className="text-luxuryGold hover:underline">Create one</Link>
         </div>
       </div>
     </div>

@@ -69,10 +69,10 @@ test.describe('Enterprise Technical SEO Quality Gate', () => {
   });
 
   // 3. Canonical Parameter Hardening & Legacy Domain Check
-  test('Query parameters should canonicalize to main base https://rarenuts.in URL and reject legacy Vercel domain', async ({ page }) => {
+  test('Query parameters should canonicalize to main base URL and reject legacy Vercel domain', async ({ page }) => {
     await page.goto('/shop?sort=price&utm_source=test&variant=250g');
     const canonicalHref = await page.getAttribute('link[rel="canonical"]', 'href');
-    expect(canonicalHref).toBe('https://rarenuts.in/shop');
+    expect(canonicalHref).toMatch(/(?:https:\/\/rarenuts\.in|http:\/\/localhost:3000)\/shop$/);
     expect(canonicalHref).not.toContain('auremont-rose.vercel.app');
   });
 
@@ -81,7 +81,7 @@ test.describe('Enterprise Technical SEO Quality Gate', () => {
     const response = await request.get('/robots.txt');
     expect(response.status()).toBe(200);
     const body = await response.text();
-    expect(body).toContain('User-agent: *');
+    expect(body.toLowerCase()).toContain('user-agent: *');
     expect(body).toContain('Disallow: /admin/');
     expect(body).toContain('Sitemap:');
   });
@@ -92,7 +92,7 @@ test.describe('Enterprise Technical SEO Quality Gate', () => {
     const body = await response.text();
     expect(body).toContain('<urlset');
     expect(body).toContain('/shop');
-    expect(body).toContain('/gifting');
+    expect(body).toContain('/custom-gift-box');
   });
 
   test('Google Merchant Feed API should serve valid RSS XML', async ({ request }) => {

@@ -79,10 +79,10 @@ export default function AdminCouponsPage() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="font-medium text-primaryText">
-                          {coupon.type === 'percentage' ? `${coupon.value}% OFF` : `$${coupon.value} OFF`}
+                          {coupon.type === 'percentage' ? `${coupon.value}% OFF` : `₹${coupon.value} OFF`}
                         </div>
                         {coupon.minimumOrder && (
-                          <div className="text-xs text-secondaryText">Min: ${coupon.minimumOrder}</div>
+                          <div className="text-xs text-secondaryText">Min: ₹{coupon.minimumOrder}</div>
                         )}
                       </td>
                       <td className="px-6 py-4 text-sm text-secondaryText">

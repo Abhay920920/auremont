@@ -3,15 +3,23 @@ node_modules/
 .pnp
 .pnp.js
 
-# Testing
+# Testing & Reports
 /coverage
+playwright-report/
+test-results/
+*.tsbuildinfo
 
-# Next.js build output
+# Build outputs
 .next/
 out/
-
-# NestJS build output
 dist/
+auremont-backend/dist/
+auremont-backend/src/**/*.js
+auremont-backend/src/**/*.d.ts
+auremont-backend/src/**/*.js.map
+auremont-backend/test/**/*.js
+auremont-backend/test/**/*.d.ts
+auremont-backend/test/**/*.js.map
 
 # Production & Environment files
 .env
