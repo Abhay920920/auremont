@@ -6,10 +6,37 @@ import { ModerateReviewDto } from './dto/moderate-review.dto';
 
 @Injectable()
 export class ReviewsService {
+  private cache = new Map<string, { data: any; expiresAt: number }>();
+  private inflight = new Map<string, Promise<any>>();
+  private readonly CACHE_TTL_MS = 60 * 1000;
+
   constructor(
     private prisma: PrismaService,
     private audit: AuditService,
   ) {}
+
+  private getCached(key: string): any | null {
+    const cached = this.cache.get(key);
+    if (!cached) return null;
+    if (Date.now() > cached.expiresAt) {
+      this.cache.delete(key);
+      return null;
+    }
+    return cached.data;
+  }
+
+  private setCache(key: string, data: any) {
+    if (this.cache.size > 200) {
+      const oldestKey = this.cache.keys().next().value;
+      if (oldestKey) this.cache.delete(oldestKey);
+    }
+    this.cache.set(key, { data, expiresAt: Date.now() + this.CACHE_TTL_MS });
+  }
+
+  clearCache() {
+    this.cache.clear();
+    this.inflight.clear();
+  }
 
   async createReview(data: {
     userId: string;
@@ -18,6 +45,7 @@ export class ReviewsService {
     title?: string;
     review?: string;
   }): Promise<Review> {
+    this.clearCache();
     return this.prisma.review.create({
       data: {
         userId: data.userId,
@@ -31,16 +59,30 @@ export class ReviewsService {
   }
 
   async getProductReviews(productId: string): Promise<Review[]> {
-    return this.prisma.review.findMany({
-      where: { 
-        productId,
-        status: 'approved',
-      },
-      include: {
-        user: { select: { firstName: true, lastName: true } }
-      },
-      orderBy: { createdAt: 'desc' },
+    const cacheKey = `reviews:product:${productId}`;
+    const cached = this.getCached(cacheKey);
+    if (cached) return cached;
+    if (this.inflight.has(cacheKey)) return this.inflight.get(cacheKey);
+
+    const fetchPromise = (async () => {
+      const reviews = await this.prisma.review.findMany({
+        where: { 
+          productId,
+          status: 'approved',
+        },
+        include: {
+          user: { select: { firstName: true, lastName: true } }
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+      this.setCache(cacheKey, reviews);
+      return reviews;
+    })().finally(() => {
+      this.inflight.delete(cacheKey);
     });
+
+    this.inflight.set(cacheKey, fetchPromise);
+    return fetchPromise;
   }
 
   async getUserReviews(userId: string): Promise<Review[]> {

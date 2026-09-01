@@ -24,7 +24,7 @@ import { AdminModule } from './admin/admin.module';
     AdminModule,
     ThrottlerModule.forRoot([{
       ttl: 60000,
-      limit: 100,
+      limit: Number(process.env.THROTTLE_LIMIT) || 10000,
     }]),
     PrismaModule,
     AuditModule,
