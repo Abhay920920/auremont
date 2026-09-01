@@ -60,10 +60,9 @@
     ]
   },
   "scripts": {
-    "postinstall": "cd auremont-frontend && npm install",
-    "build": "cd auremont-frontend && npm install && npm run build",
-    "dev": "cd auremont-frontend && npm run dev",
-    "start": "cd auremont-frontend && npm run start",
+    "build": "cd auremont-frontend && next build",
+    "dev": "cd auremont-frontend && next dev",
+    "start": "cd auremont-frontend && next start",
     "dev:backend": "cd auremont-backend && npm run dev",
     "build:backend": "cd auremont-backend && npm run build",
     "test": "jest --passWithNoTests",
