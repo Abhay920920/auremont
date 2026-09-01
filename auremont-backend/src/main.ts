@@ -8,7 +8,27 @@ import * as cookieParser from 'cookie-parser';
 import * as compression from 'compression';
 import helmet from 'helmet';
 
+import * as cluster from 'node:cluster';
+import * as os from 'os';
+
 async function bootstrap() {
+  const isCluster = process.env.CLUSTER_MODE === 'true';
+  const numWorkers = Number(process.env.WORKERS) || Math.min(os.cpus().length, 4);
+
+  // If cluster mode is enabled and this is the primary master process
+  if (isCluster && (cluster as any).isPrimary) {
+    Logger.log(`Master cluster process ${process.pid} is running. Forking ${numWorkers} worker instances...`, 'ClusterBootstrap');
+    for (let i = 0; i < numWorkers; i++) {
+      (cluster as any).fork();
+    }
+
+    (cluster as any).on('exit', (worker: any, code: number, signal: string) => {
+      Logger.warn(`Worker ${worker.process.pid} died (signal: ${signal || code}). Auto-respawning replacement worker...`, 'ClusterBootstrap');
+      (cluster as any).fork();
+    });
+    return;
+  }
+
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   
   // Enable Trust Proxy for Render / Vercel / Nginx / Cloudflare load balancers
@@ -28,7 +48,6 @@ async function bootstrap() {
   // Enterprise Hardening: Dynamic Production & Vercel CORS
   app.enableCors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (server-to-server, mobile apps)
       if (!origin) return callback(null, true);
       const frontendUrl = process.env.FRONTEND_URL || '';
       const isAllowed =
@@ -53,7 +72,6 @@ async function bootstrap() {
   app.use(compression());
 
   // Security: Enforce 1MB body size limit to prevent DoS via large payloads
-  // NestExpressApplication exposes useBodyParser which respects the limit setting
   app.useBodyParser('json', { limit: '1mb' });
   app.useBodyParser('urlencoded', { limit: '1mb', extended: true });
   
@@ -70,6 +88,6 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3001;
   await app.listen(port, '0.0.0.0');
-  Logger.log(`Backend listening on port ${port}`, 'Bootstrap');
+  Logger.log(`Worker process ${process.pid} listening on port ${port}`, 'Bootstrap');
 }
 bootstrap();

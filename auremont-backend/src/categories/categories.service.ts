@@ -7,6 +7,7 @@ import { CreateCategoryDto, UpdateCategoryDto, CreateCollectionDto, UpdateCollec
 @Injectable()
 export class CategoriesService {
   private cache = new Map<string, { data: any; expiresAt: number }>();
+  private inflight = new Map<string, Promise<any>>();
   private readonly CACHE_TTL_MS = 60 * 1000;
 
   constructor(
@@ -34,34 +35,65 @@ export class CategoriesService {
 
   clearCache() {
     this.cache.clear();
+    this.inflight.clear();
   }
 
   async getAllCategories(): Promise<Category[]> {
-    const cached = this.getCached('categories:all');
+    const cacheKey = 'categories:all';
+    const cached = this.getCached(cacheKey);
     if (cached) return cached;
-    const cats = await this.prisma.category.findMany({ where: { status: true }, orderBy: { name: 'asc' } });
-    this.setCache('categories:all', cats);
-    return cats;
+    if (this.inflight.has(cacheKey)) return this.inflight.get(cacheKey);
+
+    const fetchPromise = (async () => {
+      const cats = await this.prisma.category.findMany({ where: { status: true }, orderBy: { name: 'asc' } });
+      this.setCache(cacheKey, cats);
+      return cats;
+    })().finally(() => {
+      this.inflight.delete(cacheKey);
+    });
+
+    this.inflight.set(cacheKey, fetchPromise);
+    return fetchPromise;
   }
 
   async getCategoryBySlug(slug: string): Promise<Category> {
-    const cached = this.getCached(`category:slug:${slug}`);
+    const cacheKey = `category:slug:${slug}`;
+    const cached = this.getCached(cacheKey);
     if (cached) return cached;
-    const category = await this.prisma.category.findUnique({
-      where: { slug },
-      include: { products: { where: { status: true }, include: { images: true } } },
+    if (this.inflight.has(cacheKey)) return this.inflight.get(cacheKey);
+
+    const fetchPromise = (async () => {
+      const category = await this.prisma.category.findUnique({
+        where: { slug },
+        include: { products: { where: { status: true }, include: { images: true } } },
+      });
+      if (!category || !category.status) throw new NotFoundException('Category not found');
+      this.setCache(cacheKey, category);
+      return category;
+    })().finally(() => {
+      this.inflight.delete(cacheKey);
     });
-    if (!category || !category.status) throw new NotFoundException('Category not found');
-    this.setCache(`category:slug:${slug}`, category);
-    return category;
+
+    this.inflight.set(cacheKey, fetchPromise);
+    return fetchPromise;
   }
 
   async getAllCollections(): Promise<Collection[]> {
-    const cached = this.getCached('collections:all');
+    const cacheKey = 'collections:all';
+    const cached = this.getCached(cacheKey);
     if (cached) return cached;
-    const collections = await this.prisma.collection.findMany({ where: { status: true }, orderBy: { name: 'asc' } });
-    this.setCache('collections:all', collections);
-    return collections;
+    if (this.inflight.has(cacheKey)) return this.inflight.get(cacheKey);
+
+    const fetchPromise = (async () => {
+      const colls = await this.prisma.collection.findMany({ where: { status: true }, orderBy: { name: 'asc' } });
+      this.setCache(cacheKey, colls);
+      return colls;
+    })().finally(() => {
+      this.inflight.delete(cacheKey);
+    });
+
+    this.inflight.set(cacheKey, fetchPromise);
+    return fetchPromise;
   }
 
   async getCollectionBySlug(slug: string): Promise<Collection> {

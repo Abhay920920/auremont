@@ -161,25 +161,34 @@ export class ProductsService {
       return cached;
     }
 
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
-    const product = await this.prisma.product.findFirst({
-      where: isUuid ? { OR: [{ id: slug }, { slug }] } : { slug },
-      include: {
-        images: true,
-        attributes: true,
-        category: true,
-        collection: true,
-        reviews: {
-          where: { status: 'approved' },
-          include: { user: { select: { firstName: true, lastName: true } } },
+    if (this.inflight.has(cacheKey)) {
+      return this.inflight.get(cacheKey);
+    }
+
+    const fetchPromise = (async () => {
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
+      const product = await this.prisma.product.findFirst({
+        where: isUuid ? { id: slug } : { slug },
+        include: {
+          category: true,
+          collection: true,
+          images: { orderBy: { sortOrder: 'asc' } },
+          attributes: true,
         },
-      },
+      });
+
+      if (!product) {
+        throw new NotFoundException('Product not found');
+      }
+
+      this.setCache(cacheKey, product);
+      return product;
+    })().finally(() => {
+      this.inflight.delete(cacheKey);
     });
 
-    if (product) {
-      this.setCache(cacheKey, product);
-    }
-    return product;
+    this.inflight.set(cacheKey, fetchPromise);
+    return fetchPromise;
   }
 
   // ── ADMIN ──────────────────────────────────────────────────────────────────
