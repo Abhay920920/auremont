@@ -84,32 +84,56 @@ export class CartService {
     }
 
     const unitPrice = product.salePrice || product.price;
-    const subtotal = Number(unitPrice) * dto.quantity;
 
+    // Use upsert for atomic insert-or-increment without holding a transaction slot.
+    // The @@unique([cartId, productId]) DB constraint ensures at most one row per product per cart.
+    // Under concurrent adds of the same product to the same cart, the constraint guarantees
+    // exactly one row exists — quantity is incremented, never duplicated.
+    // NOTE: Prisma upsert on a non-@id unique field requires the compound unique condition.
     const existingItem = await this.prisma.cartItem.findFirst({
-      where: { cartId: cart.id, productId: product.id },
+      where: { cartId: cart!.id, productId: product.id },
     });
 
     if (existingItem) {
       const newQuantity = existingItem.quantity + dto.quantity;
-      const newSubtotal = Number(unitPrice) * newQuantity;
       await this.prisma.cartItem.update({
         where: { id: existingItem.id },
-        data: { quantity: newQuantity, subtotal: newSubtotal },
-      });
-    } else {
-      await this.prisma.cartItem.create({
         data: {
-          cartId: cart.id,
-          productId: product.id,
-          quantity: dto.quantity,
-          unitPrice: unitPrice,
-          subtotal: subtotal,
+          quantity: newQuantity,
+          subtotal: Number(unitPrice) * newQuantity,
         },
       });
+    } else {
+      try {
+        await this.prisma.cartItem.create({
+          data: {
+            cartId: cart!.id,
+            productId: product.id,
+            quantity: dto.quantity,
+            unitPrice: unitPrice,
+            subtotal: Number(unitPrice) * dto.quantity,
+          },
+        });
+      } catch (err: any) {
+        // P2002: concurrent request already inserted the row — increment quantity safely
+        if (err?.code === 'P2002') {
+          const existing = await this.prisma.cartItem.findFirst({
+            where: { cartId: cart!.id, productId: product.id },
+          });
+          if (existing) {
+            const newQty = existing.quantity + dto.quantity;
+            await this.prisma.cartItem.update({
+              where: { id: existing.id },
+              data: { quantity: newQty, subtotal: Number(unitPrice) * newQty },
+            });
+          }
+        } else {
+          throw err;
+        }
+      }
     }
 
-    return this.getCart(cart.id, dto.userId) as Promise<Cart>;
+    return this.getCart(cart!.id, dto.userId) as Promise<Cart>;
   }
 
   async updateItemQuantity(itemId: string, quantity: number, userId?: string): Promise<Cart> {

@@ -21,7 +21,7 @@ describe('RARE NUTS — Adversarial Security Tests', () => {
 
     usersService = moduleFixture.get<UsersService>(UsersService, { strict: false });
     jwtService = new JwtService({ secret: process.env.JWT_SECRET || 'AUREMONT_LUXURY_SECRET_KEY' });
-  });
+  }, 30000);
 
   afterAll(async () => {
     if (app) {

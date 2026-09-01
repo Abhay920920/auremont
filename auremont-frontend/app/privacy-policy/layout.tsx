@@ -1,29 +1,33 @@
 import { Metadata } from 'next';
 import JsonLd from '@/components/JsonLd';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | RARE NUTS',
-  description: 'How we protect your data and privacy at RARE NUTS.',
+  title: 'Privacy Policy & Customer Data Protection | RARE NUTS',
+  description: 'Read the RARE NUTS privacy policy. Learn how we safeguard your personal information, address data, and transaction security under strict data protection protocols.',
   alternates: {
     canonical: `${siteUrl}/privacy-policy`,
   },
-  openGraph: {
-    title: 'Privacy Policy | RARE NUTS',
-    description: 'How we protect your data and privacy at RARE NUTS.',
-    url: `${siteUrl}/privacy-policy`,
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
 export default function PrivacyPolicyLayout({ children }: { children: React.ReactNode }) {
-  const schema = {
+  const breadcrumbs = {
     "@context": "https://schema.org",
-    "@type": "WebPage"
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": `${siteUrl}/` },
+      { "@type": "ListItem", "position": 2, "name": "Privacy Policy", "item": `${siteUrl}/privacy-policy` }
+    ]
   };
+
   return (
     <>
-      <JsonLd data={schema} />
+      <JsonLd data={breadcrumbs} />
       {children}
     </>
   );

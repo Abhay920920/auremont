@@ -88,16 +88,10 @@ export class PaymentsService {
 
     const db = this.prisma as any;
 
-    // 2. Webhook Idempotency Check via WebhookLog
-    const existingLog = await db.webhookLog.findUnique({
-      where: { eventId },
-    });
-
-    if (existingLog) {
-      return { received: true, message: 'Event already processed' };
-    }
-
-    // 3. Process Event
+    // 2. ATOMIC Webhook Idempotency — attempt to INSERT the log record FIRST inside a transaction.
+    //    WebhookLog.eventId has @unique, so a concurrent duplicate will throw P2002 (unique constraint),
+    //    which we catch to return early. This is a TOCTOU-safe approach across all cluster workers,
+    //    because the uniqueness constraint is enforced at the PostgreSQL level, not in application memory.
     if (event === 'payment.captured' || event === 'order.paid') {
       const paymentEntity = payload.payload?.payment?.entity;
       const razorpayOrderId = paymentEntity?.order_id;
@@ -109,67 +103,90 @@ export class PaymentsService {
       });
 
       if (!order) {
-        await db.webhookLog.create({
-          data: { provider: 'razorpay', eventId, eventType: event, payload, status: 'ignored' }
-        });
+        // Log and ignore safely — no transaction needed
+        try {
+          await db.webhookLog.create({
+            data: { provider: 'razorpay', eventId, eventType: event, payload, status: 'ignored' }
+          });
+        } catch { /* duplicate event already logged */ }
         throw new NotFoundException(`Order with paymentRef ${razorpayOrderId} not found`);
       }
 
-      if (order.paymentStatus === 'paid') {
-        await db.webhookLog.create({
-          data: { provider: 'razorpay', eventId, eventType: event, payload, status: 'already_paid' }
-        });
-        return { received: true, message: 'Already processed' };
-      }
-
-      // Financial validation
+      // Financial validation (before acquiring DB locks)
       const expectedAmount = Number(order.total);
       if (Math.abs(amount - expectedAmount) > 0.01) {
-        await db.webhookLog.create({
-          data: { provider: 'razorpay', eventId, eventType: event, payload, status: 'amount_mismatch' }
-        });
+        try {
+          await db.webhookLog.create({
+            data: { provider: 'razorpay', eventId, eventType: event, payload, status: 'amount_mismatch' }
+          });
+        } catch { /* duplicate event already logged */ }
         throw new BadRequestException(`Amount mismatch. Expected ${expectedAmount}, received ${amount}`);
       }
 
-      // 4. Atomic Transaction for Payment & Outbox Event
-      await this.prisma.$transaction(async (tx) => {
-        await tx.payment.upsert({
-          where: { orderId: order.id },
-          update: {
-            transactionId,
-            status: 'completed',
-            paidAt: new Date(),
-          },
-          create: {
-            orderId: order.id,
-            provider: 'razorpay',
-            transactionId,
-            amount: amount,
-            currency: paymentEntity?.currency || 'INR',
-            status: 'completed',
-            paidAt: new Date(),
-          }
-        });
+      // 3. Atomic Transaction: INSERT webhook log as FIRST operation — if it throws P2002, event was
+      //    already processed by another worker. Never two workers can process the same eventId.
+      try {
+        await this.prisma.$transaction(async (tx) => {
+          // This INSERT will throw P2002 if a concurrent worker already inserted this eventId
+          await (tx as any).webhookLog.create({
+            data: { provider: 'razorpay', eventId, eventType: event, payload, status: 'processing' }
+          });
 
-        await tx.order.update({
-          where: { id: order.id },
-          data: {
-            paymentStatus: 'paid',
-            orderStatus: 'confirmed',
+          // Only execute state changes if the idempotency guard above succeeded
+          if (order.paymentStatus === 'paid') {
+            // Update status to "already_paid" and return — no further processing
+            await (tx as any).webhookLog.update({
+              where: { eventId },
+              data: { status: 'already_paid' }
+            });
+            return;
           }
-        });
 
-        await (tx as any).webhookLog.create({
-          data: { provider: 'razorpay', eventId, eventType: event, payload, status: 'processed' }
-        });
+          await tx.payment.upsert({
+            where: { orderId: order.id },
+            update: {
+              transactionId,
+              status: 'completed',
+              paidAt: new Date(),
+            },
+            create: {
+              orderId: order.id,
+              provider: 'razorpay',
+              transactionId,
+              amount: amount,
+              currency: paymentEntity?.currency || 'INR',
+              status: 'completed',
+              paidAt: new Date(),
+            }
+          });
 
-        await (tx as any).outboxEvent.create({
-          data: {
-            eventType: 'order_paid',
-            payload: { orderId: order.id, transactionId, amount }
-          }
+          await tx.order.update({
+            where: { id: order.id },
+            data: {
+              paymentStatus: 'paid',
+              orderStatus: 'confirmed',
+            }
+          });
+
+          await (tx as any).webhookLog.update({
+            where: { eventId },
+            data: { status: 'processed' }
+          });
+
+          await (tx as any).outboxEvent.create({
+            data: {
+              eventType: 'order_paid',
+              payload: { orderId: order.id, transactionId, amount }
+            }
+          });
         });
-      });
+      } catch (err: any) {
+        // P2002 = duplicate eventId — another worker already processed this webhook
+        if (err?.code === 'P2002') {
+          return { received: true, message: 'Event already processed' };
+        }
+        throw err;
+      }
     }
 
     return { received: true };
@@ -194,32 +211,41 @@ export class PaymentsService {
       }
     }
 
-    const order = await this.prisma.order.findFirst({
+    const orderRef = await this.prisma.order.findFirst({
       where: { paymentRef: razorpayOrderId }
     });
 
-    if (!order) {
+    if (!orderRef) {
       throw new NotFoundException(`Order with paymentRef ${razorpayOrderId} not found`);
     }
 
-    // SECURITY: Double-spend prevention
-    if (order.paymentStatus === 'paid') {
-      return { success: true, message: 'Already processed' };
-    }
-
+    // SECURITY: Double-spend prevention with FOR UPDATE row lock inside a transaction.
+    // This prevents two concurrent verifyPayment calls from both passing the 'paid' check
+    // and creating duplicate payment records (critical under multi-worker deployments).
     await this.prisma.$transaction(async (tx) => {
+      // Lock the order row — blocks concurrent transactions on the same orderId
+      const lockedRows = await tx.$queryRaw<any[]>`
+        SELECT id, payment_status FROM orders WHERE id = ${orderRef.id}::uuid FOR UPDATE
+      `;
+      const lockedOrder = lockedRows?.[0];
+
+      // Check inside the lock — guarantees exactly-once semantic
+      if (lockedOrder?.payment_status === 'paid') {
+        return; // Already paid — idempotent return, do not re-process
+      }
+
       await tx.payment.upsert({
-        where: { orderId: order.id },
+        where: { orderId: orderRef.id },
         update: {
           transactionId: razorpayPaymentId,
           status: 'completed',
           paidAt: new Date(),
         },
         create: {
-          orderId: order.id,
+          orderId: orderRef.id,
           provider: 'razorpay',
           transactionId: razorpayPaymentId,
-          amount: Number(order.total),
+          amount: Number(orderRef.total),
           currency: 'INR',
           status: 'completed',
           paidAt: new Date(),
@@ -227,7 +253,7 @@ export class PaymentsService {
       });
 
       await tx.order.update({
-        where: { id: order.id },
+        where: { id: orderRef.id },
         data: {
           paymentStatus: 'paid',
           orderStatus: 'confirmed',

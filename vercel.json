@@ -1,4 +1,7 @@
 {
+  "buildCommand": "cd auremont-frontend && npm install && npm run build",
+  "outputDirectory": "auremont-frontend/.next",
+  "framework": "nextjs",
   "headers": [
     {
       "source": "/(.*)",

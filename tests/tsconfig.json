@@ -2,9 +2,11 @@
   "extends": "../auremont-backend/tsconfig.json",
   "compilerOptions": {
     "rootDir": "../",
-    "baseUrl": "../auremont-backend",
+    "baseUrl": "./",
+    "jsx": "react-jsx",
     "paths": {
-      "src/*": ["src/*"]
+      "src/*": ["../auremont-backend/src/*"],
+      "@/*": ["../auremont-frontend/*"]
     },
     "typeRoots": [
       "../node_modules/@types",
@@ -13,5 +15,5 @@
     "types": ["jest", "node", "bcrypt"],
     "moduleResolution": "node"
   },
-  "include": ["../auremont-backend/src/**/*.ts", "**/*.ts"]
+  "include": ["../auremont-backend/src/**/*.ts", "**/*.ts", "../auremont-frontend/**/*.ts", "../auremont-frontend/**/*.tsx"]
 }

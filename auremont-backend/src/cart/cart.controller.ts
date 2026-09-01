@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 import { CartService } from './cart.service';
 import { CartRecoveryService } from './cart-recovery.service';
 import { OptionalJwtAuthGuard } from '../auth/optional-jwt-auth.guard';
@@ -8,6 +9,10 @@ import { MergeCartDto } from './dto/merge-cart.dto';
 import { AddCartItemDto } from './dto/add-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 
+// Cart mutations are high-frequency user actions (every product add = 1 request).
+// Throttling by IP collapses under shared-IP environments (load balancers, NAT).
+// Rate limiting for cart should be applied at CDN/WAF layer, not application level.
+@SkipThrottle()
 @Controller('cart')
 @UseGuards(OptionalJwtAuthGuard)
 export class CartController {

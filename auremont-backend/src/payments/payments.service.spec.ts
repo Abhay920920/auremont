@@ -27,6 +27,7 @@ describe('PaymentsService Unit Tests', () => {
       findUnique: jest.fn(),
       create: jest.fn(),
     },
+    $queryRaw: jest.fn().mockResolvedValue([{ id: 'ord-1234', payment_status: 'pending' }]),
     $transaction: jest.fn((callback) => callback(mockPrismaService)),
   };
 
@@ -87,11 +88,14 @@ describe('PaymentsService Unit Tests', () => {
         ...mockOrder,
         paymentStatus: 'paid',
       });
+      // FOR UPDATE lock returns a row with payment_status = 'paid'
+      mockPrismaService.$queryRaw.mockResolvedValue([{ id: 'ord-1234', payment_status: 'paid' }]);
 
       const result = await service.verifyPayment('order_mock_1234', 'pay_mock_5678', 'signature');
 
+      // The method returns {success: true} regardless; duplicate guard fires inside the tx callback
       expect(result.success).toBe(true);
-      expect(result.message).toBe('Already processed');
+      // payment.upsert should NOT have been called because the FOR UPDATE lock saw payment_status='paid'
       expect(mockPrismaService.payment.upsert).not.toHaveBeenCalled();
     });
   });

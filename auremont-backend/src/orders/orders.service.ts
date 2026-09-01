@@ -12,6 +12,7 @@ import { AuditService } from '../audit/audit.service';
 import { PaymentsService } from '../payments/payments.service';
 import { Order, Prisma } from '@prisma/client';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
+import * as crypto from 'crypto';
 
 import { NotificationsService } from '../notifications/notifications.service';
 
@@ -225,9 +226,13 @@ export class OrdersService {
         },
       });
 
-      // Create order
-      const orderNumber = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-      const createdOrder = await tx.order.create({
+      // Create order — use cryptographically random 8-char hex suffix to prevent
+      // collision across workers/simultaneous transactions at 10K concurrency.
+      // The `@unique` DB constraint provides a final safety net against any collision.
+      const orderNumber = `ORD-${Date.now()}-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
+      let createdOrder: any;
+      try {
+        createdOrder = await tx.order.create({
         data: {
           orderNumber,
           userId: effectiveUserId,
@@ -243,8 +248,15 @@ export class OrdersService {
           orderStatus: 'placed',
           items: { create: orderItems },
         },
-        include: { items: true, address: true },
-      });
+          include: { items: true, address: true },
+        });
+      } catch (err: any) {
+        // P2002 = unique constraint violation — orderNumber collision (extremely rare at this entropy)
+        if (err?.code === 'P2002' && err?.meta?.target?.includes('order_number')) {
+          throw new ConflictException({ code: 'ORDER_NUMBER_COLLISION', message: 'Order creation collision, please retry.' });
+        }
+        throw err;
+      }
 
       // Mark cart as ordered
       await tx.cart.update({ where: { id: cartId }, data: { status: 'ordered' } });

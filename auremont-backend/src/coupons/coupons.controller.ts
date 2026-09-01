@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards, HttpCode, HttpStatus } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 import { CouponsService } from './coupons.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { OptionalJwtAuthGuard } from '../auth/optional-jwt-auth.guard';
@@ -13,6 +14,8 @@ export class CouponsController {
 
   // ── PUBLIC ─────────────────────────────────────────────────────────────────
 
+  // Coupon validation is a high-volume checkout-flow action — throttle at CDN layer, not per-IP here.
+  @SkipThrottle()
   @Post('validate')
   @HttpCode(HttpStatus.OK)
   @UseGuards(OptionalJwtAuthGuard)

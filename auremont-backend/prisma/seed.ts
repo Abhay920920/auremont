@@ -543,57 +543,59 @@ async function main() {
     }
   });
 
-  // 5. Create Test and Admin Accounts
-  const adminPassword = await bcrypt.hash('Admin@12345', 10);
-  const testPassword = await bcrypt.hash('password123', 10);
+  // 5. Create Test and Admin Accounts (Dev/Staging Only)
+  if (process.env.NODE_ENV !== 'production') {
+    const adminPassword = await bcrypt.hash('Admin@12345', 10);
+    const testPassword = await bcrypt.hash('password123', 10);
 
-  await prisma.user.upsert({
-    where: { email: 'admin@rarenuts.com' },
-    update: {
-      passwordHash: adminPassword,
-      role: Role.admin,
-    },
-    create: {
-      firstName: 'RARE NUTS',
-      lastName: 'Concierge',
-      email: 'admin@rarenuts.com',
-      passwordHash: adminPassword,
-      role: Role.admin,
-      emailVerified: true,
-    },
-  });
+    await prisma.user.upsert({
+      where: { email: 'admin@rarenuts.com' },
+      update: {
+        passwordHash: adminPassword,
+        role: Role.admin,
+      },
+      create: {
+        firstName: 'RARE NUTS',
+        lastName: 'Concierge',
+        email: 'admin@rarenuts.com',
+        passwordHash: adminPassword,
+        role: Role.admin,
+        emailVerified: true,
+      },
+    });
 
-  await prisma.user.upsert({
-    where: { email: 'admin@example.com' },
-    update: {
-      passwordHash: testPassword,
-      role: Role.admin,
-    },
-    create: {
-      firstName: 'Admin',
-      lastName: 'User',
-      email: 'admin@example.com',
-      passwordHash: testPassword,
-      role: Role.admin,
-      emailVerified: true,
-    },
-  });
+    await prisma.user.upsert({
+      where: { email: 'admin@example.com' },
+      update: {
+        passwordHash: testPassword,
+        role: Role.admin,
+      },
+      create: {
+        firstName: 'Admin',
+        lastName: 'User',
+        email: 'admin@example.com',
+        passwordHash: testPassword,
+        role: Role.admin,
+        emailVerified: true,
+      },
+    });
 
-  await prisma.user.upsert({
-    where: { email: 'example@gmail.com' },
-    update: {
-      passwordHash: testPassword,
-      role: Role.customer,
-    },
-    create: {
-      firstName: 'Test',
-      lastName: 'Customer',
-      email: 'example@gmail.com',
-      passwordHash: testPassword,
-      role: Role.customer,
-      emailVerified: true,
-    },
-  });
+    await prisma.user.upsert({
+      where: { email: 'example@gmail.com' },
+      update: {
+        passwordHash: testPassword,
+        role: Role.customer,
+      },
+      create: {
+        firstName: 'Test',
+        lastName: 'Customer',
+        email: 'example@gmail.com',
+        passwordHash: testPassword,
+        role: Role.customer,
+        emailVerified: true,
+      },
+    });
+  }
 
   // 6. Create Coupons
   await prisma.coupon.upsert({
