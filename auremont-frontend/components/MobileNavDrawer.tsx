@@ -47,38 +47,59 @@ export default function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; 
 
             <div className="flex-grow overflow-y-auto custom-scrollbar p-6 space-y-8">
               <div>
-                <h4 className="text-[10px] uppercase tracking-widest text-secondaryText mb-4">Shop</h4>
-                <ul className="space-y-4">
+                <h4 className="text-[10px] uppercase tracking-widest text-luxuryGold font-medium mb-4">Nut Varieties & Reserves</h4>
+                <ul className="space-y-3">
                   <li>
-                    <Link href="/shop" onClick={onClose} className="flex justify-between items-center text-primaryText font-serif text-xl">
-                      The Collection <ChevronRight size={18} className="text-mutedText" />
+                    <Link href="/shop" onClick={onClose} className="flex justify-between items-center text-primaryText font-serif text-lg">
+                      All Reserves <ChevronRight size={16} className="text-mutedText" />
                     </Link>
                   </li>
                   <li>
-                    <Link href="/shop?category=raw" onClick={onClose} className="flex justify-between items-center text-primaryText font-serif text-xl">
-                      Raw Almonds <ChevronRight size={18} className="text-mutedText" />
+                    <Link href="/shop?category=almonds" onClick={onClose} className="flex justify-between items-center text-primaryText font-serif text-lg">
+                      California Almonds <ChevronRight size={16} className="text-mutedText" />
                     </Link>
                   </li>
                   <li>
-                    <Link href="/shop?category=roasted" onClick={onClose} className="flex justify-between items-center text-primaryText font-serif text-xl">
-                      Roasted Almonds <ChevronRight size={18} className="text-mutedText" />
+                    <Link href="/shop?category=cashews" onClick={onClose} className="flex justify-between items-center text-primaryText font-serif text-lg">
+                      King Cashews (W180) <ChevronRight size={16} className="text-mutedText" />
                     </Link>
                   </li>
                   <li>
-                    <Link href="/shop?category=gift" onClick={onClose} className="flex justify-between items-center text-primaryText font-serif text-xl">
-                      Corporate Gifting <ChevronRight size={18} className="text-mutedText" />
+                    <Link href="/shop?category=pistachios" onClick={onClose} className="flex justify-between items-center text-primaryText font-serif text-lg">
+                      Imperial Pistachios <ChevronRight size={16} className="text-mutedText" />
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/shop?category=walnuts" onClick={onClose} className="flex justify-between items-center text-primaryText font-serif text-lg">
+                      Kashmiri Walnuts <ChevronRight size={16} className="text-mutedText" />
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/shop?category=macadamias" onClick={onClose} className="flex justify-between items-center text-primaryText font-serif text-lg">
+                      Queensland Macadamias <ChevronRight size={16} className="text-mutedText" />
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/shop?category=assortments" onClick={onClose} className="flex justify-between items-center text-primaryText font-serif text-lg">
+                      Multi-Nut Assortments <ChevronRight size={16} className="text-mutedText" />
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/custom-gift-box" onClick={onClose} className="flex justify-between items-center text-luxuryGold font-serif text-lg font-medium">
+                      Bespoke Gift Box Builder <ChevronRight size={16} className="text-luxuryGold" />
                     </Link>
                   </li>
                 </ul>
               </div>
 
               <div>
-                <h4 className="text-[10px] uppercase tracking-widest text-secondaryText mb-4">Explore</h4>
-                <ul className="space-y-4">
-                  <li><Link href="/about" onClick={onClose} className="block text-secondaryText hover:text-primaryText font-serif text-lg">Our Heritage</Link></li>
-                  <li><Link href="/pairing" onClick={onClose} className="block text-secondaryText hover:text-primaryText font-serif text-lg">Pairing Guide</Link></li>
-                  <li><Link href="/journal" onClick={onClose} className="block text-secondaryText hover:text-primaryText font-serif text-lg">Journal</Link></li>
-                  <li><Link href="/contact" onClick={onClose} className="block text-secondaryText hover:text-primaryText font-serif text-lg">Contact Us</Link></li>
+                <h4 className="text-[10px] uppercase tracking-widest text-secondaryText mb-3">Explore</h4>
+                <ul className="space-y-3">
+                  <li><Link href="/about" onClick={onClose} className="block text-secondaryText hover:text-primaryText font-serif text-base">Our Heritage</Link></li>
+                  <li><Link href="/corporate-gifts" onClick={onClose} className="block text-secondaryText hover:text-primaryText font-serif text-base">Corporate Gifting</Link></li>
+                  <li><Link href="/pairing" onClick={onClose} className="block text-secondaryText hover:text-primaryText font-serif text-base">Pairing Guide</Link></li>
+                  <li><Link href="/journal" onClick={onClose} className="block text-secondaryText hover:text-primaryText font-serif text-base">Journal</Link></li>
+                  <li><Link href="/contact" onClick={onClose} className="block text-secondaryText hover:text-primaryText font-serif text-base">Contact Us</Link></li>
                 </ul>
               </div>
             </div>

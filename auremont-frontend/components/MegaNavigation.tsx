@@ -18,28 +18,41 @@ export default function MegaNavigation({ isOpen, onMouseLeave }: { isOpen: boole
         >
           <div className="max-w-[2000px] mx-auto px-6 md:px-12 grid grid-cols-12 gap-8">
              <div className="col-span-3">
-               <h4 className="text-[11px] uppercase tracking-widest text-secondaryText mb-6">Collections</h4>
-               <ul className="space-y-4">
-                 <li><Link href="/shop?category=raw" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-xl">Raw Almonds</Link></li>
-                 <li><Link href="/shop?category=roasted" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-xl">Roasted Almonds</Link></li>
-                 <li><Link href="/shop?category=flavored" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-xl">Flavored Editions</Link></li>
-                 <li><Link href="/shop?category=gift" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-xl">Gifting & Corporate</Link></li>
+               <h4 className="text-[11px] uppercase tracking-widest text-luxuryGold font-medium mb-5">Nut Varieties</h4>
+               <ul className="space-y-3">
+                 <li><Link href="/shop?category=almonds" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-lg block">California Almonds</Link></li>
+                 <li><Link href="/shop?category=cashews" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-lg block">Royal King Cashews</Link></li>
+                 <li><Link href="/shop?category=pistachios" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-lg block">Imperial Pistachios</Link></li>
+                 <li><Link href="/shop?category=walnuts" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-lg block">Kashmiri Walnuts</Link></li>
+                 <li><Link href="/shop?category=macadamias" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-lg block">Queensland Macadamias</Link></li>
+                 <li><Link href="/shop?category=pine-nuts" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-lg block">Himalayan Pine Nuts</Link></li>
                </ul>
              </div>
              <div className="col-span-3">
-               <h4 className="text-[11px] uppercase tracking-widest text-secondaryText mb-6">Explore</h4>
-               <ul className="space-y-4">
-                 <li><Link href="/custom-gift-box" className="text-luxuryGold hover:underline transition-colors font-serif text-xl">Bespoke Gift Builder</Link></li>
-                 <li><Link href="/about" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-xl">Our Heritage</Link></li>
-                 <li><Link href="/pairing" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-xl">Pairing Guide</Link></li>
-                 <li><Link href="/journal" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-xl">Journal</Link></li>
+               <h4 className="text-[11px] uppercase tracking-widest text-luxuryGold font-medium mb-5">Editions & Assortments</h4>
+               <ul className="space-y-3">
+                 <li><Link href="/shop?category=assortments" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-lg block">Multi-Nut Royal Reserves</Link></li>
+                 <li><Link href="/shop?category=raw" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-lg block">Raw Botanical Harvests</Link></li>
+                 <li><Link href="/shop?category=roasted" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-lg block">Slow-Roasted Sea Salt</Link></li>
+                 <li><Link href="/shop?category=gift" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-lg block">Mahogany Gift Chests</Link></li>
+                 <li><Link href="/corporate-gifts" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-lg block">Corporate Gifting Suite</Link></li>
                </ul>
              </div>
-             <div className="col-span-6 flex gap-6">
-               <Link href="/shop?category=gift" className="relative w-full aspect-[16/9] bg-background group overflow-hidden cursor-pointer block">
-                  <Image src="/images/royal-almonds-wooden-box.png" alt="Gift Box" fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
-                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                     <span className="text-primaryText font-serif tracking-widest text-xl border border-primaryText px-6 py-2 group-hover:bg-primaryText group-hover:text-background transition-colors">Discover Gifting</span>
+             <div className="col-span-2">
+               <h4 className="text-[11px] uppercase tracking-widest text-secondaryText mb-5">Bespoke & Story</h4>
+               <ul className="space-y-3">
+                 <li><Link href="/custom-gift-box" className="text-luxuryGold hover:underline transition-colors font-serif text-base block font-medium">Bespoke Box Builder</Link></li>
+                 <li><Link href="/about" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-base block">Our Heritage</Link></li>
+                 <li><Link href="/pairing" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-base block">Pairing Guide</Link></li>
+                 <li><Link href="/journal" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-base block">Journal & Stories</Link></li>
+               </ul>
+             </div>
+             <div className="col-span-4 flex gap-4">
+               <Link href="/custom-gift-box" className="relative w-full aspect-[4/3] bg-background group overflow-hidden cursor-pointer block border border-divider">
+                  <Image src="/images/royal-almonds-wooden-box.png" alt="Multi-Nut Gift Chest" fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center p-4 text-center">
+                     <span className="text-[10px] uppercase tracking-widest text-luxuryGold font-mono mb-1">Custom Gifting</span>
+                     <span className="text-primaryText font-serif tracking-wider text-lg border-b border-luxuryGold pb-1 group-hover:text-luxuryGold transition-colors">Build 4-Nut Box</span>
                   </div>
                </Link>
              </div>

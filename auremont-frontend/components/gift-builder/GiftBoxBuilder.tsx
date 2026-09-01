@@ -35,34 +35,70 @@ const BOX_STYLES = [
   },
 ];
 
-const ALMOND_VARIETIES = [
+const NUT_VARIETIES = [
   {
-    id: "raw-250",
+    id: "raw-almonds-250",
     name: "California Reserve Raw Almonds 250g",
+    category: "Almonds",
     price: 799,
     image: "/images/california-almonds-250g.png",
     tag: "100% Natural",
   },
   {
-    id: "roasted-sea-salt",
-    name: "Slow-Roasted Sea Salt 250g",
+    id: "roasted-almonds-250",
+    name: "Slow-Roasted Sea Salt Almonds 250g",
+    category: "Almonds",
     price: 899,
     image: "/images/roasted-almonds-jar.png",
     tag: "Artisanal Salt",
   },
   {
-    id: "smokey-barbecue",
-    name: "Smokey Hickory Roasted 250g",
-    price: 899,
-    image: "/images/roasted-almonds-jar.png",
-    tag: "Wood-Smokey",
+    id: "jumbo-cashews-250",
+    name: "Royal Mangalore Jumbo King Cashews W180 250g",
+    category: "Cashews",
+    price: 999,
+    image: "/images/cashews-matte-black.png",
+    tag: "Grade W180",
   },
   {
-    id: "honey-glazed",
-    name: "Honey Glazed Reserve 250g",
+    id: "truffle-cashews-250",
+    name: "Black Truffle & Sea Salt Cashews 250g",
+    category: "Cashews",
+    price: 1099,
+    image: "/images/truffle-cashews-matte-black.png",
+    tag: "Winter Truffle",
+  },
+  {
+    id: "akbari-pistachios-250",
+    name: "Imperial Iranian Akbari Pistachios 250g",
+    category: "Pistachios",
+    price: 1099,
+    image: "/images/pistachios-matte-black.png",
+    tag: "Saffron Roasted",
+  },
+  {
+    id: "kashmiri-walnuts-250",
+    name: "Kashmiri Snow White Walnut Halves 250g",
+    category: "Walnuts",
     price: 949,
-    image: "/images/california-almonds-250g.png",
-    tag: "Sweet Nectar",
+    image: "/images/walnuts-matte-black.png",
+    tag: "Extra Light",
+  },
+  {
+    id: "macadamia-reserve-250",
+    name: "Queensland Reserve Whole Macadamias 250g",
+    category: "Macadamias",
+    price: 1399,
+    image: "/images/macadamias-matte-black.png",
+    tag: "Velvety Crunch",
+  },
+  {
+    id: "himalayan-chilgoza-200",
+    name: "Himalayan Wild Chilgoza Pine Nuts 200g",
+    category: "Pine Nuts",
+    price: 2199,
+    image: "/images/pine-nuts-matte-black.png",
+    tag: "Rare Harvest",
   },
 ];
 
@@ -81,9 +117,9 @@ export default function GiftBoxBuilder() {
   // Customization State
   const [selectedBox, setSelectedBox] = useState(BOX_STYLES[0]);
   const [compartmentCount, setCompartmentCount] = useState<2 | 3 | 4>(2);
-  const [selectedFillings, setSelectedFillings] = useState<Array<typeof ALMOND_VARIETIES[0]>>([
-    ALMOND_VARIETIES[0],
-    ALMOND_VARIETIES[1],
+  const [selectedFillings, setSelectedFillings] = useState<Array<typeof NUT_VARIETIES[0]>>([
+    NUT_VARIETIES[0],
+    NUT_VARIETIES[2],
   ]);
   const [engravingText, setEngravingText] = useState("RARE NUTS RESERVE");
   const [selectedSeal, setSelectedSeal] = useState(WAX_SEALS[0]);
@@ -97,14 +133,14 @@ export default function GiftBoxBuilder() {
     setCompartmentCount(count);
     const newFillings = [...selectedFillings];
     while (newFillings.length < count) {
-      newFillings.push(ALMOND_VARIETIES[newFillings.length % ALMOND_VARIETIES.length]);
+      newFillings.push(NUT_VARIETIES[newFillings.length % NUT_VARIETIES.length]);
     }
     setSelectedFillings(newFillings.slice(0, count));
   };
 
-  const handleSlotFillingChange = (slotIndex: number, variety: typeof ALMOND_VARIETIES[0]) => {
+  const handleFillingChange = (index: number, variety: typeof NUT_VARIETIES[0]) => {
     const updated = [...selectedFillings];
-    updated[slotIndex] = variety;
+    updated[index] = variety;
     setSelectedFillings(updated);
   };
 
@@ -265,17 +301,17 @@ export default function GiftBoxBuilder() {
             </motion.div>
           )}
 
-          {/* STEP 2: Compartments & Almond Selection */}
+          {/* STEP 2: Compartments & Nut Reserve Selection */}
           {currentStep === 2 && (
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
               <div>
                 <h3 className="font-serif text-2xl md:text-3xl text-primaryText mb-2">Configure Box Compartments</h3>
-                <p className="text-secondaryText text-sm font-light">Choose the number of inner compartments and select almond varieties.</p>
+                <p className="text-secondaryText text-sm font-light">Select the number of inner compartments and customize each slot with any luxury botanical nut variety.</p>
               </div>
 
               {/* Compartment Count Toggle */}
               <div className="space-y-3">
-                <label className="text-xs uppercase tracking-widest text-secondaryText font-medium">Compartment Count</label>
+                <label className="text-xs uppercase tracking-widest text-secondaryText font-medium">Compartment Layout</label>
                 <div className="flex gap-4">
                   {([2, 3, 4] as const).map((count) => (
                     <button
@@ -296,28 +332,32 @@ export default function GiftBoxBuilder() {
               {/* Slot Selectors */}
               <div className="space-y-6">
                 {selectedFillings.map((currentFilling, slotIdx) => (
-                  <div key={slotIdx} className="p-5 border border-divider bg-secondaryBg space-y-3">
+                  <div key={slotIdx} className="p-5 border border-divider bg-secondaryBg space-y-3 rounded-card">
                     <div className="flex justify-between items-center border-b border-divider pb-2">
-                      <span className="text-xs uppercase tracking-ultra text-luxuryGold font-medium">Slot #{slotIdx + 1} Selection</span>
+                      <span className="text-xs uppercase tracking-ultra text-luxuryGold font-medium">Compartment Slot #{slotIdx + 1}</span>
                       <span className="text-xs text-primaryText font-serif" suppressHydrationWarning>{formatPrice(currentFilling.price)}</span>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      {ALMOND_VARIETIES.map((varItem) => (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[340px] overflow-y-auto custom-scrollbar pr-1">
+                      {NUT_VARIETIES.map((varItem) => (
                         <button
                           key={varItem.id}
-                          onClick={() => handleSlotFillingChange(slotIdx, varItem)}
-                          className={`p-3 border text-left flex gap-3 items-center transition-colors ${
+                          type="button"
+                          onClick={() => handleFillingChange(slotIdx, varItem)}
+                          className={`p-3 border text-left flex gap-3 items-center rounded-sm transition-all ${
                             currentFilling.id === varItem.id
-                              ? 'border-luxuryGold bg-background'
-                              : 'border-divider bg-secondaryBg/50 opacity-60 hover:opacity-100'
+                              ? 'border-luxuryGold bg-background shadow-md'
+                              : 'border-divider bg-secondaryBg/50 opacity-70 hover:opacity-100 hover:border-luxuryGold/30'
                           }`}
                         >
-                          <div className="w-10 h-12 relative flex-shrink-0">
+                          <div className="w-10 h-10 relative flex-shrink-0 rounded-full overflow-hidden bg-secondaryBg border border-divider">
                             <Image src={varItem.image} alt={varItem.name} fill className="object-cover" />
                           </div>
-                          <div>
-                            <p className="text-xs font-serif text-primaryText line-clamp-1">{varItem.name}</p>
-                            <span className="text-[9px] uppercase tracking-wider text-luxuryGold">{varItem.tag}</span>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1.5 mb-0.5">
+                              <span className="text-[8px] uppercase tracking-wider bg-luxuryGold/15 text-luxuryGold px-1.5 py-0.5 rounded-xs font-mono">{varItem.category}</span>
+                              <span className="text-[9px] uppercase tracking-wider text-secondaryText">{varItem.tag}</span>
+                            </div>
+                            <p className="text-xs font-serif text-primaryText truncate">{varItem.name}</p>
                           </div>
                         </button>
                       ))}

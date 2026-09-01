@@ -76,12 +76,12 @@ export default function Shop() {
       {/* Header Section */}
       <div className="max-w-[2000px] mx-auto px-6 md:px-12 mb-8 md:mb-24">
         <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
-          <h4 className="text-luxuryGold uppercase tracking-superwide text-xs mb-6">The Collection</h4>
+          <h4 className="text-luxuryGold uppercase tracking-superwide text-xs mb-6">The Master Reserve</h4>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif text-primaryText mb-8">
-            California's Finest
+            The Royal Botanical Collection
           </h1>
           <p className="text-secondaryText text-lg font-light leading-relaxed">
-            Peruse our curated selection of premium almonds. Each harvest is subjected to rigorous quality control to ensure only the absolute finest nuts reach our bespoke packaging.
+            Peruse our curated selection of the world's finest botanical nuts and artisanal reserves — from California Nonpareil Almonds and Mangalore King Cashews to Persian Akbari Pistachios, Kashmiri Walnuts, and Himalayan Chilgoza.
           </p>
         </div>
       </div>
