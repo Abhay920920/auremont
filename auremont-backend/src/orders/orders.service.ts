@@ -166,18 +166,31 @@ export class OrdersService {
       // Coupon validation
       let discount = new Prisma.Decimal(0);
       if (couponId) {
-        const coupon = await tx.coupon.findUnique({ where: { id: couponId } });
+        let coupon: any = null;
+        try {
+          const couponRows = await tx.$queryRaw<any[]>(
+            Prisma.sql`SELECT * FROM "coupons" WHERE id = ${couponId}::uuid FOR UPDATE`,
+          );
+          coupon = couponRows?.[0];
+        } catch {
+          coupon = await tx.coupon.findUnique({ where: { id: couponId } });
+        }
+
         if (coupon && coupon.status) {
           const now = new Date();
-          if (now < coupon.startDate || now > coupon.endDate) {
+          const startDate = new Date(coupon.startDate ?? coupon.start_date);
+          const endDate = new Date(coupon.endDate ?? coupon.end_date);
+          if (now < startDate || now > endDate) {
             throw new BadRequestException('Coupon is expired or not active yet');
           }
-          if (coupon.minimumOrder && subtotal.lessThan(coupon.minimumOrder)) {
-            throw new BadRequestException(`Minimum order of ${coupon.minimumOrder} required for this coupon`);
+          const minOrder = coupon.minimumOrder ?? coupon.minimum_order;
+          if (minOrder && subtotal.lessThan(minOrder)) {
+            throw new BadRequestException(`Minimum order of ${minOrder} required for this coupon`);
           }
-          if (coupon.usageLimit) {
+          const usageLimit = coupon.usageLimit ?? coupon.usage_limit;
+          if (usageLimit) {
             const usageCount = await tx.order.count({ where: { couponId: coupon.id } });
-            if (usageCount >= coupon.usageLimit) {
+            if (usageCount >= usageLimit) {
               throw new BadRequestException('Coupon usage limit reached');
             }
           }

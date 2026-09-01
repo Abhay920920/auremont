@@ -2,6 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { OrdersService } from './orders.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { PaymentsService } from '../payments/payments.service';
+import { AuditService } from '../audit/audit.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 
 describe('OrdersService Unit Tests', () => {
@@ -59,12 +61,22 @@ describe('OrdersService Unit Tests', () => {
     createRazorpayOrder: jest.fn().mockResolvedValue({ razorpayOrderId: 'order_mock_1234' }),
   };
 
+  const mockAuditService = {
+    log: jest.fn().mockResolvedValue({}),
+  };
+
+  const mockNotificationsService = {
+    create: jest.fn().mockResolvedValue({}),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         OrdersService,
         { provide: PrismaService, useValue: mockPrismaService },
+        { provide: AuditService, useValue: mockAuditService },
         { provide: PaymentsService, useValue: mockPaymentsService },
+        { provide: NotificationsService, useValue: mockNotificationsService },
       ],
     }).compile();
 
@@ -77,6 +89,7 @@ describe('OrdersService Unit Tests', () => {
       mockPrismaService.order.findUnique.mockResolvedValue(null); // idempotency check
       mockPrismaService.cart.findUnique.mockResolvedValue(mockCart);
       mockPrismaService.product.findUnique.mockResolvedValue(mockCart.items[0].product);
+      mockPrismaService.$queryRaw.mockResolvedValue([mockCart.items[0].product]);
       mockPrismaService.address.create.mockResolvedValue({ id: 'addr-1' });
       mockPrismaService.order.create.mockResolvedValue({
         id: 'ord-1234',

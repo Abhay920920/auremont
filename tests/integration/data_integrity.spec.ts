@@ -92,9 +92,16 @@ describe('RARE NUTS — Data Integrity Tests', () => {
       };
 
       prismaMock._seed('products', [product]);
+      prismaMock._seed('carts', [cart]);
+      prismaMock._seed('coupons', [coupon]);
       prismaMock.cart.findUnique = jest.fn().mockResolvedValue(cart);
       prismaMock.cart.findFirst = jest.fn().mockResolvedValue(cart);
       prismaMock.coupon.findUnique = jest.fn().mockResolvedValue(coupon);
+      prismaMock.$queryRaw = jest.fn().mockImplementation((query: any) => {
+        const str = JSON.stringify(query);
+        if (str.includes('coupons')) return [coupon];
+        return [product];
+      });
       prismaMock.order.count = jest.fn().mockResolvedValue(5); // Current usage is 5 (limit reached)
 
       prismaMock.$transaction = jest.fn().mockImplementation(async (callback: any) => {
