@@ -8,7 +8,7 @@ import { AllExceptionsFilter } from './all-exceptions.filter';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 const cookieParser = require('cookie-parser');
-import * as compression from 'compression';
+const compression = require('compression');
 import helmet from 'helmet';
 
 import * as cluster from 'node:cluster';
@@ -92,7 +92,7 @@ async function bootstrap() {
   });
   
   app.use(typeof cookieParser === 'function' ? cookieParser() : (cookieParser as any).default());
-  app.use(compression());
+  app.use(typeof compression === 'function' ? compression() : (compression as any).default());
 
   // Observability & Request Correlation Tracking
   app.use((req: any, res: any, next: any) => {
