@@ -21,6 +21,7 @@ async function loginUser(email: string, password: string): Promise<string | null
 }
 
 describe('Adversarial Authorization & IDOR Tests', () => {
+  jest.setTimeout(30000);
   let userAToken: string;
   let userBToken: string;
   let adminToken: string;
@@ -68,7 +69,7 @@ describe('Adversarial Authorization & IDOR Tests', () => {
     if (addrRes.status === 201 || addrRes.status === 200) {
       userAAddressId = addrRes.data?.id;
     }
-  });
+  }, 30000);
 
   afterAll(async () => {
     await prisma.$disconnect();

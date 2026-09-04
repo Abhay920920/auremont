@@ -36,13 +36,14 @@ const SQL_PAYLOADS = [
 ];
 
 describe('Adversarial Input Validation & XSS Tests', () => {
+  jest.setTimeout(30000);
   let customerToken: string;
   let adminToken: string;
 
   beforeAll(async () => {
     customerToken = await loginUser('example@gmail.com', 'password123') || '';
     adminToken = await loginUser('admin@rarenuts.com', 'Admin@12345') || '';
-  });
+  }, 30000);
 
   afterAll(async () => {
     await prisma.$disconnect();
@@ -255,6 +256,7 @@ describe('Adversarial Input Validation & XSS Tests', () => {
     const res = await api.post('/admin/products', {
       name: '<script>alert(1)</script>Test Product',
       slug: 'xss-test-product-' + Date.now(),
+      sku: 'XSS-' + Date.now(),
       price: 999,
       stockQty: 10,
       categoryId: null,

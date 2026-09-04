@@ -36,9 +36,12 @@ describe('OrdersService Unit Tests', () => {
     user: {
       findUnique: jest.fn(),
       create: jest.fn(),
+      update: jest.fn(),
     },
     address: {
       create: jest.fn(),
+      findFirst: jest.fn().mockResolvedValue(null),
+      count: jest.fn().mockResolvedValue(0),
     },
     coupon: {
       findUnique: jest.fn(),

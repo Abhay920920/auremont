@@ -30,22 +30,25 @@ describe('CartService Unit Tests', () => {
     });
 
     it('should throw ForbiddenException if user attempts to access another users cart', async () => {
-      const cart = { id: 'cart-001', userId: 'user-A', status: 'active', items: [] };
-      prismaMock._seed('carts', [cart]);
+      const cartId = 'a1b2c3d4-e5f6-4a1b-8c2d-3e4f5a6b7c8d';
+      const userA = '11111111-1111-4111-8111-111111111111';
+      const userB = '22222222-2222-4222-8222-222222222222';
+      const cart = { id: cartId, userId: userA, status: 'active', items: [] };
 
-      // Override findFirst to return the cart with userId intact
-      prismaMock.cart.findFirst = jest.fn().mockResolvedValue(cart);
+      prismaMock.cart.findUnique = jest.fn().mockResolvedValue(cart);
 
-      await expect(cartService.getCart('cart-001', 'user-B')).rejects.toThrow(ForbiddenException);
+      await expect(cartService.getCart(cartId, userB)).rejects.toThrow(ForbiddenException);
     });
 
     it('should return cart when user owns it', async () => {
-      const cart = { id: 'cart-001', userId: 'user-A', status: 'active', items: [] };
-      prismaMock.cart.findFirst = jest.fn().mockResolvedValue(cart);
+      const cartId = 'a1b2c3d4-e5f6-4a1b-8c2d-3e4f5a6b7c8d';
+      const userA = '11111111-1111-4111-8111-111111111111';
+      const cart = { id: cartId, userId: userA, status: 'active', items: [] };
+      prismaMock.cart.findUnique = jest.fn().mockResolvedValue(cart);
 
-      const result = await cartService.getCart('cart-001', 'user-A');
+      const result = await cartService.getCart(cartId, userA);
       expect(result).toBeDefined();
-      expect(result?.id).toBe('cart-001');
+      expect(result?.id).toBe(cartId);
     });
   });
 

@@ -140,7 +140,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ProductLayout({ children, params }: { children: React.ReactNode, params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  let schemaNodes: any[] = [];
+  const schemaNodes: any[] = [];
   
   // 1. Check if category page
   if (CATEGORY_SEO_MAP[slug]) {

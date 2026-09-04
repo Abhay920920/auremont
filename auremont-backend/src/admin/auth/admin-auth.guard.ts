@@ -31,7 +31,7 @@ export class AdminAuthGuard implements CanActivate {
     }
 
     const jwtSecret = process.env.JWT_SECRET;
-    if (!jwtSecret && (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging')) {
+    if (!jwtSecret && (process.env.NODE_ENV === 'production' || (process.env.NODE_ENV as string) === 'staging')) {
       throw new Error('JWT_SECRET must be defined in production/staging environments');
     }
 

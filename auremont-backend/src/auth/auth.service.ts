@@ -18,7 +18,7 @@ export class AuthService implements OnModuleInit {
 
   async onModuleInit() {
     // Only auto-seed test fixtures in local development environments
-    if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') {
+    if (process.env.NODE_ENV === 'production' || (process.env.NODE_ENV as string) === 'staging') {
       return;
     }
 

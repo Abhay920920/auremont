@@ -14,7 +14,7 @@ export class PaymentsService {
     const key_id = process.env.RAZORPAY_KEY_ID || '';
     const key_secret = process.env.RAZORPAY_KEY_SECRET || '';
 
-    const isProduction = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging';
+    const isProduction = process.env.NODE_ENV === 'production' || (process.env.NODE_ENV as string) === 'staging';
     const allowMock = process.env.ALLOW_MOCK_PAYMENTS === 'true' && !isProduction;
     
     if (isProduction && process.env.ALLOW_MOCK_PAYMENTS === 'true') {
@@ -47,7 +47,7 @@ export class PaymentsService {
    */
   generateOrderToken(orderId: string): string {
     const secret = process.env.ORDER_TOKEN_SECRET || process.env.JWT_SECRET;
-    if (!secret && (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging')) {
+    if (!secret && (process.env.NODE_ENV === 'production' || (process.env.NODE_ENV as string) === 'staging')) {
       throw new Error('ORDER_TOKEN_SECRET or JWT_SECRET must be defined in production/staging environments');
     }
     return crypto

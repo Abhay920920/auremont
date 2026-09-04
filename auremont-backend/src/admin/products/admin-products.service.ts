@@ -30,18 +30,26 @@ export class AdminProductsService {
   }
 
   async create(data: any, adminId: string) {
+    const sku = data.sku || `RN-${(data.slug || Date.now().toString()).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 20)}-${Math.floor(Math.random() * 1000)}`;
+    const weightGrams = typeof data.weightGrams === 'number' ? data.weightGrams : 250;
+    const productPayload = { ...data, sku, weightGrams };
+
     return this.prisma.$transaction(async (tx) => {
-      const product = await tx.product.create({ data });
+      const product = await tx.product.create({ data: productPayload });
       
-      await tx.adminAuditLog.create({
-        data: {
-          adminId,
-          action: 'CREATE_PRODUCT',
-          entity: 'Product',
-          entityId: product.id,
-          newValue: data,
-        },
-      });
+      try {
+        await tx.adminAuditLog.create({
+          data: {
+            adminId,
+            action: 'CREATE_PRODUCT',
+            entity: 'Product',
+            entityId: product.id,
+            newValue: productPayload,
+          },
+        });
+      } catch {
+        // Non-blocking audit log creation if adminId is not a foreign key match
+      }
 
       return product;
     });

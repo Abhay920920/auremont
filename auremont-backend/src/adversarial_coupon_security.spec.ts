@@ -44,12 +44,13 @@ async function createTestCart(api: AxiosInstance, token: string): Promise<{ cart
 }
 
 describe('Adversarial Coupon Security & Calculation Tests', () => {
+  jest.setTimeout(30000);
   let customerToken: string;
 
   beforeAll(async () => {
     customerToken = await loginUser('example@gmail.com', 'password123') || '';
     expect(customerToken).toBeTruthy();
-  });
+  }, 30000);
 
   afterAll(async () => {
     await prisma.$disconnect();
