@@ -159,7 +159,8 @@ export default function ConciergeChatWidget() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ duration: 0.15 }}
-            className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom,0px))] md:bottom-6 right-4 md:right-8 z-[75]"
+            style={{ bottom: "calc(4.75rem + env(safe-area-inset-bottom, 0px))" }}
+            className="fixed bottom-20 md:bottom-6 right-4 md:right-8 z-[75]"
           >
             <button
               onClick={() => setIsOpen(true)}
@@ -182,10 +183,11 @@ export default function ConciergeChatWidget() {
             exit={{ opacity: 0, y: 12, scale: 0.97 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             style={{
+              bottom: "calc(4.75rem + env(safe-area-inset-bottom, 0px))",
               maxHeight: "calc(100dvh - 120px)",
               height: "min(510px, calc(100dvh - 120px))",
             }}
-            className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom,0px))] md:bottom-6 right-3 sm:right-6 md:right-8 left-3 sm:left-auto w-auto sm:w-[380px] md:w-[390px] z-[95] bg-[#0A0A0D]/98 backdrop-blur-2xl border border-luxuryGold/40 rounded-xl shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_35px_rgba(212,175,55,0.15)] overflow-hidden flex flex-col"
+            className="fixed bottom-20 md:bottom-6 right-3 sm:right-6 md:right-8 left-3 sm:left-auto w-auto sm:w-[380px] md:w-[390px] z-[95] bg-[#0A0A0D]/98 backdrop-blur-2xl border border-luxuryGold/40 rounded-xl shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_35px_rgba(212,175,55,0.15)] overflow-hidden flex flex-col"
           >
             {/* Top Accent Gold Shimmer Line */}
             <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-luxuryGold to-transparent flex-shrink-0" />
