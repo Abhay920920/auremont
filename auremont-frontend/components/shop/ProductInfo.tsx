@@ -1,10 +1,7 @@
-import dynamic from "next/dynamic";
-import { useState } from "react";
 import Link from "next/link";
-import { Star, Rotate3d } from "lucide-react";
+import { Star } from "lucide-react";
 import { useCurrencyStore } from "@/store/currencyStore";
-
-const Packaging3DViewer = dynamic(() => import("./Packaging3DViewer"), { ssr: false });
+import JsonLd from "@/components/JsonLd";
 
 function StarRating({ rating, size = 16 }: { rating: number; size?: number }) {
   return (
@@ -16,11 +13,8 @@ function StarRating({ rating, size = 16 }: { rating: number; size?: number }) {
   );
 }
 
-import JsonLd from "@/components/JsonLd";
-
 export default function ProductInfo({ product, reviews, avgRating }: { product: any, reviews: any[], avgRating: number }) {
   const { currency, formatPrice } = useCurrencyStore();
-  const [is3DOpen, setIs3DOpen] = useState(false);
 
   const displayPrice = product.salePrice ? Number(product.salePrice) : Number(product.price);
   const originalPrice = product.salePrice ? Number(product.price) : null;
@@ -116,24 +110,6 @@ export default function ProductInfo({ product, reviews, avgRating }: { product: 
           {product.shortDescription}
         </p>
       )}
-
-      {/* 3D Packaging Inspector Trigger Button */}
-      <div className="pt-2">
-        <button
-          onClick={() => setIs3DOpen(true)}
-          className="luxury-button-outline w-full flex items-center justify-center gap-2.5 py-3 text-xs tracking-ultra border-luxuryGold/40 hover:bg-luxuryGold/10 text-luxuryGold"
-        >
-          <Rotate3d size={16} />
-          <span>Inspect 3D Vessel & Engraving</span>
-        </button>
-      </div>
-
-      {/* 3D Packaging Viewer Modal */}
-      <Packaging3DViewer 
-        isOpen={is3DOpen} 
-        onClose={() => setIs3DOpen(false)} 
-        defaultText={product.name.toUpperCase()}
-      />
     </div>
   );
 }
