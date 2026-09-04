@@ -3,7 +3,7 @@
 
 import { useCartStore } from "@/store/cartStore";
 import { useAuthStore } from "@/store/authStore";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -71,6 +71,12 @@ export default function CheckoutPage() {
     country: "India",
   });
 
+  // ── Coupon State ──────────────────────────────────────────────────────────
+  const [couponCode, setCouponCode] = useState("");
+  const [couponError, setCouponError] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
+  const [applyingCoupon, setApplyingCoupon] = useState(false);
+
   useEffect(() => {
     setMounted(true);
     if (typeof window !== "undefined") {
@@ -105,11 +111,6 @@ export default function CheckoutPage() {
     (sum, item) => sum + item.quantity * Number(item.unitPrice || 0),
     0
   );
-
-  const [couponCode, setCouponCode] = useState("");
-  const [couponError, setCouponError] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
-  const [applyingCoupon, setApplyingCoupon] = useState(false);
 
   const applyCoupon = async () => {
     if (!couponCode) return;
@@ -148,28 +149,7 @@ export default function CheckoutPage() {
   const tax = subtotal * 0.05;
   const total = Math.max(subtotal + shipping + tax - discount, 0);
 
-  if (!mounted || (cartLoading && safeItems.length === 0)) {
-    return (
-      <div className="w-full min-h-[60vh] flex flex-col items-center justify-center bg-background pt-32">
-        <div className="w-10 h-10 border border-luxuryGold border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
 
-  if (
-    safeItems.length === 0 &&
-    !cartLoading &&
-    paymentState === "IDLE"
-  ) {
-    return (
-      <div className="w-full min-h-[60vh] flex flex-col items-center justify-center px-6 py-24 text-center space-y-8 bg-background pt-32">
-        <h1 className="text-4xl md:text-5xl font-serif text-primaryText">Your Cart is Empty</h1>
-        <button onClick={() => router.push("/shop")} className="luxury-button mt-4">
-          Return to Collection
-        </button>
-      </div>
-    );
-  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -205,13 +185,12 @@ export default function CheckoutPage() {
    *
    * The frontend shows "Order Confirmed" ONLY IF the backend returns paymentStatus === 'paid'.
    */
-  const handleVerifyPayment = useCallback(
-    async (
-      razorpayOrderId: string,
-      razorpayPaymentId: string,
-      razorpaySignature: string,
-      createdOrderId: string,
-    ) => {
+  const handleVerifyPayment = async (
+    razorpayOrderId: string,
+    razorpayPaymentId: string,
+    razorpaySignature: string,
+    createdOrderId: string,
+  ) => {
       if (verificationAttemptedRef.current) return;
       verificationAttemptedRef.current = true;
 
@@ -267,10 +246,7 @@ export default function CheckoutPage() {
           startPollingStatus(createdOrderId);
         }
       }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
+  };
 
   /**
    * Polls the backend authoritative payment status every 3 seconds.
@@ -450,6 +426,29 @@ export default function CheckoutPage() {
   };
 
   const isLoading = paymentState === "ORDER_CREATING" || paymentState === "PAYMENT_PENDING" || paymentState === "VERIFYING";
+
+  if (!mounted || (cartLoading && safeItems.length === 0)) {
+    return (
+      <div className="w-full min-h-[60vh] flex flex-col items-center justify-center bg-background pt-32">
+        <div className="w-10 h-10 border border-luxuryGold border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (
+    safeItems.length === 0 &&
+    !cartLoading &&
+    paymentState === "IDLE"
+  ) {
+    return (
+      <div className="w-full min-h-[60vh] flex flex-col items-center justify-center px-6 py-24 text-center space-y-8 bg-background pt-32">
+        <h1 className="text-4xl md:text-5xl font-serif text-primaryText">Your Cart is Empty</h1>
+        <button onClick={() => router.push("/shop")} className="luxury-button mt-4">
+          Return to Collection
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full bg-background min-h-screen pt-32 pb-24 md:pb-super animate-fade-in">
