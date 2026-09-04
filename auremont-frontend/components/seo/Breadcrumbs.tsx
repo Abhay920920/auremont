@@ -31,21 +31,21 @@ export default function Breadcrumbs({ items }: BreadcrumbsProps) {
   return (
     <>
       <JsonLd data={breadcrumbListSchema} />
-      <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-widest text-secondaryText mb-8">
+      <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs uppercase tracking-wider text-zinc-400 mb-6 sm:mb-8 font-mono">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
           return (
             <React.Fragment key={index}>
               {item.url && !isLast ? (
-                <Link href={item.url} className="hover:text-luxuryGold transition-colors">
+                <Link href={item.url} className="hover:text-luxuryGold transition-colors text-zinc-400">
                   {item.label}
                 </Link>
               ) : (
-                <span className={isLast ? "text-primaryText font-medium" : "text-mutedText"}>
+                <span className={isLast ? "text-luxuryGold font-medium" : "text-zinc-400"}>
                   {item.label}
                 </span>
               )}
-              {!isLast && <span className="text-divider mx-1">/</span>}
+              {!isLast && <span className="text-zinc-600 mx-1">/</span>}
             </React.Fragment>
           );
         })}

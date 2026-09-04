@@ -14,8 +14,9 @@ export default function MobileBottomBar() {
   const user = useAuthStore((state) => state.user);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // Hide on admin routes
-  if (pathname?.startsWith("/admin")) return null;
+  // Hide on admin routes and product detail pages (where dedicated product purchase bar is active)
+  const isProductDetailPage = pathname?.startsWith("/shop/") && pathname.split("/").filter(Boolean).length > 1;
+  if (pathname?.startsWith("/admin") || isProductDetailPage) return null;
 
   const totalCount = (items || []).reduce((sum, item) => sum + item.quantity, 0);
 

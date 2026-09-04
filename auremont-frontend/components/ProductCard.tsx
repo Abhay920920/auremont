@@ -72,20 +72,30 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
       </div>
       
-      <div className="flex flex-col items-center text-center flex-grow justify-between">
-        <div>
+      <div className="flex flex-col items-center text-center flex-grow justify-between pt-1">
+        <div className="w-full px-1">
           <Link href={`/shop/${product.slug}`} data-testid={`product-title-link-${product.slug}`}>
-            <h3 className="font-serif text-sm sm:text-2xl text-primaryText mb-1 sm:mb-2 group-hover:text-luxuryGold transition-colors line-clamp-2">{product.name}</h3>
+            <h3 className="font-serif text-sm sm:text-lg md:text-xl text-primaryText mb-1 sm:mb-1.5 group-hover:text-luxuryGold transition-colors line-clamp-2 leading-snug">
+              {product.name}
+            </h3>
           </Link>
-          <p className="text-[10px] sm:text-xs text-secondaryText tracking-superwide uppercase mb-1 sm:mb-4">{product.weightGrams || 250}G</p>
+          <p className="text-[11px] sm:text-xs text-zinc-400 tracking-wider uppercase font-mono mb-2 sm:mb-3">
+            {product.weightGrams || 250}G
+          </p>
         </div>
         
-        <div className="w-full">
-          <span suppressHydrationWarning className="font-medium text-xs sm:text-base text-primaryText block mb-2 sm:mb-4">{formatPrice(product.price)}</span>
+        <div className="w-full px-1">
+          <span suppressHydrationWarning className="font-light font-serif text-sm sm:text-lg text-luxuryGold block mb-2.5 sm:mb-3">
+            {formatPrice(product.price)}
+          </span>
           
-          {/* Mobile Quick Add */}
+          {/* Mobile Quick Add Button */}
           <div className="md:hidden w-full">
-            <AddToCartButton productId={product.id} product={product} className="luxury-button w-full text-[10px] py-2 px-2" />
+            <AddToCartButton 
+              productId={product.id} 
+              product={product} 
+              className="luxury-button w-full text-[10px] sm:text-xs py-2.5 px-2 tracking-wider font-mono h-9 flex items-center justify-center rounded-sm" 
+            />
           </div>
         </div>
       </div>

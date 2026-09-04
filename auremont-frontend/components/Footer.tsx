@@ -44,14 +44,14 @@ export default function Footer() {
           
           {/* Brand Column (Full width on mobile, 5 cols on desktop) */}
           <div className="col-span-2 md:col-span-5 space-y-4 sm:space-y-6">
-            <div className="flex items-center gap-4">
-              <SquirrelLogo size={48} variant="badge" />
+            <div className="flex items-start">
+              <SquirrelLogo size={44} variant="header" />
             </div>
-            <p className="text-secondaryText text-xs sm:text-sm md:text-base max-w-md leading-relaxed font-light">
+            <p className="text-zinc-400 text-xs sm:text-sm md:text-base max-w-md leading-relaxed font-light">
               <span className="text-luxuryGold font-serif italic block mb-1 text-sm sm:text-base">Exceptional by Nature. Distinct by Choice.</span>
               Purveyors of exceptionally sourced premium nuts. Hand-selected, slow-roasted, and presented with supreme elegance for those who appreciate true botanical craftsmanship.
             </p>
-            <div className="pt-1 flex gap-5 sm:gap-6 text-secondaryText">
+            <div className="pt-1 flex gap-5 sm:gap-6 text-zinc-400">
               <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-luxuryGold transition-colors p-1" aria-label="Instagram">
                 <Instagram size={18} strokeWidth={1.5} />
               </a>

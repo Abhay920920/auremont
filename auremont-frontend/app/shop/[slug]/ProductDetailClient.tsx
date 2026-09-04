@@ -118,18 +118,20 @@ export default function ProductDetailClient({ initialProduct, slug: propSlug }: 
     : 0;
 
   return (
-    <div className="w-full bg-background pt-32 pb-24 md:pb-super">
+    <div className="w-full bg-background pt-24 sm:pt-28 md:pt-32 pb-32 sm:pb-36 md:pb-super">
       <div className="site-container">
         {/* Breadcrumb */}
-        <Breadcrumbs items={[
-          { label: "Home", url: "/" },
-          { label: "Shop", url: "/shop" },
-          ...(product.category ? [{ label: product.category.name, url: `/shop?category=${product.category.slug}` }] : []),
-          { label: product.name }
-        ]} />
+        <div className="mb-6 sm:mb-8">
+          <Breadcrumbs items={[
+            { label: "Home", url: "/" },
+            { label: "Shop", url: "/shop" },
+            ...(product.category ? [{ label: product.category.name, url: `/shop?category=${product.category.slug}` }] : []),
+            { label: product.name }
+          ]} />
+        </div>
 
         {/* Main Layout: Sticky Left, Scrolling Right */}
-        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 relative">
+        <div className="flex flex-col lg:flex-row gap-8 sm:gap-12 lg:gap-20 relative">
           
           {/* LEFT COLUMN: Sticky Gallery */}
           <div className="w-full lg:w-1/2">
@@ -137,21 +139,21 @@ export default function ProductDetailClient({ initialProduct, slug: propSlug }: 
           </div>
 
           {/* RIGHT COLUMN: Scrolling Details */}
-          <div className="w-full lg:w-1/2 flex flex-col space-y-8 animate-slide-up">
+          <div className="w-full lg:w-1/2 flex flex-col space-y-6 sm:space-y-8 animate-slide-up">
             
             <ProductInfo product={product} reviews={reviews} avgRating={avgRating} />
             <StickyPurchasePanel product={product} />
             <AccordionDetails product={product} />
 
             {/* Reviews Section */}
-            <div className="space-y-10 pt-8">
+            <div className="space-y-8 pt-6 sm:pt-8">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-divider pb-6">
                 <div>
-                  <h2 className="font-serif text-3xl text-primaryText mb-1">Client Reviews</h2>
+                  <h2 className="font-serif text-2xl sm:text-3xl text-primaryText mb-1">Client Reviews</h2>
                   {reviews.length > 0 && (
-                    <div className="flex items-center gap-3">
-                      <StarRating rating={avgRating} size={16} />
-                      <span className="text-secondaryText text-xs font-mono tracking-wide">{avgRating}.0 / 5.0 · ({reviews.length} Verified Reviews)</span>
+                    <div className="flex items-center gap-2.5">
+                      <StarRating rating={avgRating} size={15} />
+                      <span className="text-zinc-400 text-xs font-mono tracking-wide">{avgRating}.0 / 5.0 · ({reviews.length} Verified Reviews)</span>
                     </div>
                   )}
                 </div>
@@ -161,7 +163,7 @@ export default function ProductDetailClient({ initialProduct, slug: propSlug }: 
                     if (!user) { router.push('/login'); return; }
                     setIsReviewDrawerOpen(true);
                   }}
-                  className="luxury-button-outline text-xs py-3 px-6 inline-flex items-center gap-2 self-start sm:self-auto"
+                  className="luxury-button-outline text-xs py-2.5 sm:py-3 px-5 sm:px-6 inline-flex items-center gap-2 self-start sm:self-auto"
                 >
                   <Star size={14} className="text-luxuryGold" />
                   <span>Write A Review</span>
@@ -169,35 +171,35 @@ export default function ProductDetailClient({ initialProduct, slug: propSlug }: 
               </div>
 
               {/* Review List */}
-              <div className="space-y-8">
+              <div className="space-y-6 sm:space-y-8">
                 {reviews.length === 0 ? (
-                  <div className="p-8 border border-dashed border-divider rounded-card text-center space-y-3">
-                    <p className="text-secondaryText text-sm font-light">No client reviews yet. Be the first to share your experience with {product.name}.</p>
+                  <div className="p-6 sm:p-8 border border-dashed border-zinc-800 rounded-card text-center space-y-3 bg-secondaryBg/40">
+                    <p className="text-zinc-300 text-sm font-light leading-relaxed">No client reviews yet. Be the first to share your experience with {product.name}.</p>
                     <button
                       onClick={() => {
                         if (!user) { router.push('/login'); return; }
                         setIsReviewDrawerOpen(true);
                       }}
-                      className="text-xs text-luxuryGold uppercase tracking-widest font-mono hover:underline inline-block"
+                      className="text-xs text-luxuryGold uppercase tracking-widest font-mono hover:underline inline-block pt-1"
                     >
                       Write First Review →
                     </button>
                   </div>
                 ) : (
                   reviews.map(r => (
-                    <div key={r.id} className="border-b border-divider pb-8 last:border-0 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <StarRating rating={r.rating} size={14} />
-                          <span className="text-[10px] uppercase tracking-widest text-emerald-400 font-mono bg-emerald-950/40 px-2 py-0.5 border border-emerald-500/30 rounded-full inline-block">
+                    <div key={r.id} className="border-b border-divider/70 pb-6 sm:pb-8 last:border-0 space-y-2.5">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2.5">
+                          <StarRating rating={r.rating} size={13} />
+                          <span className="text-[10px] uppercase tracking-wider text-emerald-400 font-mono bg-emerald-950/50 px-2 py-0.5 border border-emerald-500/40 rounded-full inline-block">
                             Verified Purchaser
                           </span>
                         </div>
-                        <span className="text-xs text-mutedText font-light">{new Date(r.createdAt).toLocaleDateString()}</span>
+                        <span className="text-xs text-zinc-400 font-light">{new Date(r.createdAt).toLocaleDateString()}</span>
                       </div>
-                      {r.title && <h4 className="font-serif text-lg text-primaryText">{r.title}</h4>}
-                      {r.review && <p className="text-secondaryText text-sm leading-relaxed font-light">{r.review}</p>}
-                      <p className="text-xs text-mutedText uppercase tracking-widest">— {r.user?.firstName || "Discerning"} {r.user?.lastName || "Client"}</p>
+                      {r.title && <h4 className="font-serif text-base sm:text-lg text-primaryText font-medium">{r.title}</h4>}
+                      {r.review && <p className="text-zinc-300 text-sm leading-relaxed font-light">{r.review}</p>}
+                      <p className="text-xs text-zinc-400 uppercase tracking-widest font-mono">— {r.user?.firstName || "Discerning"} {r.user?.lastName || "Client"}</p>
                     </div>
                   ))
                 )}
