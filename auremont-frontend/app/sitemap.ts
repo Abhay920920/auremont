@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
-import { FALLBACK_PRODUCTS } from '@/lib/productData';
-import { FALLBACK_ARTICLES } from '@/lib/journalData';
+import { FALLBACK_PRODUCTS, CatalogProduct } from '@/lib/productData';
+import { FALLBACK_ARTICLES, BlogArticle } from '@/lib/journalData';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in';
