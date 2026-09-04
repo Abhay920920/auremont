@@ -118,7 +118,7 @@ export class ReviewsService {
       where,
       include: {
         user: { select: { firstName: true, lastName: true, email: true } },
-        product: { select: { name: true } }
+        product: { select: { name: true, slug: true, thumbnailUrl: true } }
       },
       orderBy: { createdAt: 'desc' }
     });
@@ -130,10 +130,21 @@ export class ReviewsService {
 
     const updated = await this.prisma.review.update({
       where: { id },
-      data: { status: dto.status }
+      data: { status: dto.status as any }
     });
 
+    this.clearCache();
     await this.audit.log({ userId: adminId, action: 'MODERATE_REVIEW', entity: 'Review', entityId: id });
     return updated;
+  }
+
+  async deleteReview(id: string, adminId: string): Promise<{ message: string }> {
+    const review = await this.prisma.review.findUnique({ where: { id } });
+    if (!review) throw new NotFoundException('Review not found');
+
+    await this.prisma.review.delete({ where: { id } });
+    this.clearCache();
+    await this.audit.log({ userId: adminId, action: 'DELETE_REVIEW', entity: 'Review', entityId: id });
+    return { message: 'Review deleted successfully' };
   }
 }

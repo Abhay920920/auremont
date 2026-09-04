@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Patch, Query, UseGuards, ForbiddenException } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Patch, Delete, Query, UseGuards, ForbiddenException } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -47,5 +47,12 @@ export class ReviewsController {
   @Roles('admin')
   async moderateReview(@Param('id') id: string, @Body() dto: ModerateReviewDto, @GetUser() user: any) {
     return this.reviewsService.moderateReview(id, dto, user.id);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  async deleteReview(@Param('id') id: string, @GetUser() user: any) {
+    return this.reviewsService.deleteReview(id, user.id);
   }
 }
