@@ -1,6 +1,7 @@
 "use client";
 
 import { useCartStore } from "@/store/cartStore";
+import { useAuthStore } from "@/store/authStore";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -14,15 +15,20 @@ const FREE_SHIPPING_THRESHOLD = 1999;
 
 export default function CartPage() {
   const { items, fetchCart, updateQuantity, removeItem, loading } = useCartStore();
+  const { user } = useAuthStore();
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
+    if (!user) {
+      router.push("/login?redirect=/cart&reason=cart");
+      return;
+    }
     if (!items || items.length === 0) {
       fetchCart();
     }
-  }, []);
+  }, [user]);
 
   if (!mounted) return null;
 

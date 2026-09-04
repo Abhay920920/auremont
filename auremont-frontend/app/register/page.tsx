@@ -1,20 +1,31 @@
 "use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import api from '@/lib/axios';
 import { useAuthStore } from '@/store/authStore';
 import Link from 'next/link';
 import SquirrelLogo from '@/components/ui/SquirrelLogo';
 import { Eye, EyeOff, ShieldCheck, AlertCircle, Mail, Lock, User, ArrowRight, Sparkles } from 'lucide-react';
 
-export default function Register() {
+function RegisterForm() {
+  const searchParams = useSearchParams();
+  const emailParam = searchParams?.get('email');
+  const redirect = searchParams?.get('redirect');
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    email: '',
+    email: emailParam || '',
     password: '',
   });
+
+  useEffect(() => {
+    if (emailParam) {
+      setFormData(prev => ({ ...prev, email: emailParam }));
+    }
+  }, [emailParam]);
+
   const [showPassword, setShowPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(true);
   const [error, setError] = useState('');
@@ -33,11 +44,29 @@ export default function Register() {
     setError('');
 
     try {
-      const res = await api.post('/auth/register', formData);
+      const res = await api.post('/auth/register', {
+        ...formData,
+        email: formData.email.trim(),
+      });
       const { user, access_token, refresh_token } = res.data;
       
       setAuth(user, access_token, refresh_token);
-      router.push('/account');
+      
+      // Trigger cart merge and fetch wishlist (do not await so it doesn't block routing)
+      import('@/store/cartStore').then(({ useCartStore }) => {
+        useCartStore.getState().mergeCart();
+        return null;
+      }).catch(console.error);
+      import('@/store/wishlistStore').then(({ useWishlistStore }) => {
+        useWishlistStore.getState().fetchWishlist(user.id);
+        return null;
+      }).catch(console.error);
+
+      if (redirect) {
+        router.push(redirect);
+      } else {
+        router.push('/account');
+      }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Registration failed. Please check your details.');
     } finally {
@@ -220,7 +249,10 @@ export default function Register() {
         <div className="text-center pt-4 sm:pt-5 mt-4 sm:mt-5 border-t border-divider/60">
           <p className="text-xs text-secondaryText">
             Already have an account?{' '}
-            <Link href="/login" className="text-luxuryGold hover:text-goldHover font-medium underline underline-offset-4 transition-colors py-1 inline-block">
+            <Link 
+              href={`/login${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`}
+              className="text-luxuryGold hover:text-goldHover font-medium underline underline-offset-4 transition-colors py-1 inline-block"
+            >
               Sign In
             </Link>
           </p>
@@ -245,5 +277,17 @@ export default function Register() {
         </span>
       </div>
     </div>
+  );
+}
+
+export default function Register() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-2 border-luxuryGold border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <RegisterForm />
+    </Suspense>
   );
 }

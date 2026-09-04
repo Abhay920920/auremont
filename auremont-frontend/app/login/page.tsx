@@ -1,19 +1,24 @@
 "use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import api from '@/lib/axios';
 import { useAuthStore } from '@/store/authStore';
 import Link from 'next/link';
 import SquirrelLogo from '@/components/ui/SquirrelLogo';
-import { Eye, EyeOff, ShieldCheck, AlertCircle, Mail, Lock, ArrowRight, Sparkles } from 'lucide-react';
+import { Eye, EyeOff, ShieldCheck, AlertCircle, Mail, Lock, ArrowRight, Sparkles, UserPlus, ShoppingBag } from 'lucide-react';
 
-export default function Login() {
+function LoginForm() {
+  const searchParams = useSearchParams();
+  const redirect = searchParams?.get('redirect');
+  const reason = searchParams?.get('reason');
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState('');
+  const [isNotRegistered, setIsNotRegistered] = useState(false);
   const [loading, setLoading] = useState(false);
   
   const router = useRouter();
@@ -23,9 +28,10 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setIsNotRegistered(false);
 
     try {
-      const response = await api.post('/auth/login', { email, password });
+      const response = await api.post('/auth/login', { email: email.trim(), password });
       setAuth(response.data.user, response.data.access_token, response.data.refresh_token);
       
       // Trigger cart merge and fetch wishlist (do not await so it doesn't block routing)
@@ -40,11 +46,26 @@ export default function Login() {
 
       if (response.data.user.role === 'admin') {
         router.push('/admin');
+      } else if (redirect) {
+        router.push(redirect);
       } else {
         router.push('/account');
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Authentication failed. Please verify your credentials.');
+      const msg = err.response?.data?.message || 'Authentication failed. Please verify your credentials.';
+      const notFound = typeof msg === 'string' && (
+        msg.toLowerCase().includes('no account found') || 
+        msg.toLowerCase().includes('sign up first') ||
+        msg.toLowerCase().includes('not found')
+      );
+      
+      if (notFound) {
+        setIsNotRegistered(true);
+        setError(`No account found for "${email.trim()}". Please sign up first to access your account.`);
+      } else {
+        setIsNotRegistered(false);
+        setError(msg);
+      }
     } finally {
       setLoading(false);
     }
@@ -54,6 +75,7 @@ export default function Login() {
     setEmail(demoEmail);
     setPassword(demoPass);
     setError('');
+    setIsNotRegistered(false);
   };
 
   return (
@@ -74,6 +96,16 @@ export default function Login() {
         <div className="absolute bottom-2.5 left-2.5 w-2 h-2 border-b border-l border-luxuryGold/40 pointer-events-none" />
         <div className="absolute bottom-2.5 right-2.5 w-2 h-2 border-b border-r border-luxuryGold/40 pointer-events-none" />
 
+        {/* Reason Banner: e.g. when redirected from attempting to use Cart without logging in */}
+        {reason === 'cart' && (
+          <div className="mb-6 p-3.5 bg-luxuryGold/10 border border-luxuryGold/30 text-luxuryGold text-xs flex items-center gap-2.5 rounded-sm">
+            <ShoppingBag size={16} className="flex-shrink-0" />
+            <span className="leading-snug">
+              Please sign in or create an account first to reserve items and activate your personal cart.
+            </span>
+          </div>
+        )}
+
         {/* Brand Header */}
         <div className="flex flex-col items-center text-center space-y-2.5 sm:space-y-3 mb-6 sm:mb-7">
           <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-b from-[#161619] to-[#0A0A0C] border border-luxuryGold/40 flex items-center justify-center shadow-[0_0_20px_rgba(212,175,55,0.18)]">
@@ -92,13 +124,32 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Error Notification */}
-        {error && (
+        {/* Specific Notification: User Tried Logging In Without Signing Up */}
+        {isNotRegistered ? (
+          <div className="mb-5 p-4 bg-luxuryGold/10 border border-luxuryGold/40 rounded-sm text-xs space-y-3 animate-fade-in">
+            <div className="flex items-center gap-2 text-luxuryGold font-medium">
+              <UserPlus size={16} className="flex-shrink-0" />
+              <span className="uppercase tracking-wider text-[11px]">Account Not Found</span>
+            </div>
+            <p className="text-secondaryText leading-relaxed">
+              No registered member account was found for <strong className="text-primaryText">{email}</strong>. Please first sign up to activate your account.
+            </p>
+            <div>
+              <Link
+                href={`/register?email=${encodeURIComponent(email)}${redirect ? `&redirect=${encodeURIComponent(redirect)}` : ''}`}
+                className="w-full h-11 luxury-button flex items-center justify-center gap-2 text-xs font-semibold"
+              >
+                <span>First Sign Up to Login</span>
+                <ArrowRight size={14} />
+              </Link>
+            </div>
+          </div>
+        ) : error ? (
           <div className="mb-5 p-3 sm:p-3.5 bg-error/10 border border-error/30 text-error text-xs flex items-start gap-2.5">
             <AlertCircle size={15} className="flex-shrink-0 mt-0.5" />
             <span className="leading-relaxed">{error}</span>
           </div>
-        )}
+        ) : null}
 
         {/* Credentials Form */}
         <form onSubmit={handleLogin} className="space-y-4 sm:space-y-5">
@@ -215,7 +266,10 @@ export default function Login() {
         <div className="text-center pt-4 sm:pt-5 mt-4 sm:mt-5 border-t border-divider/60">
           <p className="text-xs text-secondaryText">
             New to RARE NUTS?{' '}
-            <Link href="/register" className="text-luxuryGold hover:text-goldHover font-medium underline underline-offset-4 transition-colors">
+            <Link 
+              href={`/register${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`}
+              className="text-luxuryGold hover:text-goldHover font-medium underline underline-offset-4 transition-colors"
+            >
               Create an Account
             </Link>
           </p>
@@ -240,5 +294,17 @@ export default function Login() {
         </span>
       </div>
     </div>
+  );
+}
+
+export default function Login() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-2 border-luxuryGold border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }

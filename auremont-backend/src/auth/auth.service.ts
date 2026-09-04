@@ -73,6 +73,10 @@ export class AuthService implements OnModuleInit {
     }
   }
 
+  async findUserByEmail(email: string) {
+    return this.usersService.findByEmail(email);
+  }
+
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.usersService.findByEmail(email);
     if (user && user.passwordHash && await bcrypt.compare(pass, user.passwordHash)) {

@@ -79,6 +79,10 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     setMounted(true);
+    if (!user) {
+      router.push("/login?redirect=/checkout&reason=cart");
+      return;
+    }
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       const recoverId = params.get("recover");

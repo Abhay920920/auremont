@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { PackageCheck, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
+import { useAuthStore } from "@/store/authStore";
 import { useCurrencyStore } from "@/store/currencyStore";
 import api from "@/lib/axios";
 
@@ -109,6 +111,8 @@ const WAX_SEALS = [
 ];
 
 export default function GiftBoxBuilder() {
+  const router = useRouter();
+  const user = useAuthStore((state) => state.user);
   const { addItem } = useCartStore();
   const { formatPrice } = useCurrencyStore();
 
@@ -145,6 +149,11 @@ export default function GiftBoxBuilder() {
   };
 
   const handleAddToCart = async () => {
+    if (!user) {
+      router.push('/login?redirect=/custom-gift-box&reason=cart');
+      return;
+    }
+
     setAddingToCart(true);
     try {
       const bespokeProduct = {

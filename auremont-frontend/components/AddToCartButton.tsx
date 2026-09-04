@@ -1,6 +1,8 @@
 "use client";
 
 import { useCartStore } from "@/store/cartStore";
+import { useAuthStore } from "@/store/authStore";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function AddToCartButton({ 
@@ -14,6 +16,8 @@ export default function AddToCartButton({
   className?: string;
   quantity?: number;
 }) {
+  const { user } = useAuthStore();
+  const router = useRouter();
   const addItem = useCartStore((state) => state.addItem);
   const [success, setSuccess] = useState(false);
 
@@ -21,7 +25,14 @@ export default function AddToCartButton({
     e.preventDefault();
     e.stopPropagation();
     
-    // Instant 0ms visual confirmation
+    // Enforce: Cart works only after login
+    if (!user) {
+      const currentPath = typeof window !== "undefined" ? window.location.pathname : "/shop";
+      router.push(`/login?redirect=${encodeURIComponent(currentPath)}&reason=cart`);
+      return;
+    }
+
+    // Instant visual confirmation
     setSuccess(true);
     setTimeout(() => setSuccess(false), 2000);
 
