@@ -1,4 +1,5 @@
 import { act } from '@testing-library/react';
+import api from '@/lib/axios';
 import { useAuthStore } from '@/store/authStore';
 import { useCartStore } from '@/store/cartStore';
 import { useCurrencyStore } from '@/store/currencyStore';
@@ -52,6 +53,8 @@ describe('Zustand Stores Suite', () => {
     });
 
     it('should fetch cart via MSW endpoint', async () => {
+      jest.spyOn(api, 'get').mockResolvedValueOnce({ data: mockCart } as any);
+
       await act(async () => {
         await useCartStore.getState().fetchCart();
       });
@@ -63,6 +66,8 @@ describe('Zustand Stores Suite', () => {
     });
 
     it('should add item to cart', async () => {
+      jest.spyOn(api, 'post').mockResolvedValueOnce({ data: mockCart } as any);
+
       await act(async () => {
         await useCartStore.getState().addItem('prod-001-uuid', 2);
       });

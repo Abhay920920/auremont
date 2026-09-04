@@ -98,39 +98,39 @@ export const handlers = [
   }),
 
   // Cart Handlers
-  http.get('http://localhost:3001/cart', () => {
-    return HttpResponse.json(mockCart);
-  }),
   http.get('*/cart', () => {
-    return HttpResponse.json(mockCart);
+    return HttpResponse.text(JSON.stringify(mockCart), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }),
 
-  http.post('http://localhost:3001/cart/items', async () => {
-    return HttpResponse.json(mockCart);
-  }),
   http.post('*/cart/items', async () => {
-    return HttpResponse.json(mockCart);
+    return HttpResponse.text(JSON.stringify(mockCart), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }),
 
-  http.patch('http://localhost:3001/cart/items/:id', async () => {
-    return HttpResponse.json(mockCart);
-  }),
   http.patch('*/cart/items/:id', async () => {
-    return HttpResponse.json(mockCart);
+    return HttpResponse.text(JSON.stringify(mockCart), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }),
 
-  http.delete('http://localhost:3001/cart/items/:id', async () => {
-    return HttpResponse.json(mockCart);
-  }),
   http.delete('*/cart/items/:id', async () => {
-    return HttpResponse.json(mockCart);
+    return HttpResponse.text(JSON.stringify(mockCart), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }),
 
-  http.post('http://localhost:3001/cart/merge', async () => {
-    return HttpResponse.json(mockCart);
-  }),
   http.post('*/cart/merge', async () => {
-    return HttpResponse.json(mockCart);
+    return HttpResponse.text(JSON.stringify(mockCart), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }),
 
   // Coupon Validation Handler

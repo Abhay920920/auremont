@@ -5,10 +5,14 @@ import BreadcrumbSchema from '@/components/seo/BreadcrumbSchema';
 import ArticleSchema from '@/components/seo/ArticleSchema';
 import FAQSchema from '@/components/seo/FAQSchema';
 import WebSiteSchema from '@/components/seo/WebSiteSchema';
+import JsonLd from '@/components/JsonLd';
 import robots from '@/app/robots';
+import sitemap from '@/app/sitemap';
+import { generateMetadata as generateProductMetadata } from '@/app/shop/[slug]/page';
+import { generateMetadata as generateArticleMetadata } from '@/app/journal/[slug]/page';
 
-describe('SEO & Structured Data Regression Test Suite', () => {
-  describe('ProductSchema Structured Data', () => {
+describe('SEO & Structured Data Adversarial QA Test Suite', () => {
+  describe('ProductSchema Structured Data & Zero-Hallucination Rules', () => {
     it('should generate valid Product JSON-LD without fabricated reviews when none provided', () => {
       const { container } = render(
         <ProductSchema
@@ -60,7 +64,7 @@ describe('SEO & Structured Data Regression Test Suite', () => {
       expect(schema.aggregateRating.reviewCount).toBe(15);
     });
 
-    it('should correctly set OutOfStock availability schema when stock is 0', () => {
+    it('should correctly set OutOfStock availability schema when stock is 0 or false', () => {
       const { container } = render(
         <ProductSchema
           name="Sold Out Almonds"
@@ -77,6 +81,55 @@ describe('SEO & Structured Data Regression Test Suite', () => {
       const script = container.querySelector('script[type="application/ld+json"]');
       const schema = JSON.parse(script!.textContent || '{}');
       expect(schema.offers.availability).toBe('https://schema.org/OutOfStock');
+    });
+  });
+
+  describe('JSON-LD Security & Anti-XSS Script Breakout', () => {
+    it('should sanitize angle brackets in JSON-LD output to prevent closing tag injection', () => {
+      const maliciousData = {
+        name: '</script><script>alert("xss")</script>',
+        description: 'Test <img src=x onerror=alert(1)>',
+      };
+
+      const { container } = render(<JsonLd data={maliciousData} />);
+      const script = container.querySelector('script[type="application/ld+json"]');
+      expect(script).not.toBeNull();
+
+      const rawHtml = script!.innerHTML;
+      // Must NOT contain literal </script> unescaped
+      expect(rawHtml).not.toContain('</script>');
+      expect(rawHtml).toContain('\\u003c/script\\u003e');
+
+      // But valid JSON parsers can still reconstruct original data safely
+      const parsed = JSON.parse(script!.textContent || '{}');
+      expect(parsed.name).toBe('</script><script>alert("xss")</script>');
+    });
+  });
+
+  describe('Dynamic generateMetadata Adversarial Tests', () => {
+    it('should return valid metadata with canonical for real products', async () => {
+      const meta = await generateProductMetadata({ params: Promise.resolve({ slug: 'california-reserve-raw' }) });
+      expect(meta.title).toContain('California Reserve Raw Almonds 250g');
+      expect(meta.alternates?.canonical).toBe('https://rarenuts.in/shop/california-reserve-raw');
+      expect(meta.openGraph?.url).toBe('https://rarenuts.in/shop/california-reserve-raw');
+    });
+
+    it('should return noindex and 404 title for non-existent product slug', async () => {
+      const meta = await generateProductMetadata({ params: Promise.resolve({ slug: 'does-not-exist-xyz' }) });
+      expect(meta.title).toBe('Product Not Found | RARE NUTS');
+      expect(meta.robots).toEqual({ index: false, follow: false });
+    });
+
+    it('should return valid metadata for published journal article', async () => {
+      const meta = await generateArticleMetadata({ params: Promise.resolve({ slug: 'the-art-of-slow-roasting' }) });
+      expect(meta.title).toContain('The Art of Slow Roasting');
+      expect(meta.alternates?.canonical).toBe('https://rarenuts.in/journal/the-art-of-slow-roasting');
+    });
+
+    it('should return noindex and 404 title for non-existent journal slug', async () => {
+      const meta = await generateArticleMetadata({ params: Promise.resolve({ slug: 'invalid-article-slug-xyz' }) });
+      expect(meta.title).toBe('Article Not Found | RARE NUTS Journal');
+      expect(meta.robots).toEqual({ index: false, follow: false });
     });
   });
 
@@ -186,7 +239,35 @@ describe('SEO & Structured Data Regression Test Suite', () => {
       expect(disallowList).toContain('/api/');
 
       // Verify sitemap declarations
-      expect(robotsConfig.sitemap).toBeDefined();
+      expect(robotsConfig.sitemap).toBe('https://rarenuts.in/sitemap.xml');
+    });
+  });
+
+  describe('Sitemap XML Integrity Verification', () => {
+    it('should generate canonical URLs without duplicate slashes or non-existent hub pages', async () => {
+      const sitemapEntries = await sitemap();
+      expect(sitemapEntries.length).toBeGreaterThan(15);
+
+      const urls = sitemapEntries.map((e) => e.url);
+
+      // Verify all URLs start with trusted siteUrl
+      urls.forEach((url) => {
+        expect(url.startsWith('https://rarenuts.in')).toBe(true);
+        // No duplicate slashes (e.g., https://rarenuts.in//shop)
+        const pathPart = url.replace('https://rarenuts.in', '');
+        expect(pathPart).not.toContain('//');
+        // No trailing tracking query parameters
+        expect(url).not.toContain('?');
+      });
+
+      // Verify essential canonical URLs are present
+      expect(urls).toContain('https://rarenuts.in');
+      expect(urls).toContain('https://rarenuts.in/shop');
+      expect(urls).toContain('https://rarenuts.in/about');
+      expect(urls).toContain('https://rarenuts.in/journal');
+      expect(urls).toContain('https://rarenuts.in/faq');
+      expect(urls).toContain('https://rarenuts.in/shop/california-reserve-raw');
+      expect(urls).toContain('https://rarenuts.in/journal/the-art-of-slow-roasting');
     });
   });
 });

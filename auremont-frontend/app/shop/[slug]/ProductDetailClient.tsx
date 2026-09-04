@@ -124,7 +124,7 @@ export default function ProductDetailClient({ initialProduct, slug: propSlug }: 
         <Breadcrumbs items={[
           { label: "Home", url: "/" },
           { label: "Shop", url: "/shop" },
-          ...(product.category ? [{ label: product.category.name, url: `/category/${product.category.slug}` }] : []),
+          ...(product.category ? [{ label: product.category.name, url: `/shop?category=${product.category.slug}` }] : []),
           { label: product.name }
         ]} />
 

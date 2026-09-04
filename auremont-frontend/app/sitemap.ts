@@ -1,48 +1,6 @@
 import { MetadataRoute } from 'next';
-
-const FALLBACK_PRODUCT_SLUGS = [
-  'california-reserve-raw',
-  'roasted-sea-salt-almonds',
-  'royal-almonds-wooden-box',
-  'window-pouch-almonds-250g',
-  'grand-unboxing-luxury-box',
-  'royal-mangalore-jumbo-cashews-250g',
-  'royal-mangalore-jumbo-cashews-500g',
-  'persian-akbari-salted-pistachios-250g',
-  'persian-akbari-salted-pistachios-500g',
-  'kashmiri-snow-walnut-halves-250g',
-  'kashmiri-snow-walnut-halves-500g',
-  'australian-style-roasted-macadamias-250g',
-  'australian-style-roasted-macadamias-500g',
-  'himalayan-wild-chilgoza-pine-nuts-100g',
-  'himalayan-wild-chilgoza-pine-nuts-200g',
-  'black-truffle-sea-salt-cashews-250g',
-  'black-truffle-sea-salt-cashews-500g',
-];
-
-const CATEGORY_SLUGS = [
-  'almonds',
-  'cashews',
-  'pistachios',
-  'walnuts',
-  'macadamias',
-  'pine-nuts',
-  'truffle-cashews',
-  'raw',
-  'roasted',
-  'gift',
-];
-
-const JOURNAL_HUB_SLUGS = [
-  'buying-guides',
-  'health-benefits',
-  'comparisons',
-  'corporate-gifting',
-  'festival-gifting',
-  'gift-guides',
-  'nutrition',
-  'recipes',
-];
+import { FALLBACK_PRODUCTS } from '@/lib/productData';
+import { FALLBACK_ARTICLES } from '@/lib/journalData';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in';
@@ -149,64 +107,54 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // 2. Category / Collection Landing Pages
-  const categoryRoutes: MetadataRoute.Sitemap = CATEGORY_SLUGS.map((cat) => ({
-    url: `${baseUrl}/shop/${cat}`,
-    lastModified: now,
-    changeFrequency: 'weekly',
-    priority: 0.85,
-  }));
-
-  // 3. Journal Topical Hub Routes
-  const journalHubRoutes: MetadataRoute.Sitemap = JOURNAL_HUB_SLUGS.map((hub) => ({
-    url: `${baseUrl}/journal/${hub}`,
-    lastModified: now,
-    changeFrequency: 'weekly',
-    priority: 0.8,
-  }));
-
-  // 4. Dynamic Products (from API with Fallback)
+  // 2. Dynamic Products (from API with Verified Fallback)
   let productRoutes: MetadataRoute.Sitemap = [];
   try {
-    const res = await fetch(`${apiUrl}/products?limit=100`, { next: { revalidate: 3600 } });
+    const res = await fetch(`${apiUrl}/products?limit=100`, { 
+      next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(3000),
+    });
     if (res.ok) {
       const data = await res.json();
       const products = data.data || [];
       productRoutes = products
-        .filter((p: any) => p.isIndexable !== false && p.status !== 'INACTIVE')
-        .map((p: any) => ({
+        .filter((p: CatalogProduct & { isIndexable?: boolean; status?: string }) => p.isIndexable !== false && p.status !== 'INACTIVE')
+        .map((p: CatalogProduct & { updatedAt?: string; createdAt?: string }) => ({
           url: `${baseUrl}/shop/${p.slug}`,
           lastModified: p.updatedAt ? new Date(p.updatedAt) : now,
-          changeFrequency: 'daily',
+          changeFrequency: 'daily' as const,
           priority: 0.9,
         }));
     }
   } catch {
-    // Graceful fallback to verified slugs
+    // Graceful fallback to verified products
   }
 
   if (productRoutes.length === 0) {
-    productRoutes = FALLBACK_PRODUCT_SLUGS.map((slug) => ({
+    productRoutes = Object.keys(FALLBACK_PRODUCTS).map((slug) => ({
       url: `${baseUrl}/shop/${slug}`,
       lastModified: now,
-      changeFrequency: 'daily',
+      changeFrequency: 'daily' as const,
       priority: 0.9,
     }));
   }
 
-  // 5. Dynamic Blogs / Articles (from API with Fallback)
+  // 3. Dynamic Blogs / Articles (from API with Verified Fallback)
   let blogRoutes: MetadataRoute.Sitemap = [];
   try {
-    const res = await fetch(`${apiUrl}/blogs?limit=50`, { next: { revalidate: 3600 } });
+    const res = await fetch(`${apiUrl}/blogs?limit=50`, { 
+      next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(3000),
+    });
     if (res.ok) {
       const data = await res.json();
       const blogs = data.data || [];
       blogRoutes = blogs
-        .filter((b: any) => b.isIndexable !== false && b.published !== false)
-        .map((b: any) => ({
+        .filter((b: BlogArticle & { isIndexable?: boolean; published?: boolean }) => b.isIndexable !== false && b.published !== false)
+        .map((b: BlogArticle & { updatedAt?: string }) => ({
           url: `${baseUrl}/journal/${b.slug}`,
           lastModified: b.updatedAt ? new Date(b.updatedAt) : now,
-          changeFrequency: 'weekly',
+          changeFrequency: 'weekly' as const,
           priority: 0.75,
         }));
     }
@@ -214,10 +162,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Graceful fallback
   }
 
+  if (blogRoutes.length === 0) {
+    blogRoutes = Object.keys(FALLBACK_ARTICLES).map((slug) => ({
+      url: `${baseUrl}/journal/${slug}`,
+      lastModified: now,
+      changeFrequency: 'weekly' as const,
+      priority: 0.75,
+    }));
+  }
+
   return [
     ...staticRoutes,
-    ...categoryRoutes,
-    ...journalHubRoutes,
     ...productRoutes,
     ...blogRoutes,
   ];

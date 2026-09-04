@@ -60,7 +60,8 @@ export const useCartStore = create<CartState>()(
             } else {
               set({ cartId: null, items: [] });
             }
-          } catch (err) {
+          } catch (err: any) {
+            console.error('CART FETCH ERROR:', err?.message || err, err?.response?.data);
             set({ error: 'Failed to fetch cart' });
           } finally {
             inFlightFetch = null;

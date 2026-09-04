@@ -24,22 +24,25 @@ const customJestFetchAdapter = async (config) => {
 
   const fetchOptions = {
     method: method,
-    headers: headers,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
   };
 
-  // Node 18 native fetch throws TypeError if body property is present on GET/HEAD requests
   if (method !== 'GET' && method !== 'HEAD' && body !== undefined && body !== null) {
     fetchOptions.body = body;
   }
 
   const response = await globalThis.fetch(fullUrl, fetchOptions);
 
-  const responseText = await response.text();
   let responseData = null;
   try {
-    responseData = JSON.parse(responseText);
-  } catch {
-    responseData = responseText;
+    const arrayBuf = await response.arrayBuffer();
+    const text = new TextDecoder().decode(arrayBuf);
+    responseData = text ? JSON.parse(text) : null;
+  } catch (e) {
+    responseData = null;
   }
 
   if (response.status >= 200 && response.status < 300) {
