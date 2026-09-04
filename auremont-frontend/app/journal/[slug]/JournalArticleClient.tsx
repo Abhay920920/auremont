@@ -69,7 +69,14 @@ export default function JournalArticleClient({ blog }: { blog: BlogArticle }) {
             </div>
 
             <div className="flex items-center gap-4 text-[11px] font-mono">
-              <span>{format(new Date(blog.publishedAt || Date.now()), 'MMMM d, yyyy')}</span>
+              <span>{(() => {
+                try {
+                  const d = blog.publishedAt ? new Date(blog.publishedAt) : new Date();
+                  return isNaN(d.getTime()) ? "January 15, 2025" : format(d, 'MMMM d, yyyy');
+                } catch {
+                  return "January 15, 2025";
+                }
+              })()}</span>
               <span>·</span>
               <span className="flex items-center gap-1">
                 <Clock size={12} /> 5 min read

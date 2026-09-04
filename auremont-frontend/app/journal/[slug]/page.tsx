@@ -107,7 +107,7 @@ export default async function JournalDetailPage({ params }: PageProps) {
       <ArticleSchema
         title={blog.title}
         description={blog.seoDescription}
-        slug={blog.slug}
+        slug={blog.slug || slug}
         coverImage={blog.coverImage}
         publishedAt={blog.publishedAt}
         modifiedAt={blog.modifiedAt}
