@@ -52,7 +52,14 @@ export class CartService {
   }
 
   async getCart(cartId?: string, userId?: string): Promise<Cart | null> {
-    const cacheKey = cartId ? `cart:id:${cartId}` : (userId ? `cart:user:${userId}` : null);
+    const isUuid = (val?: string) =>
+      typeof val === 'string' &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(val);
+
+    const safeCartId = isUuid(cartId) ? cartId : undefined;
+    const safeUserId = isUuid(userId) ? userId : undefined;
+
+    const cacheKey = safeCartId ? `cart:id:${safeCartId}` : (safeUserId ? `cart:user:${safeUserId}` : null);
     if (cacheKey) {
       const cached = this.cache.get(cacheKey);
       if (cached && Date.now() <= cached.expiresAt) return cached.data;
@@ -62,23 +69,31 @@ export class CartService {
     const fetchPromise = (async () => {
       let cart: any = null;
 
-      if (cartId) {
-        cart = await this.prisma.cart.findUnique({
-          where: { id: cartId },
-          select: this.cartSelect,
-        });
+      if (safeCartId) {
+        try {
+          cart = await this.prisma.cart.findUnique({
+            where: { id: safeCartId },
+            select: this.cartSelect,
+          });
 
-        // Inactive or already-ordered carts must never be returned as active shopping carts
-        if (cart && cart.status !== 'active') {
+          // Inactive or already-ordered carts must never be returned as active shopping carts
+          if (cart && cart.status !== 'active') {
+            cart = null;
+          }
+        } catch {
           cart = null;
         }
       }
 
-      if (!cart && userId) {
-        cart = await this.prisma.cart.findFirst({
-          where: { userId, status: 'active' },
-          select: this.cartSelect,
-        });
+      if (!cart && safeUserId) {
+        try {
+          cart = await this.prisma.cart.findFirst({
+            where: { userId: safeUserId, status: 'active' },
+            select: this.cartSelect,
+          });
+        } catch {
+          cart = null;
+        }
       }
 
       if (!cart) {

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { User } from '@prisma/client';
@@ -28,7 +28,15 @@ export class UsersService {
     });
   }
 
+  private isValidUuid(val?: string): boolean {
+    return typeof val === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(val);
+  }
+
   async getProfile(userId: string) {
+    if (!this.isValidUuid(userId)) {
+      throw new UnauthorizedException('Invalid user identity');
+    }
+
     let user = await this.prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -45,24 +53,28 @@ export class UsersService {
 
     // If phone is missing on user profile, check if user has an address with a phone number (e.g. from an order)
     if (!user.phone) {
-      const addrWithPhone = await this.prisma.address.findFirst({
-        where: { userId, phone: { not: '' } },
-        orderBy: { createdAt: 'desc' },
-      });
-      if (addrWithPhone?.phone) {
-        user = await this.prisma.user.update({
-          where: { id: userId },
-          data: { phone: addrWithPhone.phone },
-          select: {
-            id: true,
-            email: true,
-            firstName: true,
-            lastName: true,
-            phone: true,
-            role: true,
-            createdAt: true,
-          }
+      try {
+        const addrWithPhone = await this.prisma.address.findFirst({
+          where: { userId },
+          orderBy: { createdAt: 'desc' },
         });
+        if (addrWithPhone?.phone) {
+          user = await this.prisma.user.update({
+            where: { id: userId },
+            data: { phone: addrWithPhone.phone },
+            select: {
+              id: true,
+              email: true,
+              firstName: true,
+              lastName: true,
+              phone: true,
+              role: true,
+              createdAt: true,
+            }
+          });
+        }
+      } catch {
+        // Silently continue with existing user profile
       }
     }
 
@@ -70,6 +82,9 @@ export class UsersService {
   }
 
   async updateProfile(userId: string, data: { firstName?: string; lastName?: string; phone?: string }) {
+    if (!this.isValidUuid(userId)) {
+      throw new UnauthorizedException('Invalid user identity');
+    }
     return this.prisma.user.update({
       where: { id: userId },
       data,
@@ -86,6 +101,9 @@ export class UsersService {
   }
 
   async changePassword(userId: string, data: any) {
+    if (!this.isValidUuid(userId)) {
+      throw new UnauthorizedException('Invalid user identity');
+    }
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new NotFoundException('User not found');
 
@@ -102,6 +120,10 @@ export class UsersService {
   }
 
   async getAddresses(userId: string) {
+    if (!this.isValidUuid(userId)) {
+      return [];
+    }
+
     const saved = await this.prisma.address.findMany({
       where: { userId, orders: { none: {} } },
       orderBy: { isDefault: 'desc' },
@@ -113,27 +135,36 @@ export class UsersService {
 
     // Auto-recovery / fallback: If user placed an order but has 0 saved addresses,
     // promote the most recent order address to a saved address so they never lose their data
-    const recentOrderAddress = await this.prisma.address.findFirst({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
-    });
-
-    if (recentOrderAddress) {
-      const cloned = await this.prisma.address.create({
-        data: {
-          userId,
-          fullName: recentOrderAddress.fullName,
-          phone: recentOrderAddress.phone,
-          addressLine1: recentOrderAddress.addressLine1,
-          addressLine2: recentOrderAddress.addressLine2,
-          city: recentOrderAddress.city,
-          state: recentOrderAddress.state,
-          postalCode: recentOrderAddress.postalCode,
-          country: recentOrderAddress.country,
-          isDefault: true,
-        },
+    try {
+      const recentOrderAddress = await this.prisma.address.findFirst({
+        where: { userId },
+        orderBy: { createdAt: 'desc' },
       });
-      return [cloned];
+
+      if (recentOrderAddress) {
+        const alreadySaved = await this.prisma.address.findFirst({
+          where: { userId, orders: { none: {} } },
+        });
+        if (alreadySaved) return [alreadySaved];
+
+        const cloned = await this.prisma.address.create({
+          data: {
+            userId,
+            fullName: recentOrderAddress.fullName,
+            phone: recentOrderAddress.phone,
+            addressLine1: recentOrderAddress.addressLine1,
+            addressLine2: recentOrderAddress.addressLine2,
+            city: recentOrderAddress.city,
+            state: recentOrderAddress.state,
+            postalCode: recentOrderAddress.postalCode,
+            country: recentOrderAddress.country,
+            isDefault: true,
+          },
+        });
+        return [cloned];
+      }
+    } catch {
+      // Fallback
     }
 
     return [];

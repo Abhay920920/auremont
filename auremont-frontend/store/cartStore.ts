@@ -48,12 +48,20 @@ export const useCartStore = create<CartState>()(
           return inFlightFetch;
         }
 
+        const isUuid = (val: any) =>
+          typeof val === 'string' &&
+          /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(val);
+
         const { cartId } = get();
+        const validCartId = isUuid(cartId) ? cartId : null;
+        if (cartId && !validCartId) {
+          set({ cartId: null });
+        }
         set({ error: null });
 
         inFlightFetch = (async () => {
           try {
-            const url = cartId ? `/cart?cartId=${cartId}` : '/cart';
+            const url = validCartId ? `/cart?cartId=${validCartId}` : '/cart';
             const res = await api.get(url);
             if (res.data) {
               set({ cartId: res.data.id, items: res.data.items || [] });
@@ -183,9 +191,14 @@ export const useCartStore = create<CartState>()(
       },
 
       mergeCart: async () => {
+        const isUuid = (val: any) =>
+          typeof val === 'string' &&
+          /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(val);
+
         const guestCartId = get().cartId;
-        if (!guestCartId) {
-          // If no guest cart, just fetch the user's cart
+        if (!guestCartId || !isUuid(guestCartId)) {
+          // If no valid guest cart, just fetch the user's cart
+          set({ cartId: null });
           await get().fetchCart();
           return;
         }
@@ -200,6 +213,7 @@ export const useCartStore = create<CartState>()(
           }
         } catch (err) {
           console.error("Merge cart failed", err);
+          set({ cartId: null });
           // Fallback to fetchCart if merge fails
           await get().fetchCart();
         } finally {

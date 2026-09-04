@@ -23,9 +23,9 @@ export class CartController {
 
   @Get()
   async getCart(@Query('cartId') cartId?: string, @GetUser() user?: any) {
-    // If we have an authenticated user, we fetch their cart
+    const cleanCartId = (cartId && cartId !== 'null' && cartId !== 'undefined' && cartId.trim() !== '') ? cartId.trim() : undefined;
     const userId = user?.id;
-    return this.cartService.getCart(cartId, userId);
+    return this.cartService.getCart(cleanCartId, userId);
   }
 
   @Post('recovery')
