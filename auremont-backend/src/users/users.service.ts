@@ -254,8 +254,50 @@ export class UsersService {
         status: true,
         emailVerified: true,
         createdAt: true,
+        _count: {
+          select: {
+            orders: true,
+          },
+        },
       }
     });
+  }
+
+  async deleteUserAdmin(id: string, adminUserId?: string) {
+    if (adminUserId && id === adminUserId) {
+      throw new BadRequestException('Cannot delete your own account');
+    }
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) throw new NotFoundException('User not found');
+    if (user.role === 'admin') {
+      throw new BadRequestException('Cannot delete an admin account via customer management');
+    }
+
+    const orders = await this.prisma.order.findMany({ where: { userId: id }, select: { id: true } });
+    const orderIds = orders.map(o => o.id);
+    const carts = await this.prisma.cart.findMany({ where: { userId: id }, select: { id: true } });
+    const cartIds = carts.map(c => c.id);
+
+    await this.prisma.$transaction(async (tx) => {
+      if (cartIds.length > 0) {
+        await tx.cartItem.deleteMany({ where: { cartId: { in: cartIds } } });
+        await tx.cart.deleteMany({ where: { id: { in: cartIds } } });
+      }
+      if (orderIds.length > 0) {
+        await tx.payment.deleteMany({ where: { orderId: { in: orderIds } } });
+        await tx.orderItem.deleteMany({ where: { orderId: { in: orderIds } } });
+        await tx.order.deleteMany({ where: { id: { in: orderIds } } });
+      }
+      await tx.address.deleteMany({ where: { userId: id } });
+      await tx.review.deleteMany({ where: { userId: id } });
+      await tx.wishlist.deleteMany({ where: { userId: id } });
+      await tx.notification.deleteMany({ where: { userId: id } });
+      await tx.auditLog.deleteMany({ where: { userId: id } });
+      await tx.adminAuditLog.deleteMany({ where: { adminId: id } });
+      await tx.user.delete({ where: { id } });
+    }, { timeout: 30000 });
+
+    return { message: 'Customer deleted successfully' };
   }
 
   async getUserDetailAdmin(id: string) {

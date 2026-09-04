@@ -77,4 +77,11 @@ export class UsersController {
   async getUserDetail(@Param('id') id: string) {
     return this.usersService.getUserDetailAdmin(id);
   }
+
+  @Delete('admin/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  async deleteUser(@GetUser() admin: any, @Param('id') id: string) {
+    return this.usersService.deleteUserAdmin(id, admin?.id);
+  }
 }
