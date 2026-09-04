@@ -4,40 +4,53 @@ import { Check } from "lucide-react";
 
 export default function ProgressIndicator({
   steps,
-  currentStep
+  currentStep,
 }: {
   steps: string[];
   currentStep: number;
 }) {
   return (
-    <div className="w-full flex items-center justify-between mb-12">
+    <div className="w-full flex items-center py-2 mb-8 sm:mb-10">
       {steps.map((step, idx) => {
         const isCompleted = idx < currentStep;
         const isActive = idx === currentStep;
+        const isLast = idx === steps.length - 1;
 
         return (
-          <div key={step} className="flex-1 flex items-center">
-            <div className="flex flex-col items-center relative">
-              <div 
-                className={`w-6 h-6 rounded-full flex items-center justify-center text-xs transition-all duration-500
-                  ${isCompleted ? 'bg-luxuryGold text-background' : 
-                    isActive ? 'border-2 border-luxuryGold text-luxuryGold bg-background' : 
-                    'border border-divider text-mutedText bg-secondaryBg'}`}
+          <div
+            key={step}
+            className={`flex items-center ${!isLast ? "flex-1" : ""}`}
+          >
+            <div className="flex items-center gap-2.5 sm:gap-3 flex-shrink-0">
+              <div
+                className={`w-7 h-7 rounded-full flex items-center justify-center text-xs transition-all duration-300 font-medium
+                  ${
+                    isCompleted
+                      ? "bg-luxuryGold text-background shadow-sm"
+                      : isActive
+                      ? "border-2 border-luxuryGold text-luxuryGold bg-background"
+                      : "border border-divider text-mutedText bg-secondaryBg"
+                  }`}
               >
-                {isCompleted ? <Check size={12} strokeWidth={3} /> : (idx + 1)}
+                {isCompleted ? <Check size={13} strokeWidth={2.5} /> : idx + 1}
               </div>
-              <span className={`absolute top-8 whitespace-nowrap text-[10px] uppercase tracking-widest font-medium transition-colors duration-500
-                ${isCompleted || isActive ? 'text-primaryText' : 'text-mutedText'}`}>
+              <span
+                className={`text-[10px] sm:text-[11px] uppercase tracking-widest font-medium transition-colors duration-300
+                  ${
+                    isCompleted || isActive
+                      ? "text-primaryText font-semibold"
+                      : "text-mutedText"
+                  }`}
+              >
                 {step}
               </span>
             </div>
-            
-            {/* Connecting Line */}
-            {idx < steps.length - 1 && (
-              <div className="flex-1 h-[1px] mx-4 relative overflow-hidden bg-divider">
-                <div 
-                  className="absolute top-0 left-0 h-full bg-luxuryGold transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
-                  style={{ width: isCompleted ? '100%' : '0%' }}
+
+            {!isLast && (
+              <div className="flex-1 h-[1px] mx-3 sm:mx-6 bg-divider relative overflow-hidden">
+                <div
+                  className="h-full bg-luxuryGold transition-all duration-500"
+                  style={{ width: isCompleted ? "100%" : "0%" }}
                 />
               </div>
             )}

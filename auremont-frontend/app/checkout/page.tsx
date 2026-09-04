@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import api from "@/lib/axios";
-import { Lock, ShieldCheck, CreditCard, AlertCircle, Clock } from "lucide-react";
+import { Lock, ShieldCheck, CreditCard, AlertCircle, Clock, ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
 
 import CustomInput from "@/components/checkout/CustomInput";
 import ProgressIndicator from "@/components/checkout/ProgressIndicator";
@@ -429,8 +429,11 @@ export default function CheckoutPage() {
 
   if (!mounted || (cartLoading && safeItems.length === 0)) {
     return (
-      <div className="w-full min-h-[60vh] flex flex-col items-center justify-center bg-background pt-32">
-        <div className="w-10 h-10 border border-luxuryGold border-t-transparent rounded-full animate-spin" />
+      <div className="w-full min-h-[70vh] flex flex-col items-center justify-center bg-background pt-32">
+        <div className="text-center space-y-4">
+          <div className="w-10 h-10 border border-luxuryGold border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-secondaryText text-xs uppercase tracking-widest">Initializing Secure Checkout...</p>
+        </div>
       </div>
     );
   }
@@ -441,11 +444,22 @@ export default function CheckoutPage() {
     paymentState === "IDLE"
   ) {
     return (
-      <div className="w-full min-h-[60vh] flex flex-col items-center justify-center px-6 py-24 text-center space-y-8 bg-background pt-32">
-        <h1 className="text-4xl md:text-5xl font-serif text-primaryText">Your Cart is Empty</h1>
-        <button onClick={() => router.push("/shop")} className="luxury-button mt-4">
-          Return to Collection
-        </button>
+      <div className="w-full min-h-[70vh] flex flex-col items-center justify-center px-6 py-24 text-center bg-background pt-32">
+        <div className="max-w-md space-y-6">
+          <div className="w-16 h-16 rounded-full bg-secondaryBg border border-divider flex items-center justify-center mx-auto">
+            <Lock className="w-7 h-7 text-luxuryGold" strokeWidth={1.5} />
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-3xl sm:text-4xl font-serif text-primaryText">Your Cart is Empty</h1>
+            <p className="text-xs uppercase tracking-widest text-secondaryText leading-relaxed">
+              Explore our master reserve collection and select your artisanal nuts before proceeding to checkout.
+            </p>
+          </div>
+          <button onClick={() => router.push("/shop")} className="luxury-button inline-flex items-center gap-2">
+            <span>Return to Collection</span>
+            <ArrowRight size={14} />
+          </button>
+        </div>
       </div>
     );
   }
@@ -562,222 +576,296 @@ export default function CheckoutPage() {
         </div>
       )}
 
-      <div className="site-container flex flex-col lg:flex-row gap-12 lg:gap-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Navigation Breadcrumb & Security Status */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 mb-8 sm:mb-10 border-b border-divider/60">
+          <div className="flex items-center gap-3">
+            <Link
+              href="/cart"
+              className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-secondaryText hover:text-luxuryGold transition-colors"
+            >
+              <ArrowLeft size={14} /> Return to Cart
+            </Link>
+            <span className="text-divider hidden sm:inline">•</span>
+            <span className="text-xs uppercase tracking-widest text-mutedText hidden sm:inline">Checkout</span>
+          </div>
 
-        {/* Checkout Form */}
-        <div className="flex-grow max-w-2xl">
-          <h1 className="text-2xl md:text-3xl font-serif text-primaryText mb-8 flex items-center gap-3">
-            Secure Checkout
-            <Lock className="text-luxuryGold" size={22} strokeWidth={1.5} />
-          </h1>
+          <div className="flex items-center gap-2 text-[10px] uppercase tracking-ultra text-luxuryGold font-medium">
+            <ShieldCheck size={14} /> Private Vault Dispatch · 256-Bit SSL
+          </div>
+        </div>
 
-          <ProgressIndicator steps={steps} currentStep={currentStep} />
+        {/* Responsive 12-Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 xl:gap-14 items-start">
 
-          <form onSubmit={handlePlaceOrder} className="space-y-10">
-            {error && (
-              <div className="text-error bg-error/10 border border-error/20 p-4 rounded-sm text-xs font-medium">
-                {error}
-              </div>
-            )}
+          {/* Left Column: Form & Stepper (7 cols) */}
+          <div className="lg:col-span-7 xl:col-span-7 space-y-8">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-serif text-primaryText mb-2 flex items-center gap-3">
+                Secure Checkout
+                <Lock className="text-luxuryGold" size={20} strokeWidth={1.5} />
+              </h1>
+              <p className="text-xs uppercase tracking-widest text-secondaryText">
+                Provide your dispatch details and complete your reserve order.
+              </p>
+            </div>
 
-            {/* Step 0: Information */}
-            {currentStep === 0 && (
-              <div className="space-y-10 animate-fade-in">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-10">
-                  <div className="md:col-span-2">
-                    <h2 className="text-[11px] tracking-widest uppercase text-primaryText border-b border-divider pb-3 font-medium mb-6">
+            <ProgressIndicator steps={steps} currentStep={currentStep} />
+
+            <form onSubmit={handlePlaceOrder} className="space-y-8">
+              {error && (
+                <div className="text-error bg-error/10 border border-error/20 p-4 rounded-sm text-xs font-medium flex items-start gap-2.5">
+                  <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
+                  <span>{error}</span>
+                </div>
+              )}
+
+              {/* Step 0: Information */}
+              {currentStep === 0 && (
+                <div className="space-y-6 animate-fade-in">
+                  <div className="border-b border-divider/80 pb-3">
+                    <h2 className="text-[11px] tracking-widest uppercase text-primaryText font-medium">
                       Shipping Information
                     </h2>
                   </div>
 
-                  {!user && (
-                    <div className="md:col-span-2">
-                      <CustomInput
-                        label="Email Address (for order tracking & receipt)"
-                        name="email"
-                        value={address.email}
-                        onChange={handleChange}
-                        required
-                        type="email"
-                      />
-                    </div>
-                  )}
-
-                  <CustomInput label="Full Name" name="fullName" value={address.fullName} onChange={handleChange} required />
-                  <CustomInput label="Phone Number" name="phone" value={address.phone} onChange={handleChange} required type="tel" />
-
-                  <div className="md:col-span-2">
-                    <CustomInput label="Address Line 1" name="addressLine1" value={address.addressLine1} onChange={handleChange} required />
-                  </div>
-                  <div className="md:col-span-2">
-                    <CustomInput label="Address Line 2 (Apartment, suite, etc.)" name="addressLine2" value={address.addressLine2} onChange={handleChange} />
-                  </div>
-
-                  <CustomInput label="City" name="city" value={address.city} onChange={handleChange} required />
-                  <CustomInput label="State / Province" name="state" value={address.state} onChange={handleChange} required />
-                  <CustomInput label="Postal Code" name="postalCode" value={address.postalCode} onChange={handleChange} required />
-                  <CustomInput label="Country/Region" name="country" value={address.country} readOnly className="text-mutedText" />
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => validateAddress() && setCurrentStep(1)}
-                  className="w-full luxury-button mt-8 h-12 text-xs"
-                >
-                  Continue to Payment
-                </button>
-              </div>
-            )}
-
-            {/* Step 1: Payment */}
-            {currentStep === 1 && (
-              <div className="space-y-10 animate-fade-in">
-                <div>
-                  <h2 className="text-[11px] tracking-widest uppercase text-primaryText border-b border-divider pb-3 font-medium mb-6 flex justify-between items-center">
-                    Payment
-                    <button type="button" onClick={() => setCurrentStep(0)} className="text-luxuryGold hover:text-goldHover text-[10px]">
-                      Edit Info
-                    </button>
-                  </h2>
-
-                  <div className="flex items-start gap-4 p-5 border border-luxuryGold bg-secondaryBg relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-luxuryGold" />
-                    <div className="flex-shrink-0 mt-0.5">
-                      <CreditCard className="w-5 h-5 text-luxuryGold" strokeWidth={1.5} />
-                    </div>
-                    <div>
-                      <p className="font-serif text-lg text-primaryText mb-1">Razorpay Secure Checkout</p>
-                      <p className="text-xs tracking-wide text-secondaryText mb-3">
-                        You will be redirected to Razorpay. Payment is verified server-side before your order is confirmed.
-                      </p>
-                      <div className="flex gap-2">
-                        <span className="px-2 py-0.5 bg-background border border-divider text-[9px] uppercase tracking-widest text-mutedText rounded-sm">UPI</span>
-                        <span className="px-2 py-0.5 bg-background border border-divider text-[9px] uppercase tracking-widest text-mutedText rounded-sm">Cards</span>
-                        <span className="px-2 py-0.5 bg-background border border-divider text-[9px] uppercase tracking-widest text-mutedText rounded-sm">Net Banking</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-7">
+                    {!user && (
+                      <div className="sm:col-span-2">
+                        <CustomInput
+                          label="Email Address (for order tracking & receipt)"
+                          name="email"
+                          value={address.email}
+                          onChange={handleChange}
+                          required
+                          type="email"
+                        />
                       </div>
+                    )}
+
+                    <CustomInput label="Full Name" name="fullName" value={address.fullName} onChange={handleChange} required />
+                    <CustomInput label="Phone Number" name="phone" value={address.phone} onChange={handleChange} required type="tel" />
+
+                    <div className="sm:col-span-2">
+                      <CustomInput label="Address Line 1" name="addressLine1" value={address.addressLine1} onChange={handleChange} required />
                     </div>
-                  </div>
-                </div>
-
-                <div className="p-4 border border-divider bg-background text-xs text-secondaryText leading-relaxed">
-                  <p>
-                    By clicking &ldquo;Complete Purchase&rdquo;, you acknowledge that you have read and agree to RARE NUTS&rsquo;s{" "}
-                    <Link href="/terms" className="text-luxuryGold underline hover:text-goldHover" target="_blank">Terms of Service</Link>{" "}
-                    and{" "}
-                    <Link href="/privacy-policy" className="text-luxuryGold underline hover:text-goldHover" target="_blank">Privacy Policy</Link>.
-                  </p>
-                </div>
-
-                <button
-                  type="submit"
-                  onClick={handlePlaceOrder}
-                  disabled={isLoading}
-                  className="w-full luxury-button mt-8 disabled:opacity-50 flex items-center justify-center h-12 text-xs group"
-                >
-                  {isLoading ? (
-                    <span className="flex items-center gap-3">
-                      <span className="w-3.5 h-3.5 border border-background border-t-transparent rounded-full animate-spin" />
-                      Processing Securely...
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-2">
-                      <ShieldCheck size={16} className="group-hover:scale-110 transition-transform" />
-                      Complete Purchase —{" "}
-                      <span suppressHydrationWarning>{formatPrice(total)}</span>
-                    </span>
-                  )}
-                </button>
-              </div>
-            )}
-          </form>
-        </div>
-
-        {/* Order Summary Sidebar */}
-        <div className="w-full lg:w-[420px] flex-shrink-0 mt-10 lg:mt-0">
-          <div className="bg-secondaryBg p-6 border border-divider sticky top-32">
-            <h2 className="font-serif text-xl md:text-2xl text-primaryText border-b border-divider pb-4 mb-6">Summary</h2>
-
-            <div className="space-y-4 mb-6 max-h-[35vh] overflow-y-auto pr-2 scrollbar-hide">
-              {safeItems.map((item) => (
-                <div key={item.id} className="flex gap-3 items-center group">
-                  <div className="w-14 h-16 bg-background border border-divider relative flex-shrink-0 overflow-hidden">
-                    <Image
-                      src={(item as any).product?.thumbnailUrl || "/images/california-almonds-250g.png"}
-                      alt={(item as any).product?.name || "Product"}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                  </div>
-                  <div className="flex-grow flex justify-between items-center text-xs">
-                    <div>
-                      <p className="text-primaryText font-serif text-sm group-hover:text-luxuryGold transition-colors">
-                        {(item as any).product?.name}
-                      </p>
-                      <p className="text-secondaryText text-[9px] uppercase tracking-widest mt-0.5">Qty: {item.quantity}</p>
+                    <div className="sm:col-span-2">
+                      <CustomInput label="Address Line 2 (Apartment, suite, etc.)" name="addressLine2" value={address.addressLine2} onChange={handleChange} />
                     </div>
-                    <span className="text-primaryText font-medium" suppressHydrationWarning>
-                      {formatPrice(item.quantity * Number(item.unitPrice || 0))}
-                    </span>
+
+                    <CustomInput label="City" name="city" value={address.city} onChange={handleChange} required />
+                    <CustomInput label="State / Province" name="state" value={address.state} onChange={handleChange} required />
+                    <CustomInput label="Postal Code" name="postalCode" value={address.postalCode} onChange={handleChange} required />
+                    <CustomInput label="Country/Region" name="country" value={address.country} readOnly className="text-mutedText" />
                   </div>
-                </div>
-              ))}
-            </div>
 
-            <div className="border-t border-divider pt-4 space-y-4 mb-6">
-              <div className="space-y-3">
-                <CustomInput
-                  label="Gift Card or Privilege Code"
-                  name="couponCode"
-                  value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                  disabled={Boolean(appliedCoupon)}
-                />
-                <button
-                  type="button"
-                  onClick={appliedCoupon ? removeCoupon : applyCoupon}
-                  disabled={applyingCoupon || (!couponCode && !appliedCoupon)}
-                  className="w-full h-10 luxury-button-outline text-xs disabled:opacity-50"
-                >
-                  {applyingCoupon ? "Verifying..." : appliedCoupon ? "Remove Code" : "Apply Code"}
-                </button>
-                {couponError && <p className="text-error text-xs text-center">{couponError}</p>}
-                {appliedCoupon && (
-                  <p className="text-luxuryGold text-xs text-center">Privilege &apos;{appliedCoupon.code}&apos; Applied</p>
-                )}
-              </div>
-            </div>
-
-            <div className="border-t border-divider pt-4 space-y-3 text-xs text-secondaryText mb-6">
-              <div className="flex justify-between">
-                <span>Subtotal</span>
-                <span className="text-primaryText" suppressHydrationWarning>{formatPrice(subtotal)}</span>
-              </div>
-              {appliedCoupon && (
-                <div className="flex justify-between text-luxuryGold">
-                  <span>Discount</span>
-                  <span suppressHydrationWarning>-{formatPrice(discount)}</span>
+                  <button
+                    type="button"
+                    onClick={() => validateAddress() && setCurrentStep(1)}
+                    className="w-full luxury-button mt-6 h-12 text-xs flex items-center justify-center gap-2"
+                  >
+                    <span>Continue to Payment</span>
+                    <ArrowRight size={14} />
+                  </button>
                 </div>
               )}
-              <div className="flex justify-between">
-                <span>Shipping</span>
-                <span className="text-primaryText">Complimentary</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Tax (5% GST)</span>
-                <span className="text-primaryText" suppressHydrationWarning>{formatPrice(tax)}</span>
-              </div>
-            </div>
 
-            <div className="border-t border-divider pt-4 flex justify-between font-serif text-xl md:text-2xl text-primaryText">
-              <span>Total</span>
-              <span className="text-luxuryGold" suppressHydrationWarning>{formatPrice(total)}</span>
-            </div>
+              {/* Step 1: Payment */}
+              {currentStep === 1 && (
+                <div className="space-y-6 animate-fade-in">
+                  <div className="border-b border-divider/80 pb-3 flex justify-between items-center">
+                    <h2 className="text-[11px] tracking-widest uppercase text-primaryText font-medium">
+                      Payment Method
+                    </h2>
+                    <button
+                      type="button"
+                      onClick={() => setCurrentStep(0)}
+                      className="text-luxuryGold hover:text-goldHover text-[10px] uppercase tracking-wider font-medium flex items-center gap-1"
+                    >
+                      Edit Address
+                    </button>
+                  </div>
 
-            <div className="mt-8 pt-6 border-t border-divider flex flex-col gap-4 text-[10px] text-mutedText uppercase tracking-widest text-center">
-              <p className="flex items-center justify-center gap-2">
-                <ShieldCheck size={14} /> 256-Bit Encryption
-              </p>
-              <p>RARE NUTS Quality Guarantee</p>
+                  {/* Delivery Address Summary Card */}
+                  <div className="bg-secondaryBg/40 border border-divider p-4 sm:p-5 flex justify-between items-start">
+                    <div className="space-y-1 text-xs">
+                      <p className="text-[10px] uppercase tracking-ultra text-luxuryGold font-medium">Deliver To</p>
+                      <p className="text-primaryText font-medium">{address.fullName} • {address.phone}</p>
+                      <p className="text-secondaryText">{address.addressLine1}{address.addressLine2 ? `, ${address.addressLine2}` : ""}</p>
+                      <p className="text-secondaryText">{address.city}, {address.state} {address.postalCode}, {address.country}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setCurrentStep(0)}
+                      className="text-luxuryGold hover:text-goldHover text-xs uppercase tracking-wider font-medium"
+                    >
+                      Change
+                    </button>
+                  </div>
+
+                  {/* Gateway Banner */}
+                  <div className="p-5 border border-luxuryGold bg-secondaryBg relative overflow-hidden space-y-3">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-luxuryGold" />
+                    <div className="flex items-start gap-3.5">
+                      <div className="flex-shrink-0 mt-0.5">
+                        <CreditCard className="w-5 h-5 text-luxuryGold" strokeWidth={1.5} />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="font-serif text-lg text-primaryText">Razorpay Secure Checkout</p>
+                        <p className="text-xs text-secondaryText leading-relaxed">
+                          Instant verification via UPI, Credit/Debit Cards, and Net Banking. All transactions are SSL encrypted.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2 pt-1 pl-8">
+                      <span className="px-2 py-0.5 bg-background border border-divider text-[9px] uppercase tracking-widest text-mutedText rounded-sm">UPI (GPay / PhonePe / Paytm)</span>
+                      <span className="px-2 py-0.5 bg-background border border-divider text-[9px] uppercase tracking-widest text-mutedText rounded-sm">Visa / Mastercard / RuPay</span>
+                      <span className="px-2 py-0.5 bg-background border border-divider text-[9px] uppercase tracking-widest text-mutedText rounded-sm">Net Banking</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 border border-divider bg-background text-xs text-secondaryText leading-relaxed">
+                    <p>
+                      By clicking &ldquo;Complete Purchase&rdquo;, you agree to RARE NUTS&rsquo;s{" "}
+                      <Link href="/terms" className="text-luxuryGold underline hover:text-goldHover" target="_blank">Terms of Service</Link>{" "}
+                      and{" "}
+                      <Link href="/privacy-policy" className="text-luxuryGold underline hover:text-goldHover" target="_blank">Privacy Policy</Link>.
+                    </p>
+                  </div>
+
+                  <button
+                    type="submit"
+                    onClick={handlePlaceOrder}
+                    disabled={isLoading}
+                    className="w-full luxury-button disabled:opacity-50 flex items-center justify-center h-12 text-xs group"
+                  >
+                    {isLoading ? (
+                      <span className="flex items-center gap-3">
+                        <span className="w-3.5 h-3.5 border border-background border-t-transparent rounded-full animate-spin" />
+                        Processing Securely...
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-2">
+                        <ShieldCheck size={16} className="group-hover:scale-110 transition-transform" />
+                        Complete Purchase —{" "}
+                        <span suppressHydrationWarning>{formatPrice(total)}</span>
+                      </span>
+                    )}
+                  </button>
+                </div>
+              )}
+            </form>
+          </div>
+
+          {/* Right Column: Order Summary (5 cols) */}
+          <div className="lg:col-span-5 xl:col-span-5">
+            <div className="bg-secondaryBg/70 backdrop-blur-sm p-6 sm:p-7 border border-divider sticky top-28 space-y-6">
+              <div className="flex justify-between items-baseline border-b border-divider pb-4">
+                <h2 className="font-serif text-xl md:text-2xl text-primaryText">Order Summary</h2>
+                <span className="text-xs uppercase tracking-widest text-mutedText">
+                  {safeItems.reduce((sum, item) => sum + item.quantity, 0)} {safeItems.reduce((sum, item) => sum + item.quantity, 0) === 1 ? "item" : "items"}
+                </span>
+              </div>
+
+              {/* Items scroll area */}
+              <div className="space-y-4 max-h-[38vh] overflow-y-auto pr-2 scrollbar-hide">
+                {safeItems.map((item) => (
+                  <div key={item.id} className="flex gap-3.5 items-start group">
+                    <div className="w-14 h-16 bg-background border border-divider relative flex-shrink-0 overflow-hidden">
+                      <Image
+                        src={(item as any).product?.thumbnailUrl || "/images/california-almonds-250g.png"}
+                        alt={(item as any).product?.name || "Product"}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                    <div className="flex-grow min-w-0">
+                      <p className="text-primaryText font-serif text-sm truncate group-hover:text-luxuryGold transition-colors">
+                        {(item as any).product?.name}
+                      </p>
+                      <p className="text-secondaryText text-[10px] uppercase tracking-widest mt-0.5">
+                        Qty: {item.quantity}
+                      </p>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      <span className="text-primaryText font-medium text-sm" suppressHydrationWarning>
+                        {formatPrice(item.quantity * Number(item.unitPrice || 0))}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Privilege / Gift card input */}
+              <div className="border-t border-divider pt-5">
+                <div className="flex gap-2.5 items-end">
+                  <div className="flex-grow">
+                    <CustomInput
+                      label="Privilege or Promo Code"
+                      name="couponCode"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                      disabled={Boolean(appliedCoupon)}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={appliedCoupon ? removeCoupon : applyCoupon}
+                    disabled={applyingCoupon || (!couponCode && !appliedCoupon)}
+                    className="h-11 px-5 luxury-button-outline text-[11px] whitespace-nowrap flex-shrink-0 disabled:opacity-50"
+                  >
+                    {applyingCoupon ? "Verifying..." : appliedCoupon ? "Remove" : "Apply"}
+                  </button>
+                </div>
+                {couponError && <p className="text-error text-xs mt-2">{couponError}</p>}
+                {appliedCoupon && (
+                  <p className="text-luxuryGold text-xs mt-2 flex items-center gap-1.5">
+                    <CheckCircle2 size={13} />
+                    Privilege &apos;{appliedCoupon.code}&apos; applied successfully
+                  </p>
+                )}
+              </div>
+
+              {/* Price Breakdown */}
+              <div className="border-t border-divider pt-5 space-y-3 text-xs text-secondaryText">
+                <div className="flex justify-between">
+                  <span>Subtotal</span>
+                  <span className="text-primaryText font-medium" suppressHydrationWarning>{formatPrice(subtotal)}</span>
+                </div>
+                {appliedCoupon && (
+                  <div className="flex justify-between text-luxuryGold">
+                    <span>Privilege Discount</span>
+                    <span suppressHydrationWarning>-{formatPrice(discount)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between">
+                  <span>Insured Vault Dispatch</span>
+                  <span className="text-primaryText font-medium">Complimentary</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Estimated GST (5%)</span>
+                  <span className="text-primaryText font-medium" suppressHydrationWarning>{formatPrice(tax)}</span>
+                </div>
+              </div>
+
+              {/* Grand Total */}
+              <div className="border-t border-divider pt-4 flex justify-between items-baseline font-serif text-xl sm:text-2xl text-primaryText">
+                <span>Total</span>
+                <span className="text-luxuryGold font-medium" suppressHydrationWarning>{formatPrice(total)}</span>
+              </div>
+
+              {/* Trust Guarantees */}
+              <div className="pt-4 border-t border-divider/60 grid grid-cols-2 gap-3 text-[10px] text-mutedText uppercase tracking-widest text-center">
+                <div className="flex items-center justify-center gap-1.5 p-2 bg-background/50 border border-divider/40">
+                  <ShieldCheck size={13} className="text-luxuryGold flex-shrink-0" />
+                  <span>256-Bit SSL</span>
+                </div>
+                <div className="flex items-center justify-center gap-1.5 p-2 bg-background/50 border border-divider/40">
+                  <Clock size={13} className="text-luxuryGold flex-shrink-0" />
+                  <span>Vault Transit</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
