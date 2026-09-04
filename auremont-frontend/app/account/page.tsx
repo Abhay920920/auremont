@@ -11,7 +11,6 @@ import OrderHistoryTab from "@/components/account/OrderHistoryTab";
 import ProfileTab from "@/components/account/ProfileTab";
 import AddressesTab from "@/components/account/AddressesTab";
 import WishlistTab from "@/components/account/WishlistTab";
-import ReserveTierCard from "@/components/account/ReserveTierCard";
 
 export default function AccountDashboard() {
   const { user, setUser, logout } = useAuthStore();
@@ -204,9 +203,6 @@ export default function AccountDashboard() {
             Sign Out Concierge
           </button>
         </div>
-
-        {/* Reserve Tier Loyalty Card */}
-        <ReserveTierCard orderCount={orders.length} />
 
         {/* Account Body: Sidebar + Main Content */}
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
