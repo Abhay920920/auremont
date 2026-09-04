@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Star, Rotate3d } from "lucide-react";
 import { useCurrencyStore } from "@/store/currencyStore";
 
-const FlavorRadarChart = dynamic(() => import("./FlavorRadarChart"), { ssr: false });
 const Packaging3DViewer = dynamic(() => import("./Packaging3DViewer"), { ssr: false });
 
 function StarRating({ rating, size = 16 }: { rating: number; size?: number }) {
@@ -127,11 +126,6 @@ export default function ProductInfo({ product, reviews, avgRating }: { product: 
           <Rotate3d size={16} />
           <span>Inspect 3D Vessel & Engraving</span>
         </button>
-      </div>
-
-      {/* Interactive Botanical Flavor & Texture Radar Chart */}
-      <div className="pt-4">
-        <FlavorRadarChart />
       </div>
 
       {/* 3D Packaging Viewer Modal */}
