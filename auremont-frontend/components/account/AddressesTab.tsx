@@ -47,7 +47,7 @@ export default function AddressesTab({
       </div>
 
       {showAddressForm ? (
-        <div className="bg-secondaryBg p-8 border border-divider animate-fade-in max-w-3xl">
+        <div className="bg-secondaryBg p-5 sm:p-8 border border-divider rounded-card animate-fade-in w-full max-w-3xl">
           <h3 className="font-serif text-2xl mb-8">{editingAddressId ? 'Edit Address' : 'New Address'}</h3>
           {addressMsg && <p className="text-error text-sm mb-6 p-4 bg-error/10 border border-error/20">{addressMsg}</p>}
           
@@ -108,7 +108,7 @@ export default function AddressesTab({
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {addresses.map(addr => (
-            <div key={addr.id} className="border border-divider rounded-sm p-8 bg-secondaryBg relative group hover:border-luxuryGold/50 transition-colors">
+            <div key={addr.id} className="border border-divider rounded-card p-5 sm:p-7 bg-secondaryBg relative group hover:border-luxuryGold/50 transition-colors">
               {addr.isDefault && (
                 <div className="absolute top-6 right-6 flex items-center gap-1 text-luxuryGold bg-luxuryGold/10 px-2 py-1 text-[10px] uppercase tracking-widest rounded-sm">
                   <CheckCircle2 size={12} /> Default

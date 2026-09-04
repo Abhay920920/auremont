@@ -177,7 +177,7 @@ export default function OrderHistoryTab({ orders, loadingOrders }: OrderHistoryT
                 {/* Dispatch Progress — only shown for paid, confirmed orders */}
                 {isPaid && !isCancelled && (
                   <div className="space-y-3 pt-2">
-                    <div className="flex items-center justify-between text-[10px] uppercase tracking-ultra text-mutedText">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1 text-[10px] uppercase tracking-ultra text-mutedText">
                       <span className="flex items-center gap-1.5 text-secondaryText">
                         <Truck size={14} className="text-luxuryGold" />
                         Vault Dispatch Progress
@@ -185,30 +185,32 @@ export default function OrderHistoryTab({ orders, loadingOrders }: OrderHistoryT
                       <span className="text-luxuryGold">Guaranteed Courier Dispatch</span>
                     </div>
 
-                    <div className="grid grid-cols-5 gap-2 relative">
-                      {steps.map((st, idx) => (
-                        <div
-                          key={idx}
-                          className="flex flex-col items-center text-center space-y-1.5 relative z-10"
-                        >
+                    <div className="w-full overflow-x-auto pb-2 scrollbar-hide">
+                      <div className="grid grid-cols-5 gap-2 min-w-[360px] sm:min-w-0 relative">
+                        {steps.map((st, idx) => (
                           <div
-                            className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border transition-colors ${
-                              st.done
-                                ? "bg-luxuryGold text-background border-luxuryGold"
-                                : "bg-background text-mutedText border-divider"
-                            }`}
+                            key={idx}
+                            className="flex flex-col items-center text-center space-y-1.5 relative z-10"
                           >
-                            {st.done ? <CheckCircle size={12} /> : idx + 1}
+                            <div
+                              className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border transition-colors ${
+                                st.done
+                                  ? "bg-luxuryGold text-background border-luxuryGold"
+                                  : "bg-background text-mutedText border-divider"
+                              }`}
+                            >
+                              {st.done ? <CheckCircle size={12} /> : idx + 1}
+                            </div>
+                            <span
+                              className={`text-[8px] sm:text-[10px] uppercase tracking-wider font-medium line-clamp-1 ${
+                                st.done ? "text-primaryText" : "text-mutedText"
+                              }`}
+                            >
+                              {st.label}
+                            </span>
                           </div>
-                          <span
-                            className={`text-[8px] sm:text-[10px] uppercase tracking-wider font-medium line-clamp-1 ${
-                              st.done ? "text-primaryText" : "text-mutedText"
-                            }`}
-                          >
-                            {st.label}
-                          </span>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -257,9 +259,9 @@ export default function OrderHistoryTab({ orders, loadingOrders }: OrderHistoryT
                   {order.items.map((item: any) => (
                     <div
                       key={item.id}
-                      className="flex items-center justify-between gap-4 bg-background p-3.5 border border-divider rounded-card hover:border-luxuryGold/30 transition-colors"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-background p-3.5 border border-divider rounded-card hover:border-luxuryGold/30 transition-colors"
                     >
-                      <div className="flex items-center gap-3.5 min-w-0">
+                      <div className="flex items-center gap-3.5 min-w-0 flex-1">
                         <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-md overflow-hidden bg-secondaryBg border border-divider/60 flex-shrink-0">
                           <Image
                             src={
@@ -273,11 +275,11 @@ export default function OrderHistoryTab({ orders, loadingOrders }: OrderHistoryT
                             className="object-cover"
                           />
                         </div>
-                        <div className="min-w-0">
+                        <div className="min-w-0 flex-1">
                           <p className="text-primaryText font-serif text-sm font-medium truncate">
                             {item.productName || item.product?.name || "RARE NUTS Reserve Almonds"}
                           </p>
-                          <div className="flex items-center gap-3 text-[10px] sm:text-[11px] text-mutedText font-mono mt-0.5">
+                          <div className="flex items-center gap-3 text-[10px] sm:text-[11px] text-mutedText font-mono mt-0.5 flex-wrap">
                             {item.sku && <span>SKU: {item.sku}</span>}
                             <span>Qty: {item.quantity}</span>
                             {item.price && (
@@ -287,7 +289,7 @@ export default function OrderHistoryTab({ orders, loadingOrders }: OrderHistoryT
                         </div>
                       </div>
                       <span
-                        className="text-luxuryGold font-serif text-sm sm:text-base font-medium flex-shrink-0"
+                        className="text-luxuryGold font-serif text-sm sm:text-base font-medium flex-shrink-0 self-end sm:self-center"
                         suppressHydrationWarning
                       >
                         {formatPrice(item.subtotal)}

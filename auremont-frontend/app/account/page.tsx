@@ -180,19 +180,27 @@ export default function AccountDashboard() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-background pt-32 pb-24 md:pb-super">
-      <div className="site-container space-y-12">
+    <div className="w-full min-h-screen bg-background pt-28 sm:pt-32 pb-24 md:pb-32 overflow-x-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
         
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-divider pb-8 gap-4">
-          <div>
-             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-luxuryGold/30 bg-luxuryGold/10 mb-3">
-               <span className="w-1.5 h-1.5 rounded-full bg-luxuryGold animate-ping" />
-               <span className="text-[9px] uppercase tracking-ultra text-luxuryGold font-medium">RARE NUTS Reserve Member</span>
-             </div>
-             <h1 className="text-3xl sm:text-5xl font-serif text-primaryText tracking-tight">Welcome, {user.firstName}</h1>
-             <p className="text-secondaryText mt-2 uppercase tracking-ultra text-[10px]">Your private concierge membership portal, order vault, and saved privileges.</p>
+        {/* Page Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-divider/80 pb-6 sm:pb-8 gap-4">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-luxuryGold/30 bg-luxuryGold/10">
+              <span className="w-1.5 h-1.5 rounded-full bg-luxuryGold animate-ping" />
+              <span className="text-[9px] uppercase tracking-ultra text-luxuryGold font-medium">RARE NUTS Reserve Member</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-serif text-primaryText tracking-tight">
+              Welcome, {user.firstName || 'Client'}
+            </h1>
+            <p className="text-secondaryText uppercase tracking-ultra text-[10px] max-w-xl">
+              Your private concierge membership portal, order vault, and saved privileges.
+            </p>
           </div>
-          <button onClick={handleLogout} className="text-[10px] uppercase tracking-ultra text-secondaryText hover:text-luxuryGold transition-colors py-2 md:py-0 md:pb-1">
+          <button 
+            onClick={handleLogout} 
+            className="text-[10px] uppercase tracking-ultra text-secondaryText hover:text-luxuryGold border border-divider/60 hover:border-luxuryGold/40 px-4 py-2 rounded-sm transition-all self-start md:self-auto"
+          >
             Sign Out Concierge
           </button>
         </div>
@@ -200,50 +208,53 @@ export default function AccountDashboard() {
         {/* Reserve Tier Loyalty Card */}
         <ReserveTierCard orderCount={orders.length} />
 
-        <div className="flex flex-col md:flex-row gap-12 lg:gap-24">
-           {/* Sidebar */}
-           <AccountSidebar activeTab={activeTab} setActiveTab={setActiveTab} wishlistCount={wishlistItems.length} />
+        {/* Account Body: Sidebar + Main Content */}
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
+          {/* Sidebar Navigation */}
+          <div className="w-full lg:w-72 flex-shrink-0 lg:sticky lg:top-36">
+            <AccountSidebar activeTab={activeTab} setActiveTab={setActiveTab} wishlistCount={wishlistItems.length} />
+          </div>
 
-           {/* Main Content Area */}
-           <div className="flex-grow max-w-4xl min-h-[60vh]">
-              {activeTab === 'orders' && (
-                <OrderHistoryTab orders={orders} loadingOrders={loadingOrders} />
-              )}
+          {/* Main Content Area */}
+          <main className="flex-1 w-full min-w-0 min-h-[60vh]">
+            {activeTab === 'orders' && (
+              <OrderHistoryTab orders={orders} loadingOrders={loadingOrders} />
+            )}
 
-              {activeTab === 'profile' && (
-                <ProfileTab 
-                  user={user} 
-                  profileForm={profileForm} 
-                  setProfileForm={setProfileForm} 
-                  handleUpdateProfile={handleUpdateProfile}
-                  updatingProfile={updatingProfile}
-                  profileMsg={profileMsg}
-                />
-              )}
+            {activeTab === 'profile' && (
+              <ProfileTab 
+                user={user} 
+                profileForm={profileForm} 
+                setProfileForm={setProfileForm} 
+                handleUpdateProfile={handleUpdateProfile}
+                updatingProfile={updatingProfile}
+                profileMsg={profileMsg}
+              />
+            )}
 
-              {activeTab === 'addresses' && (
-                <AddressesTab 
-                  addresses={addresses}
-                  loadingAddresses={loadingAddresses}
-                  showAddressForm={showAddressForm}
-                  setShowAddressForm={setShowAddressForm}
-                  editingAddressId={editingAddressId}
-                  setEditingAddressId={setEditingAddressId}
-                  addressForm={addressForm}
-                  setAddressForm={setAddressForm}
-                  handleSaveAddress={handleSaveAddress}
-                  handleEditAddress={handleEditAddress}
-                  handleDeleteAddress={handleDeleteAddress}
-                  handleSetDefaultAddress={handleSetDefaultAddress}
-                  addressMsg={addressMsg}
-                  savingAddress={savingAddress}
-                />
-              )}
+            {activeTab === 'addresses' && (
+              <AddressesTab 
+                addresses={addresses}
+                loadingAddresses={loadingAddresses}
+                showAddressForm={showAddressForm}
+                setShowAddressForm={setShowAddressForm}
+                editingAddressId={editingAddressId}
+                setEditingAddressId={setEditingAddressId}
+                addressForm={addressForm}
+                setAddressForm={setAddressForm}
+                handleSaveAddress={handleSaveAddress}
+                handleEditAddress={handleEditAddress}
+                handleDeleteAddress={handleDeleteAddress}
+                handleSetDefaultAddress={handleSetDefaultAddress}
+                addressMsg={addressMsg}
+                savingAddress={savingAddress}
+              />
+            )}
 
-              {activeTab === 'wishlist' && (
-                <WishlistTab wishlistItems={wishlistItems} loadingWishlist={loadingWishlist} />
-              )}
-           </div>
+            {activeTab === 'wishlist' && (
+              <WishlistTab wishlistItems={wishlistItems} loadingWishlist={loadingWishlist} />
+            )}
+          </main>
         </div>
 
       </div>

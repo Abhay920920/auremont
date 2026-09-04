@@ -42,7 +42,7 @@ export default function ReserveTierCard({ orderCount = 5 }: { orderCount?: numbe
 
       {/* Tier Progress Bar */}
       <div className="space-y-2">
-        <div className="flex justify-between items-center text-[10px] uppercase tracking-ultra">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1 text-[10px] uppercase tracking-ultra">
           <span className="text-secondaryText">Vault Progression &bull; {tier.current} of {tier.target} Orders</span>
           <span className="text-luxuryGold font-medium">Next Tier: {tier.next}</span>
         </div>
