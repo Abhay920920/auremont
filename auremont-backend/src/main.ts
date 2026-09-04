@@ -71,6 +71,8 @@ async function bootstrap() {
     'https://www.rarenuts.com',
     'https://auremont.com',
     'https://www.auremont.com',
+    'https://auremont-rose.vercel.app',
+    'https://auremont.vercel.app',
     ...(frontendUrl ? [frontendUrl] : []),
     ...customAllowedOrigins,
   ]);
@@ -80,7 +82,8 @@ async function bootstrap() {
       if (!origin) return callback(null, true);
       const normalizedOrigin = origin.replace(/\/$/, '');
       const isLocalhost = isDev && (/^http:\/\/localhost(:\d+)?$/.test(normalizedOrigin) || /^http:\/\/127\.0\.0\.1(:\d+)?$/.test(normalizedOrigin));
-      if (trustedOrigins.has(normalizedOrigin) || isLocalhost) {
+      const isVercel = /^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(normalizedOrigin);
+      if (trustedOrigins.has(normalizedOrigin) || isLocalhost || isVercel) {
         callback(null, true);
       } else {
         callback(new Error(`CORS policy: origin '${origin}' not allowed`), false);
