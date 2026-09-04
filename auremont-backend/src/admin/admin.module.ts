@@ -21,7 +21,7 @@ import { AdminOperationsModule } from './operations/operations.module';
     AdminReviewsModule,
     AdminOperationsModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET || process.env.ADMIN_JWT_SECRET || 'AUREMONT_LUXURY_SECRET_KEY',
+      secret: process.env.JWT_SECRET || process.env.ADMIN_JWT_SECRET,
       signOptions: { expiresIn: '1d' },
     }),
   ],

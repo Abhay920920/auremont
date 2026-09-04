@@ -1,7 +1,7 @@
 import CinematicHero from "@/components/home/CinematicHero";
 import FeaturedCollections from "@/components/home/FeaturedCollections";
 import BestSellers from "@/components/home/BestSellers";
-import WhyRareNuts from "@/components/home/WhyRareNuts";
+import WhyAuremont from "@/components/home/WhyAuremont";
 import PackagingShowcase from "@/components/home/PackagingShowcase";
 import BrandStory from "@/components/home/BrandStory";
 import Testimonials from "@/components/home/Testimonials";
@@ -67,11 +67,15 @@ const FALLBACK_PRODUCTS = [
   }
 ];
 
-// Fetch products from backend with ISR cache (60s revalidation)
+// Fetch featured products from backend with ISR cache (30s revalidation) and 2s timeout guard
 async function getProducts() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
   try {
-    const res = await fetch(`${apiUrl}/products`, { next: { revalidate: 60 } });
+    // Fetch only 8 recommended products with 2s timeout guard so SSR never hangs
+    const res = await fetch(`${apiUrl}/products?sort=recommended&limit=8`, { 
+      next: { revalidate: 30 },
+      signal: AbortSignal.timeout(2000),
+    });
     if (!res.ok) return FALLBACK_PRODUCTS;
     const json = await res.json();
     return json.data && json.data.length > 0 ? json.data : FALLBACK_PRODUCTS;
@@ -87,7 +91,7 @@ export default async function Home() {
     <main className="w-full bg-background overflow-hidden">
       <CinematicHero />
       <FeaturedCollections products={products} />
-      <WhyRareNuts />
+      <WhyAuremont />
       <BestSellers products={products} />
       <BrandStory />
       <PackagingShowcase />

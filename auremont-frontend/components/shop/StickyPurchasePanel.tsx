@@ -19,6 +19,7 @@ export default function StickyPurchasePanel({ product }: { product: any }) {
         <div className="flex-grow">
           <AddToCartButton
             productId={product.id}
+            product={product}
             className="w-full bg-luxuryGold hover:bg-goldHover text-background font-medium text-sm tracking-widest uppercase h-14 rounded-btn transition-colors duration-300"
           />
         </div>
@@ -42,13 +43,14 @@ export default function StickyPurchasePanel({ product }: { product: any }) {
 
       {/* Mobile Sticky Add To Cart Bar positioned cleanly above mobile navigation bar */}
       <div className="fixed bottom-14 md:bottom-0 left-0 w-full bg-background/95 backdrop-blur-md border-t border-divider px-4 py-2.5 lg:hidden z-40 animate-slide-up shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
-        <div className="flex items-center justify-between gap-4 max-w-7xl mx-auto">
+        <div className="flex items-center justify-between gap-4 site-container">
           <div className="hidden sm:block">
             <p className="text-sm font-serif text-primaryText truncate">{product.name}</p>
             <p className="text-luxuryGold text-xs font-serif">₹{displayPrice.toFixed(2)}</p>
           </div>
           <AddToCartButton
             productId={product.id}
+            product={product}
             className="flex-grow sm:w-auto bg-luxuryGold hover:bg-goldHover text-background font-medium text-xs tracking-widest uppercase h-12 px-8 rounded-btn transition-colors duration-300"
           />
         </div>

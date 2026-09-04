@@ -91,6 +91,7 @@ describe('CartService Unit Tests', () => {
 
       prismaMock.product.findFirst = jest.fn().mockResolvedValue(product);
       prismaMock.cart.findFirst = jest.fn().mockResolvedValue(cart);
+      prismaMock.cart.findUnique = jest.fn().mockResolvedValue(cart);
       prismaMock.cartItem.findFirst = jest.fn().mockResolvedValue(existingItem);
       prismaMock.cartItem.update = jest.fn().mockResolvedValue({ ...existingItem, quantity: 5, subtotal: 500 });
 
@@ -105,7 +106,7 @@ describe('CartService Unit Tests', () => {
       expect(prismaMock.cartItem.update).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { id: 'item-001' },
-          data: { quantity: 5, subtotal: 500 },
+          data: { quantity: { increment: 3 }, subtotal: { increment: 300 } },
         })
       );
     });

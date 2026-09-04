@@ -26,8 +26,8 @@ export default function WhyRareNuts() {
   ];
 
   return (
-    <section className="w-full py-20 md:py-32 px-6 md:px-12 bg-background border-y border-divider relative">
-      <div className="max-w-[1400px] mx-auto">
+    <section className="w-full py-20 md:py-32 bg-background border-y border-divider relative">
+      <div className="site-container">
         <div className="text-center mb-16">
           <span className="text-[10px] uppercase tracking-ultra text-luxuryGold font-medium bg-luxuryGold/10 px-3.5 py-1 border border-luxuryGold/20 rounded-full inline-block mb-3">
             Botanical Standards

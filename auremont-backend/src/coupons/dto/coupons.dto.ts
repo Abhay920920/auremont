@@ -37,3 +37,14 @@ export class UpdateCouponDto {
   @IsOptional() @IsInt() @Min(1) @Type(() => Number) usageLimit?: number;
   @IsOptional() @IsBoolean() status?: boolean;
 }
+
+export class ValidateCouponDto {
+  @IsString()
+  @IsNotEmpty()
+  code!: string;
+
+  @IsNumber()
+  @Min(0)
+  @Type(() => Number)
+  subtotal!: number;
+}

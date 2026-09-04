@@ -18,6 +18,7 @@ describe('PaymentsService Unit Tests', () => {
   const mockPrismaService = {
     order: {
       findFirst: jest.fn(),
+      findUnique: jest.fn(),
       update: jest.fn(),
     },
     payment: {
@@ -25,6 +26,12 @@ describe('PaymentsService Unit Tests', () => {
     },
     webhookLog: {
       findUnique: jest.fn(),
+      create: jest.fn(),
+    },
+    outboxEvent: {
+      create: jest.fn(),
+    },
+    notification: {
       create: jest.fn(),
     },
     $queryRaw: jest.fn().mockResolvedValue([{ id: 'ord-1234', payment_status: 'pending' }]),
@@ -40,7 +47,9 @@ describe('PaymentsService Unit Tests', () => {
     }).compile();
 
     service = module.get<PaymentsService>(PaymentsService);
+    mockPrismaService.order.findUnique.mockResolvedValue(mockOrder);
     jest.clearAllMocks();
+    mockPrismaService.order.findUnique.mockResolvedValue(mockOrder);
   });
 
   describe('createRazorpayOrder', () => {

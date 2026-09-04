@@ -45,6 +45,10 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // Tree-shake large icon/animation libraries — eliminates unused bundle weight
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'framer-motion'],
+  },
   async headers() {
     return [
       {
@@ -91,6 +95,11 @@ const nextConfig = {
     ];
   },
   images: {
+    // Serve modern formats — AVIF is ~50% smaller than JPEG, WebP ~30% smaller
+    formats: ['image/avif', 'image/webp'],
+    // Tuned breakpoints for product cards (250px, 400px) and hero images
+    deviceSizes: [375, 640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [64, 128, 256, 384],
     remotePatterns: [
       {
         protocol: 'https',

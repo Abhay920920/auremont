@@ -1,11 +1,9 @@
-import type { Metadata } from 'next';
+import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Checkout | RARE NUTS',
-  robots: {
-    index: false,
-    follow: false,
-  },
+  title: "Secure Checkout | RARE NUTS",
+  description: "Complete your luxury almond order securely with 256-bit encryption.",
+  robots: { index: false, follow: false },
 };
 
 export default function CheckoutLayout({ children }: { children: React.ReactNode }) {

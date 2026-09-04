@@ -55,7 +55,7 @@ export default function FestivalGiftingHub() {
   return (
     <>
       <JsonLd data={articleSchema} />
-      <main className="w-full bg-background pt-32 pb-24 min-h-screen text-primaryText px-6 md:px-12 max-w-[1400px] mx-auto">
+      <main className="w-full bg-background pt-32 pb-24 min-h-screen text-primaryText site-container">
         <Breadcrumbs items={[
           { label: "Home", url: "/" },
           { label: "The Journal", url: "/journal" },

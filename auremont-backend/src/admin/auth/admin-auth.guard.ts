@@ -30,9 +30,14 @@ export class AdminAuthGuard implements CanActivate {
       throw new UnauthorizedException('Admin token missing');
     }
 
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret && (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging')) {
+      throw new Error('JWT_SECRET must be defined in production/staging environments');
+    }
+
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: process.env.JWT_SECRET || 'AUREMONT_LUXURY_SECRET_KEY',
+        secret: jwtSecret || 'dev_jwt_secret_only_local',
       });
       const adminId = payload.sub || payload.id;
       request['admin'] = {
@@ -50,14 +55,21 @@ export class AdminAuthGuard implements CanActivate {
       context.getClass(),
     ]);
     
-    if (!requiredRoles) {
-      return true; // No specific role required, just valid admin JWT
-    }
-
     const { role } = request['admin'];
     const uppercaseRole = role ? role.toUpperCase() : '';
-    if (uppercaseRole === 'SUPER_ADMIN') {
-      return true;
+
+    if (!requiredRoles || requiredRoles.length === 0) {
+      // Default rule: Any admin endpoint requires at least an ADMIN or SUPER_ADMIN role (customer role is forbidden)
+      if (uppercaseRole === 'ADMIN' || uppercaseRole === 'SUPER_ADMIN') {
+        return true;
+      }
+      throw new ForbiddenException('Insufficient permissions');
+    }
+
+    if (uppercaseRole === 'SUPER_ADMIN' || uppercaseRole === 'ADMIN') {
+      if (uppercaseRole === 'SUPER_ADMIN' || requiredRoles.includes('ADMIN') || requiredRoles.includes('SUPER_ADMIN')) {
+        return true;
+      }
     }
 
     if (!requiredRoles.includes(uppercaseRole)) {

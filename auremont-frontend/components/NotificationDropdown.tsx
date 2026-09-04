@@ -6,6 +6,8 @@ import { useAuthStore } from "@/store/authStore";
 import { Bell } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
+import { isTokenExpired } from "@/lib/jwt";
+
 interface Notification {
   id: string;
   type: string;
@@ -16,32 +18,48 @@ interface Notification {
 }
 
 export default function NotificationDropdown() {
-  const { user, token } = useAuthStore();
+  const { user, token, refreshToken } = useAuthStore();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const currentToken = token || useAuthStore.getState().token;
+    const currentRefreshToken = refreshToken || useAuthStore.getState().refreshToken;
+
     if (!user || !currentToken) {
       setNotifications([]);
       return;
     }
 
+    // If both access token and refresh token are expired, session is dead — clear and exit
+    if (isTokenExpired(currentToken) && (!currentRefreshToken || isTokenExpired(currentRefreshToken))) {
+      useAuthStore.getState().logout();
+      setNotifications([]);
+      return;
+    }
+
+    let isMounted = true;
+
     const fetchNotifications = async () => {
       try {
         const res = await api.get('/notifications/me');
-        if (Array.isArray(res.data)) {
+        if (isMounted && Array.isArray(res.data)) {
           setNotifications(res.data);
         }
-      } catch (err) {
-        // Fail gracefully without triggering console.error overlay
+      } catch (err: any) {
+        if (isMounted && err?.response?.status === 401) {
+          setNotifications([]);
+        }
       }
     };
 
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 60000);
-    return () => clearInterval(interval);
-  }, [user, token]);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [user, token, refreshToken]);
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
 

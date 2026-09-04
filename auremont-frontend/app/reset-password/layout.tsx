@@ -1,12 +1,8 @@
-import type { Metadata } from 'next';
+import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Set New Password | RARE NUTS',
-  robots: {
-    index: false,
-    follow: false,
-    nocache: true,
-  },
+  title: "Reset Password | RARE NUTS",
+  robots: { index: false, follow: false },
 };
 
 export default function ResetPasswordLayout({ children }: { children: React.ReactNode }) {

@@ -8,7 +8,7 @@ import { Briefcase, ArrowRight } from "lucide-react";
 export default function CorporateGifting() {
   return (
     <section className="w-full relative overflow-hidden bg-background">
-      <div className="max-w-[2000px] mx-auto min-h-[75vh] grid grid-cols-1 md:grid-cols-2 border-y border-divider">
+      <div className="site-container min-h-[75vh] grid grid-cols-1 md:grid-cols-2 border-y border-divider">
         
         {/* Left Photo Hero */}
         <motion.div 
@@ -22,6 +22,7 @@ export default function CorporateGifting() {
             src="/images/royal-almonds-wooden-box.png" 
             alt="RARE NUTS Executive Corporate Gifting" 
             fill 
+            sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover object-center group-hover:scale-105 transition-transform duration-[2s] filter brightness-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />

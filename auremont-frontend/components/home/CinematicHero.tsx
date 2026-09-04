@@ -42,7 +42,7 @@ export default function CinematicHero() {
       </div>
 
       {/* Hero Container: Side-by-Side on Desktop, Centered Column on Mobile */}
-      <div className="max-w-[1800px] mx-auto px-6 md:px-12 w-full flex-grow flex items-center z-10">
+      <div className="site-container flex-grow flex items-center z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center w-full">
           
           {/* LEFT: Typography & Narrative CTA */}
@@ -58,7 +58,7 @@ export default function CinematicHero() {
             >
               <Sparkles size={13} className="text-luxuryGold" />
               <span className="text-[10px] uppercase tracking-ultra text-luxuryGold font-medium">
-                RARE NUTS · Grand Botanical Harvest 2026
+                MAISON AUREMONT · Grand Botanical Harvest 2026
               </span>
             </motion.div>
             

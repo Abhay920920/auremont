@@ -19,7 +19,7 @@ export class AdminProductsController {
   }
 
   @Post()
-  @Roles('SUPER_ADMIN', 'INVENTORY_MANAGER')
+  @Roles('SUPER_ADMIN', 'ADMIN', 'INVENTORY_MANAGER')
   async create(@Body() data: any, @Req() req: any) {
     // The admin's ID is injected into req.admin by the AdminAuthGuard
     // Using a dummy ID for testing if not fully hooked up

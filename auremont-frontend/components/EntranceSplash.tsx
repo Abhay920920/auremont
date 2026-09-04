@@ -20,8 +20,8 @@ export default function EntranceSplash() {
         setFade(true);
         setTimeout(() => {
           setVisible(false);
-        }, 1000); // 1 second fade out duration
-      }, 1800); // Display for 1.8 seconds
+        }, 300); // 300ms quick fade out
+      }, 500); // Display for 500ms swift brand intro
 
       return () => clearTimeout(timer);
     }

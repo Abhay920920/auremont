@@ -46,6 +46,21 @@ export class ReviewsService {
     review?: string;
   }): Promise<Review> {
     this.clearCache();
+
+    // Check if user has a confirmed/paid order containing this product
+    const verifiedOrder = await this.prisma.order.findFirst({
+      where: {
+        userId: data.userId,
+        paymentStatus: 'paid',
+        items: {
+          some: { productId: data.productId },
+        },
+      },
+      select: { id: true },
+    });
+
+    const status = verifiedOrder ? 'approved' : 'pending';
+
     return this.prisma.review.create({
       data: {
         userId: data.userId,
@@ -53,7 +68,7 @@ export class ReviewsService {
         rating: data.rating,
         title: data.title,
         review: data.review,
-        status: 'approved',
+        status,
       },
     });
   }

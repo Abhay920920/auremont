@@ -32,19 +32,24 @@ export default function Header() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
+  // One-shot mount effect: fetch cart and wishlist once
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     setMounted(true);
     fetchCart();
     if (user && useAuthStore.getState().token) {
       fetchWishlist(user.id);
     }
+  }, []); // intentionally empty — runs only on mount
 
+  // Scroll listener — separate effect for clarity and stability
+  useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [fetchCart, fetchWishlist, user]);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <>
@@ -81,7 +86,7 @@ export default function Header() {
         </AnimatePresence>
 
         {/* ── Row 2: Main Nav ──────────────────────────────────────────────────── */}
-        <div className="max-w-[2000px] mx-auto px-4 md:px-12 flex justify-between items-center h-14 md:h-20">
+        <div className="site-container flex justify-between items-center h-14 md:h-20">
 
           {/* Mobile Hamburger (Left) */}
           <div className="flex-1 flex md:hidden justify-start items-center">
@@ -138,7 +143,7 @@ export default function Header() {
             </button>
 
             <div className="hidden md:block">
-              {mounted && <NotificationDropdown />}
+              {mounted && user && <NotificationDropdown />}
             </div>
 
             <div className="hidden md:block">

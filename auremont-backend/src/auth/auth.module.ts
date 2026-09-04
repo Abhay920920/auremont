@@ -13,7 +13,7 @@ import { MailService } from './mail.service';
   imports: [
     UsersModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'AUREMONT_LUXURY_SECRET_KEY',
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '7d' },
     }),
   ],

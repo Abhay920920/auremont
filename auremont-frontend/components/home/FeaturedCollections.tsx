@@ -11,8 +11,9 @@ export default function FeaturedCollections({ products }: { products?: any[] }) 
   const { formatPrice } = useCurrencyStore();
   
   return (
-    <section className="w-full py-24 md:py-super px-6 md:px-12 max-w-[2000px] mx-auto bg-background relative z-10">
-       <div className="flex flex-col md:flex-row justify-between items-end mb-24">
+    <section className="w-full py-24 md:py-super bg-background relative z-10">
+      <div className="site-container">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-24">
           <div className="max-w-xl">
             <h4 className="text-luxuryGold uppercase tracking-superwide text-xs mb-4">Curated Selection</h4>
             <h2 className="text-4xl md:text-5xl font-serif text-primaryText">Signature Creations</h2>
@@ -20,7 +21,7 @@ export default function FeaturedCollections({ products }: { products?: any[] }) 
           <Link href="/shop" className="hidden md:inline-flex luxury-link text-xs tracking-superwide uppercase text-primaryText pb-1 mt-8 md:mt-0">
             View Entire Collection
           </Link>
-       </div>
+        </div>
        
        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {featured.length > 0 ? featured.map((product: any, idx: number) => (
@@ -44,7 +45,7 @@ export default function FeaturedCollections({ products }: { products?: any[] }) 
                 </Link>
                 <div className="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center pointer-events-none">
                   <div className="pointer-events-auto">
-                    <AddToCartButton productId={product.id} className="luxury-button-outline bg-background/50 backdrop-blur-md" />
+                    <AddToCartButton productId={product.id} product={product} className="luxury-button-outline bg-background/50 backdrop-blur-md" />
                   </div>
                 </div>
               </div>
@@ -59,7 +60,8 @@ export default function FeaturedCollections({ products }: { products?: any[] }) 
           )) : (
             <p className="col-span-3 text-center text-mutedText py-12">Products will appear here once connected to the backend.</p>
           )}
-       </div>
+        </div>
+      </div>
     </section>
   );
 }

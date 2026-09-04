@@ -17,20 +17,24 @@ export class AuthService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    // Only auto-seed test fixtures in non-production environments
-    if (process.env.NODE_ENV === 'production') {
+    // Only auto-seed test fixtures in local development environments
+    if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'staging') {
       return;
     }
 
     try {
-      const adminPassword = await bcrypt.hash('Admin@12345', 10);
-      const testPassword = await bcrypt.hash('password123', 10);
+      // Parallelize both hash operations — each takes ~100ms, so concurrent saves ~100ms
+      const [adminPassword, testPassword] = await Promise.all([
+        bcrypt.hash('Admin@12345', 10),
+        bcrypt.hash('password123', 10),
+      ]);
 
-      // Seed default dev admin only if not already existing (do not overwrite existing password)
-      const existingAdmin = await this.prisma.user.findUnique({ where: { email: 'admin@rarenuts.com' } });
-      if (!existingAdmin) {
-        await this.prisma.user.create({
-          data: {
+      // Upsert admin and test fixtures
+      await Promise.all([
+        this.prisma.user.upsert({
+          where: { email: 'admin@rarenuts.com' },
+          update: { passwordHash: adminPassword, role: 'admin' },
+          create: {
             firstName: 'RARE NUTS',
             lastName: 'Concierge',
             email: 'admin@rarenuts.com',
@@ -38,13 +42,11 @@ export class AuthService implements OnModuleInit {
             role: 'admin',
             emailVerified: true,
           },
-        });
-      }
-
-      const existingTestAdmin = await this.prisma.user.findUnique({ where: { email: 'admin@example.com' } });
-      if (!existingTestAdmin) {
-        await this.prisma.user.create({
-          data: {
+        }),
+        this.prisma.user.upsert({
+          where: { email: 'admin@example.com' },
+          update: { passwordHash: testPassword, role: 'admin' },
+          create: {
             firstName: 'Admin',
             lastName: 'User',
             email: 'admin@example.com',
@@ -52,13 +54,11 @@ export class AuthService implements OnModuleInit {
             role: 'admin',
             emailVerified: true,
           },
-        });
-      }
-
-      const existingCustomer = await this.prisma.user.findUnique({ where: { email: 'example@gmail.com' } });
-      if (!existingCustomer) {
-        await this.prisma.user.create({
-          data: {
+        }),
+        this.prisma.user.upsert({
+          where: { email: 'example@gmail.com' },
+          update: { passwordHash: testPassword, role: 'customer' },
+          create: {
             firstName: 'Test',
             lastName: 'Customer',
             email: 'example@gmail.com',
@@ -66,8 +66,8 @@ export class AuthService implements OnModuleInit {
             role: 'customer',
             emailVerified: true,
           },
-        });
-      }
+        }),
+      ]);
     } catch (e) {
       // Auto-seed on startup complete
     }

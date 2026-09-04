@@ -105,6 +105,17 @@ export class MailService {
    * Lightweight native SMTP transport
    */
   private async sendViaSmtp(options: EmailOptions): Promise<void> {
+    const cleanTo = options.to.replace(/[\r\n]/g, '').trim();
+    const cleanSubject = options.subject.replace(/[\r\n]/g, '').trim();
+    const cleanFrom = this.smtpFrom.replace(/[\r\n]/g, '').trim();
+    const cleanFromAddress = cleanFrom.replace(/^.*<|>.*$/g, '');
+
+    // Strict email format validation
+    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    if (!emailRegex.test(cleanTo)) {
+      throw new Error(`Invalid recipient email address format: ${cleanTo}`);
+    }
+
     return new Promise((resolve, reject) => {
       const socket = net.createConnection(this.smtpPort, this.smtpHost!, () => {
         let step = 0;
@@ -123,19 +134,19 @@ export class MailService {
             socket.write(`${Buffer.from(this.smtpPass!).toString('base64')}\r\n`);
             step++;
           } else if (step === 4 && response.startsWith('235')) {
-            socket.write(`MAIL FROM:<${this.smtpFrom.replace(/^.*<|>.*$/g, '')}>\r\n`);
+            socket.write(`MAIL FROM:<${cleanFromAddress}>\r\n`);
             step++;
           } else if (step === 5 && response.startsWith('250')) {
-            socket.write(`RCPT TO:<${options.to}>\r\n`);
+            socket.write(`RCPT TO:<${cleanTo}>\r\n`);
             step++;
           } else if (step === 6 && response.startsWith('250')) {
             socket.write('DATA\r\n');
             step++;
           } else if (step === 7 && response.startsWith('354')) {
             const rawMessage = [
-              `From: ${this.smtpFrom}`,
-              `To: ${options.to}`,
-              `Subject: ${options.subject}`,
+              `From: ${cleanFrom}`,
+              `To: ${cleanTo}`,
+              `Subject: ${cleanSubject}`,
               'MIME-Version: 1.0',
               'Content-Type: text/html; charset=UTF-8',
               '',

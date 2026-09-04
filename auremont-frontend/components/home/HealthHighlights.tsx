@@ -23,8 +23,8 @@ export default function HealthHighlights() {
   ];
 
   return (
-    <section className="w-full py-24 md:py-super px-6 md:px-12 bg-background">
-      <div className="max-w-[1400px] mx-auto text-center">
+    <section className="w-full py-24 md:py-super bg-background">
+      <div className="site-container text-center">
         <h4 className="text-luxuryGold uppercase tracking-superwide text-xs mb-16">Nourishment</h4>
         <h2 className="text-4xl md:text-5xl font-serif text-primaryText mb-20">The Essence of Vitality</h2>
         

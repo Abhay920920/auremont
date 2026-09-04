@@ -147,17 +147,13 @@ export default function GiftBoxBuilder() {
   const handleAddToCart = async () => {
     setAddingToCart(true);
     try {
-      let targetProductId = "ALM-EV-250";
-      try {
-        const res = await api.get('/products');
-        const products = res.data?.data || [];
-        if (products.length > 0) {
-          targetProductId = products[0].id;
-        }
-      } catch (err) {
-        // Fallback SKU
-      }
-      await addItem(targetProductId, 1);
+      const bespokeProduct = {
+        id: "ALM-EV-250",
+        name: `Bespoke ${selectedBox.name} (${compartmentCount} Compartments)`,
+        price: grandTotal,
+        thumbnailUrl: selectedBox.image,
+      };
+      await addItem(bespokeProduct.id, 1, bespokeProduct);
     } catch (e) {
       console.error("Failed to add bespoke gift box to cart", e);
     } finally {
@@ -168,7 +164,7 @@ export default function GiftBoxBuilder() {
   return (
     <div className="w-full bg-background min-h-screen">
       {/* Interactive Builder Container */}
-      <div className="max-w-[1800px] mx-auto px-6 md:px-12 py-12 flex flex-col lg:flex-row gap-12 xl:gap-20">
+      <div className="site-container py-12 flex flex-col lg:flex-row gap-12 xl:gap-20">
         
         {/* LEFT COLUMN: Sticky 3D Visual Box Mock & Real-Time Engraving Preview */}
         <div className="w-full lg:w-1/2 flex flex-col items-center">

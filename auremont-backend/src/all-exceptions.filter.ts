@@ -1,32 +1,44 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
+import * as crypto from 'crypto';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
+  private readonly logger = new Logger(AllExceptionsFilter.name);
+
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    // --- Server-side diagnostic log (dev only, never sent to client) ---
-    console.error('================ EXCEPTION ================');
-    console.error('TYPE       :', (exception as any)?.constructor?.name);
-    console.error('MESSAGE    :', (exception as any)?.message);
-    console.error('HTTP?      :', exception instanceof HttpException);
-    if (exception instanceof HttpException) {
-      console.error('HTTP STATUS:', exception.getStatus());
-      console.error('RESPONSE   :', exception.getResponse());
+    // Request & Correlation Tracking
+    const requestId =
+      (request.headers['x-request-id'] as string) ||
+      (request.headers['x-correlation-id'] as string) ||
+      `req_${crypto.randomBytes(8).toString('hex')}`;
+
+    response.setHeader('X-Request-ID', requestId);
+
+    const isHttp = exception instanceof HttpException;
+    const status = isHttp ? (exception as HttpException).getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
+    const exceptionResponse = isHttp ? (exception as HttpException).getResponse() : null;
+
+    // Server-side structured diagnostic logging
+    if (status >= 500) {
+      this.logger.error(
+        `[${requestId}] ${request.method} ${request.url} - ${status} Error: ${(exception as any)?.message}`,
+        (exception as any)?.stack,
+      );
+    } else {
+      this.logger.warn(
+        `[${requestId}] ${request.method} ${request.url} - ${status} Client Error: ${(exception as any)?.message}`,
+      );
     }
-    console.error('STACK      :', (exception as any)?.stack);
-    console.error('===========================================');
 
-    if (exception instanceof HttpException) {
-      // NestJS HTTP exception — preserve status and response exactly
-      const status = exception.getStatus();
-      const exceptionResponse = exception.getResponse();
-
+    if (isHttp) {
       const responseBody: Record<string, any> = {
         statusCode: status,
+        requestId,
         timestamp: new Date().toISOString(),
         path: request.url,
       };
@@ -35,8 +47,8 @@ export class AllExceptionsFilter implements ExceptionFilter {
         responseBody.message = exceptionResponse;
       } else if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
         Object.assign(responseBody, exceptionResponse);
-        // Always keep statusCode correct
         responseBody.statusCode = status;
+        responseBody.requestId = requestId;
       }
 
       return response.status(status).json(responseBody);
@@ -47,16 +59,18 @@ export class AllExceptionsFilter implements ExceptionFilter {
     if (typeof errStatus === 'number' && errStatus >= 400 && errStatus < 600) {
       return response.status(errStatus).json({
         statusCode: errStatus,
+        requestId,
         timestamp: new Date().toISOString(),
         path: request.url,
         message: (exception as any)?.message || 'Request error',
       });
     }
 
-    // Non-HTTP exception — return 500, expose message in dev
+    // Non-HTTP exception — safe 500
     const isDev = process.env.NODE_ENV !== 'production';
     return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      requestId,
       timestamp: new Date().toISOString(),
       path: request.url,
       message: isDev

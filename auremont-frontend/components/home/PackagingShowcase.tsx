@@ -51,7 +51,7 @@ export default function PackagingShowcase() {
   return (
     <section className="w-full py-20 md:py-32 bg-background relative overflow-hidden border-t border-b border-divider">
       {/* Section Header */}
-      <div className="max-w-[2000px] mx-auto px-6 md:px-12 text-center mb-12 md:mb-20">
+      <div className="site-container text-center mb-12 md:mb-20">
         <span className="text-[10px] uppercase tracking-ultra text-luxuryGold font-medium bg-luxuryGold/10 px-3.5 py-1 border border-luxuryGold/20 rounded-full inline-block mb-4">
           Visual Packaging Suite
         </span>
@@ -64,7 +64,7 @@ export default function PackagingShowcase() {
       </div>
 
       {/* Grid of Packaging Editions */}
-      <div className="max-w-[2000px] mx-auto px-6 md:px-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+      <div className="site-container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {PACKAGING_EDITIONS.map((item, idx) => {
           const IconComp = item.icon;
           return (
@@ -80,6 +80,7 @@ export default function PackagingShowcase() {
                 src={item.image} 
                 alt={item.title} 
                 fill 
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 className="object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-[1.5s] filter brightness-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent flex flex-col justify-end p-6 sm:p-8">
@@ -109,6 +110,7 @@ export default function PackagingShowcase() {
             src="/images/rarenuts-packaging-showcase.png" 
             alt="RARE NUTS Packaging Suite Showcase" 
             fill 
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-[1.5s] filter brightness-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent flex flex-col justify-end p-6 sm:p-8">

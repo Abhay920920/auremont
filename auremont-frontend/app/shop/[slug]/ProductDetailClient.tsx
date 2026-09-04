@@ -25,14 +25,15 @@ function StarRating({ rating, size = 16 }: { rating: number; size?: number }) {
   );
 }
 
-export default function ProductDetailClient() {
-  const { slug } = useParams<{ slug: string }>();
+export default function ProductDetailClient({ initialProduct, slug: propSlug }: { initialProduct?: any | null; slug?: string }) {
+  const params = useParams<{ slug: string }>();
+  const slug = propSlug || params?.slug;
   const router = useRouter();
   const { user } = useAuthStore();
 
-  const [product, setProduct] = useState<any | null>(null);
-  const [reviews, setReviews] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [product, setProduct] = useState<any | null>(initialProduct || null);
+  const [reviews, setReviews] = useState<any[]>(initialProduct?.reviews || []);
+  const [loading, setLoading] = useState(!initialProduct);
 
   const [reviewForm, setReviewForm] = useState({ rating: 5, title: "", review: "" });
   const [submittingReview, setSubmittingReview] = useState(false);
@@ -41,7 +42,8 @@ export default function ProductDetailClient() {
   const [isReviewDrawerOpen, setIsReviewDrawerOpen] = useState(false);
 
   useEffect(() => {
-    if (!slug) return;
+    // If product is already pre-loaded via SSR, do not execute duplicate fetch
+    if (initialProduct || !slug) return;
     const load = async () => {
       try {
         const prodRes = await api.get(`/products/${slug}`);
@@ -63,7 +65,7 @@ export default function ProductDetailClient() {
       }
     };
     load();
-  }, [slug]);
+  }, [slug, initialProduct]);
 
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,7 +87,7 @@ export default function ProductDetailClient() {
 
   if (loading) {
     return (
-      <div className="w-full max-w-[1400px] mx-auto px-6 py-32 grid grid-cols-1 lg:grid-cols-2 gap-16 animate-pulse">
+      <div className="site-container py-32 grid grid-cols-1 lg:grid-cols-2 gap-16 animate-pulse">
         <div className="aspect-[4/5] bg-secondaryBg border border-divider" />
         <div className="space-y-6 pt-12">
           <div className="h-12 bg-secondaryBg rounded w-3/4" />
@@ -117,7 +119,7 @@ export default function ProductDetailClient() {
 
   return (
     <div className="w-full bg-background pt-32 pb-24 md:pb-super">
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12">
+      <div className="site-container">
         {/* Breadcrumb */}
         <Breadcrumbs items={[
           { label: "Home", url: "/" },

@@ -1,12 +1,9 @@
-import type { Metadata } from 'next';
+import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Create an Account | RARE NUTS',
-  robots: {
-    index: false,
-    follow: false,
-    nocache: true,
-  },
+  title: "Create Account | RARE NUTS",
+  description: "Join RARE NUTS for private reserve allocations and order tracking.",
+  robots: { index: false, follow: false },
 };
 
 export default function RegisterLayout({ children }: { children: React.ReactNode }) {

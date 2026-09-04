@@ -64,7 +64,7 @@ export default function SquirrelLogo({ variant = "header", className = "", size 
       >
         <Image
           src="/images/rarenuts-gold-squirrel-logo.png"
-          alt="RARE NUTS"
+          alt="RARE NUTS Luxury Almonds"
           width={size * 1.2}
           height={size}
           className="object-contain filter drop-shadow-[0_2px_10px_rgba(212,175,55,0.5)]"

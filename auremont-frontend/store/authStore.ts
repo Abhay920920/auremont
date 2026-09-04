@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { isTokenExpired } from '@/lib/jwt';
 
 interface User {
   id: string;
@@ -35,6 +36,18 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'rarenuts-auth',
+      partialize: (state) => ({
+        user: state.user,
+        token: state.token,
+      }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          // If stored token is expired, clear dead session
+          if (state.token && isTokenExpired(state.token)) {
+            state.logout();
+          }
+        }
+      },
     }
   )
 );

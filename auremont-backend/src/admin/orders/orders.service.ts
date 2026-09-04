@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { OrderStatus, PayStatus } from '@prisma/client';
 
@@ -71,6 +71,35 @@ export class AdminOrdersService {
       throw new NotFoundException(`Order with ID ${id} not found`);
     }
 
+    const current = order.orderStatus;
+    const target = status;
+
+    if (current === target) {
+      return order;
+    }
+
+    const ALLOWED_TRANSITIONS: Record<string, string[]> = {
+      placed: ['confirmed', 'cancelled'],
+      confirmed: ['packed', 'cancelled'],
+      packed: ['shipped', 'cancelled'],
+      shipped: ['delivered'],
+      delivered: [],
+      cancelled: [],
+    };
+
+    const allowed = ALLOWED_TRANSITIONS[current] || [];
+    if (!allowed.includes(target)) {
+      throw new BadRequestException(
+        `Invalid state transition: Cannot transition order #${order.orderNumber} from '${current}' to '${target}'.`,
+      );
+    }
+
+    if (target === 'confirmed' && order.paymentStatus !== 'paid') {
+      throw new BadRequestException(
+        `Cannot confirm order #${order.orderNumber}: paymentStatus is '${order.paymentStatus}', expected 'paid'.`,
+      );
+    }
+
     const updated = await this.prisma.order.update({
       where: { id },
       data: { orderStatus: status },
@@ -100,6 +129,11 @@ export class AdminOrdersService {
     const order = await this.prisma.order.findUnique({ where: { id } });
     if (!order) {
       throw new NotFoundException(`Order with ID ${id} not found`);
+    }
+
+    // Invariant: Cannot downgrade from 'paid' to 'pending' or 'failed'
+    if (order.paymentStatus === 'paid' && (status === 'pending' || status === 'failed')) {
+      throw new BadRequestException(`Cannot downgrade payment status from 'paid' to '${status}'.`);
     }
 
     const updated = await this.prisma.order.update({

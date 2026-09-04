@@ -62,55 +62,21 @@ export const metadata: Metadata = {
 };
 
 import JsonLd from "@/components/JsonLd";
-import FilmGrain from "@/components/FilmGrain";
-import EntranceSplash from "@/components/EntranceSplash";
 import StorefrontWrapper from "@/components/StorefrontWrapper";
-import CookieBanner from "@/components/CookieBanner";
-import CustomCursor from "@/components/ui/CustomCursor";
 import TransitionProvider from "@/components/providers/TransitionProvider";
-import MobileBottomBar from "@/components/mobile/MobileBottomBar";
-import ConciergeChatWidget from "@/components/concierge/ConciergeChatWidget";
-import PageProgressLoader from "@/components/providers/PageProgressLoader";
 import WebSiteSchema from "@/components/seo/WebSiteSchema";
+import dynamic from "next/dynamic";
+
+// Lazy-load non-critical components — split into independent async chunks
+const EntranceSplash = dynamic(() => import("@/components/EntranceSplash"));
+const FilmGrain = dynamic(() => import("@/components/FilmGrain"));
+const CustomCursor = dynamic(() => import("@/components/ui/CustomCursor"));
+const ConciergeChatWidget = dynamic(() => import("@/components/concierge/ConciergeChatWidget"));
+const MobileBottomBar = dynamic(() => import("@/components/mobile/MobileBottomBar"));
+const CookieBanner = dynamic(() => import("@/components/CookieBanner"));
+const PageProgressLoader = dynamic(() => import("@/components/providers/PageProgressLoader"));
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in';
-
-const organizationSchema = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": `${siteUrl}/#organization`,
-      "name": "RARE NUTS",
-      "legalName": "RARE NUTS Private Limited",
-      "url": siteUrl,
-      "logo": `${siteUrl}/images/og-rarenuts.png`,
-      "description": "Luxury gourmet nuts and premium gifting brand.",
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "email": "concierge@rarenuts.com",
-        "contactType": "customer service"
-      }
-    },
-    {
-      "@type": "WebSite",
-      "@id": `${siteUrl}/#website`,
-      "url": siteUrl,
-      "name": "RARE NUTS",
-      "publisher": {
-        "@id": `${siteUrl}/#organization`
-      },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": `${siteUrl}/shop?q={search_term_string}`
-        },
-        "query-input": "required name=search_term_string"
-      }
-    }
-  ]
-};
 
 export default function RootLayout({
   children,
@@ -120,7 +86,6 @@ export default function RootLayout({
   return (
     <html lang="en" dir="ltr">
       <head>
-        <JsonLd data={organizationSchema} />
         <WebSiteSchema />
       </head>
       <body className={`${inter.variable} ${cormorant.variable} font-sans bg-background text-primaryText min-h-screen antialiased flex flex-col overflow-x-hidden selection:bg-luxuryGold/30 selection:text-luxuryGold print:bg-background print:text-primaryText pb-16 md:pb-0`}>

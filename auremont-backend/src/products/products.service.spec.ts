@@ -58,7 +58,7 @@ describe('ProductsService Unit Tests', () => {
 
       const result = await service.findAll({ minPrice: 500, maxPrice: 1000, page: 1, limit: 10 });
 
-      expect(result.total).toBe(1);
+      expect(result.meta.total).toBe(1);
       expect(result.data).toHaveLength(1);
       expect(result.data[0].slug).toBe('california-reserve-raw');
       expect(mockPrismaService.product.findMany).toHaveBeenCalledWith(

@@ -1,52 +1,64 @@
-"use client";
-
+import React from "react";
+import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import Breadcrumbs from "@/components/seo/Breadcrumbs";
-import JsonLd from "@/components/JsonLd";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
+import FAQSchema from "@/components/seo/FAQSchema";
 import SquirrelLogo from "@/components/ui/SquirrelLogo";
-import { Gift, Award, ShieldCheck, ArrowRight, PackageCheck, Sparkles } from "lucide-react";
+import { Gift, Award, ArrowRight, PackageCheck, Sparkles } from "lucide-react";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in';
+
+export const metadata: Metadata = {
+  title: "Luxury Gifting & Keepsake Wooden Boxes | RARE NUTS",
+  description: "Explore bespoke luxury gifting: California reserve almonds presented in solid mahogany presentation chests, velvet lining, and personalized brass engraved plates.",
+  alternates: {
+    canonical: `${siteUrl}/gifting`,
+  },
+  openGraph: {
+    title: "Luxury Gifting & Keepsake Wooden Boxes | RARE NUTS",
+    description: "Solid mahogany presentation chests, gold foil accents, and bespoke almond assortments.",
+    url: `${siteUrl}/gifting`,
+    siteName: "RARE NUTS",
+    images: [{ url: `${siteUrl}/images/rarenuts-packaging-showcase.png`, width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Luxury Gifting & Keepsake Wooden Boxes | RARE NUTS",
+    description: "Solid mahogany presentation chests and bespoke almond assortments.",
+    images: [`${siteUrl}/images/rarenuts-packaging-showcase.png`],
+  },
+};
+
+const giftingFaqs = [
+  {
+    question: "Why do premium nuts make memorable luxury gifts?",
+    answer: "Premium nuts symbolize prosperity, health, and thoughtful care. Presented in velvet-lined mahogany chests with custom gold engraving, RARE NUTS creates an enduring impression far beyond traditional gifting.",
+  },
+  {
+    question: "Can RARE NUTS gift boxes be personalized with custom names or corporate logos?",
+    answer: "Yes. Our Bespoke Gift Box Builder allows you to personalize solid brass plates with laser-engraved names, corporate emblems, or custom messages.",
+  },
+  {
+    question: "Do you provide white-glove corporate and festive gifting services across India?",
+    answer: "We provide nationwide express delivery across India with individual recipient tracking and concierge customization.",
+  },
+];
 
 export default function GiftingPage() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.com';
-
-  const giftingFaqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "Why do premium nuts make memorable luxury gifts?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Premium nuts symbolize prosperity, health, and thoughtful care. Presented in velvet-lined mahogany chests with custom gold engraving, RARE NUTS creates an enduring impression far beyond traditional gifting."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Can RARE NUTS gift boxes be personalized with custom names or corporate logos?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Yes. Our Bespoke Gift Box Builder allows you to personalize solid brass plates with laser-engraved names, corporate emblems, or custom messages."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Do you provide white-glove corporate and festive gifting services across India?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "We provide nationwide express delivery across India with individual recipient tracking and concierge customization."
-        }
-      }
-    ]
-  };
+  const breadcrumbItems = [
+    { name: "Home", url: "/" },
+    { name: "Gifting", url: "/gifting" },
+  ];
 
   return (
     <>
-      <JsonLd data={giftingFaqSchema} />
+      <BreadcrumbSchema items={breadcrumbItems} />
+      <FAQSchema items={giftingFaqs} />
       
-      <main className="min-h-screen bg-background text-primaryText pt-32 pb-24 px-6 md:px-12 max-w-[1800px] mx-auto">
-        <Breadcrumbs items={[{ label: "Home", url: "/" }, { label: "Gifting", url: "/gifting" }]} />
+      <main className="min-h-screen bg-background text-primaryText pt-32 pb-24 site-container">
+        <Breadcrumbs items={breadcrumbItems.map(i => ({ label: i.name, url: i.url }))} />
 
         {/* Hero Section */}
         <section className="text-center max-w-4xl mx-auto my-12 space-y-6">
@@ -141,18 +153,14 @@ export default function GiftingPage() {
         <section className="my-20 max-w-4xl mx-auto border-t border-divider pt-16">
           <h2 className="text-2xl sm:text-3xl font-serif text-luxuryGold text-center uppercase tracking-widest mb-12">Gifting FAQ</h2>
           <div className="space-y-8">
-            <div className="bg-secondaryBg p-6 rounded-card border border-divider">
-              <h3 className="text-lg font-serif text-primaryText mb-2">Why do premium nuts make memorable luxury gifts?</h3>
-              <p className="text-secondaryText text-sm font-light leading-relaxed">
-                Premium nuts symbolize health, longevity, and royal hospitality. Presented in velvet-lined mahogany chests with custom gold engraving, RARE NUTS creates an enduring impression for any occasion.
-              </p>
-            </div>
-            <div className="bg-secondaryBg p-6 rounded-card border border-divider">
-              <h3 className="text-lg font-serif text-primaryText mb-2">Can RARE NUTS gift boxes be personalized?</h3>
-              <p className="text-secondaryText text-sm font-light leading-relaxed">
-                Yes. Our Bespoke Gift Box Builder allows you to personalize solid brass plates with laser-engraved names, corporate emblems, or custom messages.
-              </p>
-            </div>
+            {giftingFaqs.map((faq) => (
+              <div key={faq.question} className="bg-secondaryBg p-6 rounded-card border border-divider">
+                <h3 className="text-lg font-serif text-primaryText mb-2">{faq.question}</h3>
+                <p className="text-secondaryText text-sm font-light leading-relaxed">
+                  {faq.answer}
+                </p>
+              </div>
+            ))}
           </div>
         </section>
       </main>

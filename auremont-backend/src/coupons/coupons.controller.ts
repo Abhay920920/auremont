@@ -6,7 +6,8 @@ import { OptionalJwtAuthGuard } from '../auth/optional-jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { GetUser } from '../auth/get-user.decorator';
-import { CreateCouponDto, UpdateCouponDto } from './dto/coupons.dto';
+import { CreateCouponDto, UpdateCouponDto, ValidateCouponDto } from './dto/coupons.dto';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('coupons')
 export class CouponsController {
@@ -14,12 +15,11 @@ export class CouponsController {
 
   // ── PUBLIC ─────────────────────────────────────────────────────────────────
 
-  // Coupon validation is a high-volume checkout-flow action — throttle at CDN layer, not per-IP here.
-  @SkipThrottle()
   @Post('validate')
   @HttpCode(HttpStatus.OK)
+  @Throttle({ default: { limit: 20, ttl: 60000 } })
   @UseGuards(OptionalJwtAuthGuard)
-  async validateCoupon(@Body() body: { code: string; subtotal: number }, @GetUser() user?: any) {
+  async validateCoupon(@Body() body: ValidateCouponDto, @GetUser() user?: any) {
     const coupon = await this.couponsService.validateCoupon(body.code, body.subtotal, user?.id);
     return {
       success: true,

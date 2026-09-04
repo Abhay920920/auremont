@@ -1,5 +1,5 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
-import { SkipThrottle } from '@nestjs/throttler';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, Headers, UseGuards, UnauthorizedException, ForbiddenException } from '@nestjs/common';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
 import { CartService } from './cart.service';
 import { CartRecoveryService } from './cart-recovery.service';
 import { OptionalJwtAuthGuard } from '../auth/optional-jwt-auth.guard';
@@ -29,7 +29,19 @@ export class CartController {
   }
 
   @Post('recovery')
-  async triggerCartRecovery() {
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  async triggerCartRecovery(
+    @GetUser() user?: any,
+    @Headers('x-worker-secret') workerSecret?: string,
+  ) {
+    const configuredSecret = process.env.CART_RECOVERY_WORKER_SECRET;
+    const isAuthorizedWorker = configuredSecret && workerSecret === configuredSecret;
+    const isAdmin = user && (user.role === 'admin' || user.role === 'SUPER_ADMIN');
+
+    if (!isAuthorizedWorker && !isAdmin) {
+      throw new ForbiddenException('Unauthorized: Cart recovery requires admin privileges or worker secret.');
+    }
+
     return this.cartRecoveryService.processAbandonedCarts();
   }
 
@@ -45,12 +57,21 @@ export class CartController {
   }
 
   @Patch('items/:id')
-  async updateItem(@Param('id') id: string, @Body() body: UpdateCartItemDto, @GetUser() user?: any) {
-    return this.cartService.updateItemQuantity(id, body.quantity, user?.id);
+  async updateItem(
+    @Param('id') id: string,
+    @Body() body: UpdateCartItemDto,
+    @Query('cartId') cartId?: string,
+    @GetUser() user?: any
+  ) {
+    return this.cartService.updateItemQuantity(id, body.quantity, user?.id, cartId);
   }
 
   @Delete('items/:id')
-  async removeItem(@Param('id') id: string, @GetUser() user?: any) {
-    return this.cartService.removeItem(id, user?.id);
+  async removeItem(
+    @Param('id') id: string,
+    @Query('cartId') cartId?: string,
+    @GetUser() user?: any
+  ) {
+    return this.cartService.removeItem(id, user?.id, cartId);
   }
 }

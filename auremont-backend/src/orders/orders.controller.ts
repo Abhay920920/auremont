@@ -1,6 +1,7 @@
-import { Controller, Post, Body, Get, Param, UseGuards, Delete, Patch, Query, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, UseGuards, Delete, Patch, Query, ParseUUIDPipe, HttpCode } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { OrdersService } from './orders.service';
+import { PaymentsService } from '../payments/payments.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { OptionalJwtAuthGuard } from '../auth/optional-jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -12,7 +13,10 @@ import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 
 @Controller('orders')
 export class OrdersController {
-  constructor(private readonly ordersService: OrdersService) {}
+  constructor(
+    private readonly ordersService: OrdersService,
+    private readonly paymentsService: PaymentsService,
+  ) {}
 
   // ── PUBLIC / USER ──────────────────────────────────────────────────────────
 
@@ -30,9 +34,15 @@ export class OrdersController {
       Number(order.total),
     );
 
+    // Generate a guest order token so unauthenticated users can poll payment status
+    // and view their confirmation without authentication.
+    // Guests store this token in sessionStorage alongside the orderId.
+    const orderToken = this.paymentsService.generateOrderToken(order.id);
+
     return {
       ...order,
       paymentSession,
+      orderToken, // Frontend must store this for guest confirmation polling
     };
   }
 
@@ -46,6 +56,17 @@ export class OrdersController {
   @UseGuards(JwtAuthGuard)
   async getOrder(@Param('id', ParseUUIDPipe) id: string, @GetUser() user: any) {
     return this.ordersService.getOrderById(id, user.id);
+  }
+
+  @Get(':id/payment-status')
+  @UseGuards(OptionalJwtAuthGuard)
+  @Throttle({ default: { limit: 30, ttl: 60000 } }) // Allow polling: 30/min per IP
+  async getOrderPaymentStatus(
+    @Param('id', ParseUUIDPipe) id: string,
+    @GetUser() user: any,
+    @Query('token') orderToken?: string,
+  ) {
+    return this.paymentsService.getOrderPaymentStatus(id, user?.id, orderToken);
   }
 
   @Delete(':id/cancel')

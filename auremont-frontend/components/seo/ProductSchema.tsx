@@ -21,8 +21,8 @@ export default function ProductSchema({
   price,
   currency = "INR",
   inStock = true,
-  ratingValue = 5.0,
-  reviewCount = 12,
+  ratingValue,
+  reviewCount,
   slug,
 }: ProductSchemaProps) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in';
@@ -52,7 +52,7 @@ export default function ProductSchema({
         "name": "RARE NUTS"
       }
     },
-    ...(reviewCount > 0 && {
+    ...(reviewCount && reviewCount > 0 && ratingValue ? {
       "aggregateRating": {
         "@type": "AggregateRating",
         "ratingValue": ratingValue,
@@ -60,7 +60,7 @@ export default function ProductSchema({
         "bestRating": "5",
         "worstRating": "1"
       }
-    })
+    } : {})
   };
 
   return <JsonLd data={schema} />;

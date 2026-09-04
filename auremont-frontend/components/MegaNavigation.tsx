@@ -16,7 +16,7 @@ export default function MegaNavigation({ isOpen, onMouseLeave }: { isOpen: boole
           className="absolute top-full left-0 w-full bg-secondaryBg border-b border-divider shadow-2xl z-40 py-12"
           onMouseLeave={onMouseLeave}
         >
-          <div className="max-w-[2000px] mx-auto px-6 md:px-12 grid grid-cols-12 gap-8">
+          <div className="site-container grid grid-cols-12 gap-8">
              <div className="col-span-3">
                <h4 className="text-[11px] uppercase tracking-widest text-luxuryGold font-medium mb-5">Nut Varieties</h4>
                <ul className="space-y-3">

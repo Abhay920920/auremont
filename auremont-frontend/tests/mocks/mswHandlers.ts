@@ -98,22 +98,37 @@ export const handlers = [
   }),
 
   // Cart Handlers
+  http.get('http://localhost:3001/cart', () => {
+    return HttpResponse.json(mockCart);
+  }),
   http.get('*/cart', () => {
     return HttpResponse.json(mockCart);
   }),
 
+  http.post('http://localhost:3001/cart/items', async () => {
+    return HttpResponse.json(mockCart);
+  }),
   http.post('*/cart/items', async () => {
     return HttpResponse.json(mockCart);
   }),
 
-  http.put('*/cart/items/:id', async () => {
+  http.patch('http://localhost:3001/cart/items/:id', async () => {
+    return HttpResponse.json(mockCart);
+  }),
+  http.patch('*/cart/items/:id', async () => {
     return HttpResponse.json(mockCart);
   }),
 
+  http.delete('http://localhost:3001/cart/items/:id', async () => {
+    return HttpResponse.json(mockCart);
+  }),
   http.delete('*/cart/items/:id', async () => {
     return HttpResponse.json(mockCart);
   }),
 
+  http.post('http://localhost:3001/cart/merge', async () => {
+    return HttpResponse.json(mockCart);
+  }),
   http.post('*/cart/merge', async () => {
     return HttpResponse.json(mockCart);
   }),

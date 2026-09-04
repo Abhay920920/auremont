@@ -104,6 +104,22 @@ select:-webkit-autofill:active {
     @apply pt-36 md:pt-40;
   }
 
+  /* =========================================================================
+     HARMONIC ZOOM & ULTRA-WIDE CONTAINER SYSTEM (80%, 90%, 100% ZOOM STABILITY)
+     ========================================================================= */
+  .site-container {
+    @apply w-full max-w-[1600px] mx-auto px-4 sm:px-6 md:px-10 lg:px-12;
+  }
+  .site-container-wide {
+    @apply w-full max-w-[1720px] mx-auto px-4 sm:px-6 md:px-10 lg:px-12;
+  }
+  .site-container-editorial {
+    @apply w-full max-w-[1400px] mx-auto px-4 sm:px-6 md:px-10 lg:px-12;
+  }
+  .site-container-reading {
+    @apply w-full max-w-5xl mx-auto px-4 sm:px-6 md:px-8;
+  }
+
   .glass {
     @apply bg-background/70 backdrop-blur-xl border-b border-divider/50;
   }

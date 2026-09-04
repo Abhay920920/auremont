@@ -103,6 +103,7 @@ model Address {
 
   orders        Order[]
 
+  @@index([userId])
   @@map("addresses")
 }
 
@@ -193,6 +194,8 @@ model Product {
   @@index([collectionId])
   @@index([status])
   @@index([createdAt])
+  @@index([status, isFeatured])
+  @@index([status, price])
   @@map("products")
 }
 
@@ -205,6 +208,8 @@ model ProductImage {
 
   product     Product  @relation(fields: [productId], references: [id])
 
+  @@index([productId])
+  @@index([productId, isPrimary])
   @@map("product_images")
 }
 
@@ -216,6 +221,7 @@ model ProductAttribute {
 
   product        Product  @relation(fields: [productId], references: [id])
 
+  @@index([productId])
   @@map("product_attributes")
 }
 
@@ -246,6 +252,7 @@ model Cart {
 
   @@index([userId])
   @@index([status])
+  @@index([userId, status])
   @@map("carts")
 }
 
@@ -322,13 +329,17 @@ model Order {
   @@index([userId])
   @@index([createdAt])
   @@index([orderStatus])
+  @@index([paymentStatus])
+  @@index([userId, createdAt(sort: Desc)])
   @@map("orders")
 }
 
 enum PayStatus {
   pending
+  processing
   paid
   failed
+  cancelled
   refunded
 }
 
@@ -361,18 +372,23 @@ model OrderItem {
 }
 
 model Payment {
-  id             String    @id @default(uuid()) @db.Uuid
-  orderId        String    @unique @map("order_id") @db.Uuid
-  provider       Provider
-  transactionId  String?   @map("transaction_id") @db.VarChar(255)
-  amount         Decimal   @db.Decimal(10,2)
-  currency       String    @default("INR") @db.VarChar(10)
-  status         String    @db.VarChar(50)
-  paymentMethod  String?   @map("payment_method") @db.VarChar(50)
-  paidAt         DateTime? @map("paid_at")
+  id                String    @id @default(uuid()) @db.Uuid
+  orderId           String    @unique @map("order_id") @db.Uuid
+  provider          Provider
+  transactionId     String?   @map("transaction_id") @db.VarChar(255)
+  gatewayPaymentId  String?   @map("gateway_payment_id") @db.VarChar(255)
+  amount            Decimal   @db.Decimal(10,2)
+  verifiedAmount    Decimal?  @map("verified_amount") @db.Decimal(10,2)
+  currency          String    @default("INR") @db.VarChar(10)
+  status            String    @db.VarChar(50)
+  paymentMethod     String?   @map("payment_method") @db.VarChar(50)
+  failureReason     String?   @map("failure_reason") @db.VarChar(500)
+  paidAt            DateTime? @map("paid_at")
+  verifiedAt        DateTime? @map("verified_at")
 
-  order          Order     @relation(fields: [orderId], references: [id])
+  order             Order     @relation(fields: [orderId], references: [id])
 
+  @@index([orderId])
   @@map("payments")
 }
 
@@ -456,6 +472,8 @@ model InventoryLog {
 
   product     Product  @relation(fields: [productId], references: [id])
 
+  @@index([productId])
+  @@index([referenceId])
   @@map("inventory_logs")
 }
 

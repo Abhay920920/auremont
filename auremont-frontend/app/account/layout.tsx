@@ -1,11 +1,9 @@
-import type { Metadata } from 'next';
+import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'My Account | RARE NUTS',
-  robots: {
-    index: false,
-    follow: false,
-  },
+  title: "Client Portal & Order History | RARE NUTS",
+  description: "Manage your RARE NUTS account, addresses, and track active orders.",
+  robots: { index: false, follow: false },
 };
 
 export default function AccountLayout({ children }: { children: React.ReactNode }) {

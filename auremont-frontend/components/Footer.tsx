@@ -39,7 +39,7 @@ export default function Footer() {
 
   return (
     <footer className="w-full bg-background border-t border-divider pt-24 md:pt-32 pb-12 mt-auto">
-      <div className="max-w-[2000px] mx-auto px-6 md:px-12">
+      <div className="site-container">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-24 mb-20 md:mb-24">
           
           <div className="md:col-span-5 space-y-6">

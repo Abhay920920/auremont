@@ -1,70 +1,78 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
 
 export default function CustomCursor() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isHovering, setIsHovering] = useState(false);
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const dotRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const updateMousePosition = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
+    // Only run on non-touch desktop devices
+    if (typeof window === "undefined" || window.matchMedia("(pointer: coarse)").matches) {
+      return;
+    }
 
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      // Expand cursor on clickable elements or elements with data-cursor-hover
-      if (
-        target.tagName.toLowerCase() === "a" ||
-        target.tagName.toLowerCase() === "button" ||
-        target.closest("a") ||
-        target.closest("button") ||
-        target.closest("[data-cursor-hover='true']")
-      ) {
-        setIsHovering(true);
-      } else {
-        setIsHovering(false);
+    let rafId: number;
+    let mouseX = -100;
+    let mouseY = -100;
+
+    const onMouseMove = (e: MouseEvent) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      if (!rafId) {
+        rafId = requestAnimationFrame(updateCursor);
       }
     };
 
-    window.addEventListener("mousemove", updateMousePosition);
-    window.addEventListener("mouseover", handleMouseOver);
+    const updateCursor = () => {
+      if (cursorRef.current) {
+        cursorRef.current.style.transform = `translate3d(${mouseX - 8}px, ${mouseY - 8}px, 0)`;
+      }
+      if (dotRef.current) {
+        dotRef.current.style.transform = `translate3d(${mouseX - 3}px, ${mouseY - 3}px, 0)`;
+      }
+      rafId = 0;
+    };
+
+    const onMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const isClickable = target && (
+        target.tagName === "A" ||
+        target.tagName === "BUTTON" ||
+        target.closest("a") ||
+        target.closest("button") ||
+        target.closest("[data-cursor-hover='true']")
+      );
+      if (cursorRef.current) {
+        if (isClickable) {
+          cursorRef.current.classList.add("scale-[2.2]", "bg-luxuryGold/20");
+        } else {
+          cursorRef.current.classList.remove("scale-[2.2]", "bg-luxuryGold/20");
+        }
+      }
+    };
+
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
+    window.addEventListener("mouseover", onMouseOver, { passive: true });
 
     return () => {
-      window.removeEventListener("mousemove", updateMousePosition);
-      window.removeEventListener("mouseover", handleMouseOver);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseover", onMouseOver);
+      if (rafId) cancelAnimationFrame(rafId);
     };
   }, []);
 
   return (
     <>
-      <motion.div
-        className="fixed top-0 left-0 w-4 h-4 bg-luxuryGold/40 rounded-full pointer-events-none z-[9999] mix-blend-difference hidden md:block"
-        animate={{
-          x: mousePosition.x - 8,
-          y: mousePosition.y - 8,
-          scale: isHovering ? 2.5 : 1,
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 500,
-          damping: 28,
-          mass: 0.5,
-        }}
+      <div
+        ref={cursorRef}
+        className="fixed top-0 left-0 w-4 h-4 rounded-full pointer-events-none z-[9999] mix-blend-difference bg-luxuryGold/40 transition-transform duration-75 ease-out hidden md:block"
+        style={{ willChange: "transform" }}
       />
-      <motion.div
-        className="fixed top-0 left-0 w-1.5 h-1.5 bg-luxuryGold rounded-full pointer-events-none z-[10000] hidden md:block"
-        animate={{
-          x: mousePosition.x - 3,
-          y: mousePosition.y - 3,
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 1000,
-          damping: 50,
-          mass: 0.1,
-        }}
+      <div
+        ref={dotRef}
+        className="fixed top-0 left-0 w-1.5 h-1.5 rounded-full pointer-events-none z-[10000] bg-luxuryGold hidden md:block"
+        style={{ willChange: "transform" }}
       />
     </>
   );

@@ -23,7 +23,7 @@ export default function Testimonials() {
 
   return (
     <section className="w-full py-24 md:py-super bg-background border-y border-divider relative">
-      <div className="max-w-[1200px] mx-auto px-6 md:px-12 text-center">
+      <div className="site-container text-center">
         <h4 className="text-luxuryGold uppercase tracking-superwide text-xs mb-16">The Verdict</h4>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">

@@ -67,7 +67,7 @@ export default function ProductCard({ product }: { product: Product }) {
         {/* Desktop Quick Add Overlay */}
         <div className="absolute inset-0 bg-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 hidden md:flex items-center justify-center pointer-events-none z-20">
           <div className="pointer-events-none group-hover:pointer-events-auto">
-            <AddToCartButton productId={product.id} className="luxury-button-outline bg-background/50 backdrop-blur-md" />
+            <AddToCartButton productId={product.id} product={product} className="luxury-button-outline bg-background/50 backdrop-blur-md" />
           </div>
         </div>
       </div>
@@ -85,7 +85,7 @@ export default function ProductCard({ product }: { product: Product }) {
           
           {/* Mobile Quick Add */}
           <div className="md:hidden w-full">
-            <AddToCartButton productId={product.id} className="luxury-button w-full text-[10px] py-2 px-2" />
+            <AddToCartButton productId={product.id} product={product} className="luxury-button w-full text-[10px] py-2 px-2" />
           </div>
         </div>
       </div>

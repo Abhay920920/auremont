@@ -169,13 +169,44 @@ export class ProductsService {
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
       const product = await this.prisma.product.findFirst({
         where: isUuid ? { id: slug } : { slug },
-        include: {
-          category: true,
-          collection: true,
-          images: { orderBy: { sortOrder: 'asc' } },
-          attributes: true,
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          sku: true,
+          shortDescription: true,
+          description: true,
+          weightGrams: true,
+          price: true,
+          salePrice: true,
+          stockQty: true,
+          thumbnailUrl: true,
+          isFeatured: true,
+          nutritionJson: true,
+          status: true,
+          categoryId: true,
+          collectionId: true,
+          createdAt: true,
+          updatedAt: true,
+          // SEO fields needed for generateMetadata in the page
+          seoTitle: true,
+          seoDescription: true,
+          ogImageUrl: true,
+          category: {
+            select: { id: true, name: true, slug: true },
+          },
+          collection: {
+            select: { id: true, name: true, slug: true },
+          },
+          images: {
+            orderBy: { sortOrder: 'asc' },
+            select: { id: true, imageUrl: true, sortOrder: true, isPrimary: true },
+          },
+          attributes: {
+            select: { id: true, attributeName: true, attributeValue: true },
+          },
         },
-      });
+      }) as any;
 
       if (!product) {
         throw new NotFoundException('Product not found');

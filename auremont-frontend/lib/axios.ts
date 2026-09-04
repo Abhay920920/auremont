@@ -7,6 +7,7 @@ const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 const api = axios.create({
   baseURL,
   withCredentials: true,
+  timeout: 15000,
 });
 
 let isRefreshing = false;
@@ -26,11 +27,74 @@ const processQueue = (error: any = null, token: string | null = null) => {
   failedQueue = [];
 };
 
-api.interceptors.request.use((config) => {
-  const { token } = useAuthStore.getState();
-  if (token && config.headers) {
-    config.headers.Authorization = `Bearer ${token}`;
+import { isTokenExpired } from './jwt';
+
+let refreshPromise: Promise<string | null> | null = null;
+
+export async function getValidAccessToken(): Promise<string | null> {
+  const { token, refreshToken } = useAuthStore.getState();
+  if (!token) return null;
+
+  if (!isTokenExpired(token)) {
+    return token;
   }
+
+  // Token is expired. If refresh token is also missing or expired, log out cleanly
+  if (!refreshToken || isTokenExpired(refreshToken)) {
+    useAuthStore.getState().logout();
+    useWishlistStore.getState().clearWishlist();
+    return null;
+  }
+
+  // Deduplicate concurrent token refreshes
+  if (refreshPromise) {
+    return refreshPromise;
+  }
+
+  refreshPromise = (async () => {
+    try {
+      const res = await axios.post(
+        `${baseURL}/auth/refresh`,
+        { refreshToken },
+        { withCredentials: true }
+      );
+      const { access_token, refresh_token: new_refresh_token } = res.data;
+      
+      useAuthStore.getState().setToken(access_token);
+      if (new_refresh_token) {
+        useAuthStore.getState().setRefreshToken(new_refresh_token);
+      }
+      return access_token;
+    } catch (err) {
+      useAuthStore.getState().logout();
+      useWishlistStore.getState().clearWishlist();
+      return null;
+    } finally {
+      refreshPromise = null;
+    }
+  })();
+
+  return refreshPromise;
+}
+
+api.interceptors.request.use(async (config) => {
+  const isAuthRequest = 
+    config.url?.includes('/auth/login') || 
+    config.url?.includes('/auth/refresh') ||
+    config.url?.includes('/auth/register');
+
+  if (!isAuthRequest) {
+    const validToken = await getValidAccessToken();
+    if (validToken && config.headers) {
+      config.headers.Authorization = `Bearer ${validToken}`;
+    } else if (config.url?.includes('/notifications') || config.url?.includes('/wishlists')) {
+      // Abort requests to user-specific endpoints if unauthenticated or session expired to prevent 401 errors in console
+      const controller = new AbortController();
+      controller.abort('Authentication required');
+      config.signal = controller.signal;
+    }
+  }
+
   return config;
 });
 

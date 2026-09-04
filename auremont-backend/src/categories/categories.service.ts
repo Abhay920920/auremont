@@ -45,7 +45,18 @@ export class CategoriesService {
     if (this.inflight.has(cacheKey)) return this.inflight.get(cacheKey);
 
     const fetchPromise = (async () => {
-      const cats = await this.prisma.category.findMany({ where: { status: true }, orderBy: { name: 'asc' } });
+      const cats = await this.prisma.category.findMany({
+        where: { status: true },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          imageUrl: true,
+          status: true,
+          createdAt: true,
+        },
+        orderBy: { name: 'asc' },
+      }) as unknown as Category[];
       this.setCache(cacheKey, cats);
       return cats;
     })().finally(() => {
