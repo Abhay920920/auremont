@@ -295,6 +295,46 @@ export class OrdersService {
         },
       });
 
+      // Synchronize phone and saved address for authenticated users
+      if (userId) {
+        if (address.phone) {
+          await tx.user.update({
+            where: { id: userId },
+            data: { phone: address.phone },
+          });
+        }
+
+        // Check if user already has an unlinked saved address with matching details
+        const existingSaved = await tx.address.findFirst({
+          where: {
+            userId,
+            orders: { none: {} },
+            addressLine1: address.addressLine1,
+            postalCode: address.postalCode,
+          },
+        });
+
+        if (!existingSaved) {
+          const savedCount = await tx.address.count({
+            where: { userId, orders: { none: {} } },
+          });
+          await tx.address.create({
+            data: {
+              userId,
+              fullName: address.fullName,
+              phone: address.phone,
+              addressLine1: address.addressLine1,
+              addressLine2: address.addressLine2 || null,
+              city: address.city,
+              state: address.state,
+              postalCode: address.postalCode,
+              country: address.country || 'India',
+              isDefault: savedCount === 0,
+            },
+          });
+        }
+      }
+
       // Create order — use cryptographically random 8-char hex suffix to prevent
       // collision across workers/simultaneous transactions at 10K concurrency.
       // The `@unique` DB constraint provides a final safety net against any collision.

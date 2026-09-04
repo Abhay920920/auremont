@@ -29,7 +29,7 @@ export class UsersService {
   }
 
   async getProfile(userId: string) {
-    const user = await this.prisma.user.findUnique({
+    let user = await this.prisma.user.findUnique({
       where: { id: userId },
       select: {
         id: true,
@@ -42,6 +42,30 @@ export class UsersService {
       }
     });
     if (!user) throw new NotFoundException('User not found');
+
+    // If phone is missing on user profile, check if user has an address with a phone number (e.g. from an order)
+    if (!user.phone) {
+      const addrWithPhone = await this.prisma.address.findFirst({
+        where: { userId, phone: { not: '' } },
+        orderBy: { createdAt: 'desc' },
+      });
+      if (addrWithPhone?.phone) {
+        user = await this.prisma.user.update({
+          where: { id: userId },
+          data: { phone: addrWithPhone.phone },
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            phone: true,
+            role: true,
+            createdAt: true,
+          }
+        });
+      }
+    }
+
     return user;
   }
 
@@ -78,10 +102,41 @@ export class UsersService {
   }
 
   async getAddresses(userId: string) {
-    return this.prisma.address.findMany({
+    const saved = await this.prisma.address.findMany({
       where: { userId, orders: { none: {} } },
       orderBy: { isDefault: 'desc' },
     });
+
+    if (saved.length > 0) {
+      return saved;
+    }
+
+    // Auto-recovery / fallback: If user placed an order but has 0 saved addresses,
+    // promote the most recent order address to a saved address so they never lose their data
+    const recentOrderAddress = await this.prisma.address.findFirst({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (recentOrderAddress) {
+      const cloned = await this.prisma.address.create({
+        data: {
+          userId,
+          fullName: recentOrderAddress.fullName,
+          phone: recentOrderAddress.phone,
+          addressLine1: recentOrderAddress.addressLine1,
+          addressLine2: recentOrderAddress.addressLine2,
+          city: recentOrderAddress.city,
+          state: recentOrderAddress.state,
+          postalCode: recentOrderAddress.postalCode,
+          country: recentOrderAddress.country,
+          isDefault: true,
+        },
+      });
+      return [cloned];
+    }
+
+    return [];
   }
 
   async addAddress(userId: string, data: any) {

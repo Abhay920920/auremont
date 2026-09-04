@@ -56,7 +56,23 @@ export default function AccountDashboard() {
 
   useEffect(() => {
     if (!mounted || !user) return;
-    
+
+    const fetchProfile = async () => {
+      try {
+        const res = await api.get('/users/me');
+        if (res.data) {
+          setUser(res.data);
+          setProfileForm({
+            firstName: res.data.firstName || '',
+            lastName: res.data.lastName || '',
+            phone: res.data.phone || ''
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch profile:", err);
+      }
+    };
+
     const fetchOrders = async () => {
       try {
         const res = await api.get('/orders/me');
@@ -79,9 +95,10 @@ export default function AccountDashboard() {
       }
     };
 
+    fetchProfile();
     fetchOrders();
     fetchAddresses();
-  }, [mounted, user]);
+  }, [mounted, user?.id]);
 
   if (!mounted || !user) {
     return (

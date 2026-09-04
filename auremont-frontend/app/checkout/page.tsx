@@ -77,6 +77,9 @@ export default function CheckoutPage() {
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
   const [applyingCoupon, setApplyingCoupon] = useState(false);
 
+  const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+
   useEffect(() => {
     setMounted(true);
     if (!user) {
@@ -96,12 +99,51 @@ export default function CheckoutPage() {
     if (user) {
       setAddress((prev) => ({
         ...prev,
-        fullName: `${user.firstName} ${user.lastName}`,
+        fullName: prev.fullName || `${user.firstName || ''} ${user.lastName || ''}`.trim(),
         email: user.email,
+        phone: user.phone || prev.phone,
       }));
+
+      api.get("/users/me/addresses")
+        .then((res) => {
+          if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+            setSavedAddresses(res.data);
+            const defaultAddr = res.data.find((a: any) => a.isDefault) || res.data[0];
+            if (defaultAddr) {
+              setSelectedAddressId(defaultAddr.id);
+              setAddress((prev) => ({
+                ...prev,
+                fullName: defaultAddr.fullName || prev.fullName,
+                phone: defaultAddr.phone || user.phone || prev.phone,
+                addressLine1: defaultAddr.addressLine1 || prev.addressLine1,
+                addressLine2: defaultAddr.addressLine2 || prev.addressLine2,
+                city: defaultAddr.city || prev.city,
+                state: defaultAddr.state || prev.state,
+                postalCode: defaultAddr.postalCode || prev.postalCode,
+                country: defaultAddr.country || prev.country,
+              }));
+            }
+          }
+        })
+        .catch((err) => console.error("Failed to load saved addresses in checkout:", err));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
+
+  const handleSelectSavedAddress = (addr: any) => {
+    setSelectedAddressId(addr.id);
+    setAddress((prev) => ({
+      ...prev,
+      fullName: addr.fullName,
+      phone: addr.phone,
+      addressLine1: addr.addressLine1,
+      addressLine2: addr.addressLine2 || "",
+      city: addr.city,
+      state: addr.state,
+      postalCode: addr.postalCode,
+      country: addr.country || "India",
+    }));
+  };
 
   // Cleanup polling on unmount
   useEffect(() => {
@@ -628,11 +670,56 @@ export default function CheckoutPage() {
               {/* Step 0: Information */}
               {currentStep === 0 && (
                 <div className="space-y-6 animate-fade-in">
-                  <div className="border-b border-divider/80 pb-3">
+                  <div className="border-b border-divider/80 pb-3 flex items-center justify-between">
                     <h2 className="text-[11px] tracking-widest uppercase text-primaryText font-medium">
                       Shipping Information
                     </h2>
+                    {savedAddresses.length > 0 && (
+                      <span className="text-[10px] uppercase tracking-wider text-luxuryGold font-medium">
+                        {savedAddresses.length} Saved {savedAddresses.length === 1 ? 'Address' : 'Addresses'}
+                      </span>
+                    )}
                   </div>
+
+                  {savedAddresses.length > 0 && (
+                    <div className="space-y-2.5 pb-2">
+                      <p className="text-[10px] uppercase tracking-widest text-secondaryText">
+                        Select Saved Address or Edit Details Below:
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {savedAddresses.map((addr) => {
+                          const isSelected = selectedAddressId === addr.id;
+                          return (
+                            <button
+                              key={addr.id}
+                              type="button"
+                              onClick={() => handleSelectSavedAddress(addr)}
+                              className={`text-left p-3.5 border transition-all rounded-sm flex flex-col justify-between ${
+                                isSelected
+                                  ? "border-luxuryGold bg-luxuryGold/10 shadow-[0_0_15px_rgba(212,175,55,0.1)]"
+                                  : "border-divider bg-secondaryBg/40 hover:border-divider/90 hover:bg-secondaryBg/70"
+                              }`}
+                            >
+                              <div className="flex items-center justify-between w-full mb-1">
+                                <span className="font-medium text-xs text-primaryText">{addr.fullName}</span>
+                                {addr.isDefault && (
+                                  <span className="text-[9px] uppercase tracking-widest text-luxuryGold bg-luxuryGold/20 px-1.5 py-0.5 rounded">
+                                    Default
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[11px] text-secondaryText truncate w-full">
+                                {addr.addressLine1}, {addr.city}
+                              </p>
+                              <p className="text-[10px] text-mutedText mt-1">
+                                {addr.phone}
+                              </p>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-7">
                     {!user && (
