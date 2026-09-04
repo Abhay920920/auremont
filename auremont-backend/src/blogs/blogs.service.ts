@@ -55,9 +55,23 @@ export class BlogsService {
 
   async findAll() {
     // Admin only
-    return this.prisma.blog.findMany({
-      orderBy: { publishedAt: 'desc' },
+    const cacheKey = 'blogs:admin:all';
+    const cached = this.getCached(cacheKey);
+    if (cached) return cached;
+    if (this.inflight.has(cacheKey)) return this.inflight.get(cacheKey);
+
+    const fetchPromise = (async () => {
+      const blogs = await this.prisma.blog.findMany({
+        orderBy: { publishedAt: 'desc' },
+      });
+      this.setCache(cacheKey, blogs);
+      return blogs;
+    })().finally(() => {
+      this.inflight.delete(cacheKey);
     });
+
+    this.inflight.set(cacheKey, fetchPromise);
+    return fetchPromise;
   }
 
   async findBySlug(slug: string) {

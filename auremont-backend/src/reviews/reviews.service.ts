@@ -113,15 +113,29 @@ export class ReviewsService {
   // ── ADMIN ──────────────────────────────────────────────────────────────────
 
   async getAllReviews(status?: string): Promise<Review[]> {
-    const where = status ? { status: status as any } : {};
-    return this.prisma.review.findMany({
-      where,
-      include: {
-        user: { select: { firstName: true, lastName: true, email: true } },
-        product: { select: { name: true, slug: true, thumbnailUrl: true } }
-      },
-      orderBy: { createdAt: 'desc' }
+    const cacheKey = `reviews:admin:all:${status || 'any'}`;
+    const cached = this.getCached(cacheKey);
+    if (cached) return cached;
+    if (this.inflight.has(cacheKey)) return this.inflight.get(cacheKey);
+
+    const fetchPromise = (async () => {
+      const where = status ? { status: status as any } : {};
+      const list = await this.prisma.review.findMany({
+        where,
+        include: {
+          user: { select: { firstName: true, lastName: true, email: true } },
+          product: { select: { name: true, slug: true, thumbnailUrl: true } }
+        },
+        orderBy: { createdAt: 'desc' }
+      });
+      this.setCache(cacheKey, list);
+      return list;
+    })().finally(() => {
+      this.inflight.delete(cacheKey);
     });
+
+    this.inflight.set(cacheKey, fetchPromise);
+    return fetchPromise;
   }
 
   async moderateReview(id: string, dto: ModerateReviewDto, adminId: string): Promise<Review> {

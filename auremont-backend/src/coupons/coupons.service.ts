@@ -76,8 +76,13 @@ export class CouponsService {
     return coupon;
   }
 
+  private listAllCache: { data: Coupon[]; expiresAt: number } | null = null;
+  private inFlightListAll: Promise<Coupon[]> | null = null;
+
   // Invalidate caches when a coupon is modified (admin operations)
   private invalidateCouponCache(code?: string, id?: string) {
+    this.listAllCache = null;
+    this.inFlightListAll = null;
     if (code) this.couponCache.delete(`coupon:${code}`);
     if (id) this.usageCountCache.delete(`usage:${id}`);
   }
@@ -85,7 +90,23 @@ export class CouponsService {
   // ── ADMIN ──────────────────────────────────────────────────────────────────
 
   async listAll(): Promise<Coupon[]> {
-    return this.prisma.coupon.findMany({ orderBy: { endDate: 'desc' } });
+    const now = Date.now();
+    if (this.listAllCache && now < this.listAllCache.expiresAt) {
+      return this.listAllCache.data;
+    }
+    if (this.inFlightListAll) {
+      return this.inFlightListAll;
+    }
+
+    this.inFlightListAll = (async () => {
+      const list = await this.prisma.coupon.findMany({ orderBy: { endDate: 'desc' } });
+      this.listAllCache = { data: list, expiresAt: Date.now() + this.CACHE_TTL_MS };
+      return list;
+    })().finally(() => {
+      this.inFlightListAll = null;
+    });
+
+    return this.inFlightListAll;
   }
 
   async findOne(id: string): Promise<Coupon> {

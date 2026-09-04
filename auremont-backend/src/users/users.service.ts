@@ -241,26 +241,56 @@ export class UsersService {
     return { message: 'Address deleted' };
   }
 
+  private allUsersCache: { data: any; expiresAt: number } | null = null;
+  private inFlightAllUsers: Promise<any> | null = null;
+  private readonly ALL_USERS_TTL_MS = 15 * 1000;
+
+  clearUsersCache() {
+    this.allUsersCache = null;
+    this.inFlightAllUsers = null;
+  }
+
   async getAllUsers() {
-    return this.prisma.user.findMany({
-      orderBy: { createdAt: 'desc' },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-        phone: true,
-        role: true,
-        status: true,
-        emailVerified: true,
-        createdAt: true,
-        _count: {
-          select: {
-            orders: true,
+    const now = Date.now();
+    if (this.allUsersCache && now < this.allUsersCache.expiresAt) {
+      return this.allUsersCache.data;
+    }
+
+    if (this.inFlightAllUsers) {
+      return this.inFlightAllUsers;
+    }
+
+    this.inFlightAllUsers = (async () => {
+      const users = await this.prisma.user.findMany({
+        orderBy: { createdAt: 'desc' },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          phone: true,
+          role: true,
+          status: true,
+          emailVerified: true,
+          createdAt: true,
+          _count: {
+            select: {
+              orders: true,
+            },
           },
-        },
-      }
+        }
+      });
+
+      this.allUsersCache = {
+        data: users,
+        expiresAt: Date.now() + this.ALL_USERS_TTL_MS,
+      };
+      return users;
+    })().finally(() => {
+      this.inFlightAllUsers = null;
     });
+
+    return this.inFlightAllUsers;
   }
 
   async deleteUserAdmin(id: string, adminUserId?: string) {
@@ -297,6 +327,7 @@ export class UsersService {
       await tx.user.delete({ where: { id } });
     }, { timeout: 30000 });
 
+    this.clearUsersCache();
     return { message: 'Customer deleted successfully' };
   }
 

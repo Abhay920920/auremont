@@ -22,10 +22,20 @@ export class OrdersService {
   private userOrdersInflight = new Map<string, Promise<any>>();
   private readonly USER_ORDERS_TTL_MS = 5000;
 
+  private adminOrdersCache = new Map<string, { data: any; expiresAt: number }>();
+  private adminOrdersInflight = new Map<string, Promise<any>>();
+  private readonly ADMIN_ORDERS_TTL_MS = 15000;
+
+  invalidateAdminOrders() {
+    this.adminOrdersCache.clear();
+    this.adminOrdersInflight.clear();
+  }
+
   invalidateUserOrders(userId?: string) {
     if (userId) {
       this.userOrdersCache.delete(`orders:user:${userId}`);
     }
+    this.invalidateAdminOrders();
   }
 
   constructor(
@@ -565,30 +575,58 @@ export class OrdersService {
   // ── ADMIN ──────────────────────────────────────────────────────────────────
 
   async getAllOrders(query: any): Promise<{ data: Order[]; total: number }> {
-    const { status, paymentStatus, page = 1, limit = 20 } = query;
-    const where: any = {};
-    if (status) where.orderStatus = status;
-    if (paymentStatus) where.paymentStatus = paymentStatus;
+    const { status, paymentStatus, page = 1, limit = 20, search } = query;
+    const cacheKey = `orders:admin:${page}:${limit}:${status || ''}:${paymentStatus || ''}:${search || ''}`;
+    const cached = this.adminOrdersCache.get(cacheKey);
+    if (cached && Date.now() < cached.expiresAt) {
+      return cached.data;
+    }
 
-    const skip = (Number(page) - 1) * Number(limit);
+    if (this.adminOrdersInflight.has(cacheKey)) {
+      return this.adminOrdersInflight.get(cacheKey);
+    }
 
-    const [data, total] = await Promise.all([
-      this.prisma.order.findMany({
-        where,
-        include: { user: { select: { firstName: true, lastName: true, email: true } } },
-        orderBy: { createdAt: 'desc' },
-        skip,
-        take: Number(limit),
-      }),
-      this.prisma.order.count({ where }),
-    ]);
+    const fetchPromise = (async () => {
+      const where: any = {};
+      if (status) where.orderStatus = status;
+      if (paymentStatus) where.paymentStatus = paymentStatus;
+      if (search) {
+        where.OR = [
+          { orderNumber: { contains: search, mode: 'insensitive' } },
+          { user: { firstName: { contains: search, mode: 'insensitive' } } },
+          { user: { lastName: { contains: search, mode: 'insensitive' } } },
+        ];
+      }
 
-    return { data, total };
+      const skip = (Number(page) - 1) * Number(limit);
+
+      const [data, total] = await Promise.all([
+        this.prisma.order.findMany({
+          where,
+          include: { user: { select: { firstName: true, lastName: true, email: true } } },
+          orderBy: { createdAt: 'desc' },
+          skip,
+          take: Number(limit),
+        }),
+        this.prisma.order.count({ where }),
+      ]);
+
+      const result = { data, total };
+      this.adminOrdersCache.set(cacheKey, { data: result, expiresAt: Date.now() + this.ADMIN_ORDERS_TTL_MS });
+      return result;
+    })().finally(() => {
+      this.adminOrdersInflight.delete(cacheKey);
+    });
+
+    this.adminOrdersInflight.set(cacheKey, fetchPromise);
+    return fetchPromise;
   }
 
   async updateOrderStatus(orderId: string, dto: UpdateOrderStatusDto, adminId?: string): Promise<Order> {
     const order = await this.prisma.order.findUnique({ where: { id: orderId } });
     if (!order) throw new NotFoundException('Order not found');
+
+    this.invalidateAdminOrders();
 
     const current = order.orderStatus;
     const target = dto.status;
