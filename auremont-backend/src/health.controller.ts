@@ -1,5 +1,6 @@
-import { Controller, Get, HttpCode, HttpStatus, ServiceUnavailableException } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, ServiceUnavailableException, Headers, Res } from '@nestjs/common';
 import { SkipThrottle } from '@nestjs/throttler';
+import { Response } from 'express';
 import { PrismaService } from './prisma/prisma.service';
 
 @Controller()
@@ -7,15 +8,57 @@ import { PrismaService } from './prisma/prisma.service';
 export class HealthController {
   constructor(private prisma: PrismaService) {}
 
+  @Get('favicon.ico')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  getFavicon() {
+    return;
+  }
+
   @Get()
   @HttpCode(HttpStatus.OK)
-  getRoot() {
-    return {
+  getRoot(@Headers('accept') accept?: string, @Res() res?: Response) {
+    if (accept && accept.includes('text/html') && res) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      return res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RARE NUTS — Luxury API Service</title>
+  <style>
+    body { background: #0A0A0A; color: #F5F5F0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+    .card { background: #141414; border: 1px solid rgba(212,175,55,0.3); border-radius: 12px; padding: 40px; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.8); }
+    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 9999px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; color: #10B981; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); margin-bottom: 20px; font-weight: 600; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: #10B981; }
+    h1 { color: #D4AF37; font-family: 'Cinzel', Georgia, serif; font-size: 26px; margin: 0 0 10px; letter-spacing: 0.05em; }
+    p { color: #A0A09C; font-size: 13px; line-height: 1.6; margin: 0 0 24px; }
+    a.btn { display: inline-block; background: #D4AF37; color: #0A0A0A; text-decoration: none; padding: 12px 24px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; border-radius: 4px; transition: opacity 0.2s; }
+    a.btn:hover { opacity: 0.9; }
+    .meta { margin-top: 24px; font-family: monospace; font-size: 11px; color: #666; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge"><span class="dot"></span> Online & Healthy</div>
+    <h1>RARE NUTS API</h1>
+    <p>This is the backend API service running on port 3001. The frontend customer storefront is running on port 3000.</p>
+    <a href="http://localhost:3000" class="btn">Open Storefront (Port 3000)</a>
+    <div class="meta">Status: 200 OK · Port: 3001 · Mode: Development</div>
+  </div>
+</body>
+</html>`);
+    }
+
+    const payload = {
       name: 'RARE NUTS Luxury API',
       status: 'online',
       timestamp: new Date().toISOString(),
       version: process.env.npm_package_version || '1.0.0',
     };
+
+    if (res) {
+      return res.json(payload);
+    }
+    return payload;
   }
 
   @Get('health')
