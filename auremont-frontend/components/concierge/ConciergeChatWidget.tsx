@@ -145,36 +145,51 @@ export default function ConciergeChatWidget() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
-            className="sm:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[75]"
+            className="sm:hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-[90]"
             aria-hidden="true"
           />
         )}
       </AnimatePresence>
 
-      {/* FLOATING TRIGGER BUTTON (Visible when drawer is closed) */}
-      <div className="fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom,0px))] md:bottom-8 right-4 md:right-8 z-[74]">
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label={isOpen ? "Close Concierge Support" : "Open Concierge Support"}
-          className={`relative bg-secondaryBg/95 backdrop-blur-xl border border-luxuryGold/60 text-luxuryGold w-12 h-12 rounded-full shadow-[0_4px_25px_rgba(0,0,0,0.85),0_0_15px_rgba(212,175,55,0.3)] hover:border-luxuryGold hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center group ${
-            isOpen ? "opacity-0 pointer-events-none scale-75" : "opacity-100 scale-100"
-          }`}
-        >
-          <MessageCircle size={21} strokeWidth={1.75} className="group-hover:rotate-12 transition-transform drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" />
-          <span className="absolute top-0.5 right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background shadow-[0_0_8px_#10b981] animate-pulse" />
-        </button>
-      </div>
+      {/* FLOATING TRIGGER BUTTON (Only shown when chat is closed) */}
+      <AnimatePresence>
+        {!isOpen && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.15 }}
+            className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom,0px))] md:bottom-6 right-4 md:right-8 z-[75]"
+          >
+            <button
+              onClick={() => setIsOpen(true)}
+              aria-label="Open Concierge Support"
+              className="relative bg-secondaryBg/95 backdrop-blur-xl border border-luxuryGold/60 text-luxuryGold w-12 h-12 rounded-full shadow-[0_4px_25px_rgba(0,0,0,0.85),0_0_15px_rgba(212,175,55,0.3)] hover:border-luxuryGold hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center group cursor-pointer"
+            >
+              <MessageCircle size={21} strokeWidth={1.75} className="group-hover:rotate-12 transition-transform drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]" />
+              <span className="absolute top-0.5 right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background shadow-[0_0_8px_#10b981] animate-pulse" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* CHAT MODAL DRAWER */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.96 }}
+            initial={{ opacity: 0, y: 16, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 15, scale: 0.96 }}
-            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed bottom-[calc(4.75rem+env(safe-area-inset-bottom,0px))] md:bottom-8 left-3 right-3 sm:left-auto sm:right-6 md:right-8 w-auto sm:w-[380px] md:w-[390px] max-h-[calc(100svh-5.5rem-env(safe-area-inset-bottom,0px))] sm:max-h-[min(550px,calc(100svh-6.5rem))] z-[85] bg-[#0A0A0D]/98 backdrop-blur-2xl border border-luxuryGold/40 rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.95),0_0_30px_rgba(212,175,55,0.12)] overflow-hidden flex flex-col"
+            exit={{ opacity: 0, y: 12, scale: 0.97 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+              maxHeight: "calc(100dvh - 120px)",
+              height: "min(510px, calc(100dvh - 120px))",
+            }}
+            className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom,0px))] md:bottom-6 right-3 sm:right-6 md:right-8 left-3 sm:left-auto w-auto sm:w-[380px] md:w-[390px] z-[95] bg-[#0A0A0D]/98 backdrop-blur-2xl border border-luxuryGold/40 rounded-xl shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_35px_rgba(212,175,55,0.15)] overflow-hidden flex flex-col"
           >
+            {/* Top Accent Gold Shimmer Line */}
+            <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-luxuryGold to-transparent flex-shrink-0" />
+
             {/* Header */}
             <div className="bg-surface/95 border-b border-divider px-4 py-3 flex justify-between items-center relative flex-shrink-0">
               <div className="flex items-center gap-3">
@@ -196,7 +211,7 @@ export default function ConciergeChatWidget() {
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="text-secondaryText hover:text-luxuryGold p-1.5 rounded-lg hover:bg-white/5 transition-colors"
+                  className="text-secondaryText hover:text-luxuryGold p-1.5 rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
                   aria-label="Minimize Concierge"
                   title="Minimize"
                 >
@@ -204,7 +219,7 @@ export default function ConciergeChatWidget() {
                 </button>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="text-secondaryText hover:text-luxuryGold p-1.5 rounded-lg hover:bg-white/5 transition-colors"
+                  className="text-secondaryText hover:text-luxuryGold p-1.5 rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
                   aria-label="Close Concierge"
                   title="Close"
                 >
@@ -217,7 +232,7 @@ export default function ConciergeChatWidget() {
             <div className="grid grid-cols-3 border-b border-divider bg-surface/50 text-[10px] uppercase tracking-wider font-mono flex-shrink-0">
               <button
                 onClick={() => { setActiveTab("chat"); setSelectedTopic(null); }}
-                className={`py-2.5 text-center transition-colors flex items-center justify-center gap-1.5 font-medium ${
+                className={`py-2.5 text-center transition-colors flex items-center justify-center gap-1.5 font-medium cursor-pointer ${
                   activeTab === "chat" 
                     ? "text-luxuryGold border-b-2 border-luxuryGold bg-secondaryBg" 
                     : "text-secondaryText hover:text-primaryText"
@@ -229,7 +244,7 @@ export default function ConciergeChatWidget() {
 
               <button
                 onClick={() => setActiveTab("whatsapp")}
-                className={`py-2.5 text-center transition-colors flex items-center justify-center gap-1.5 font-medium ${
+                className={`py-2.5 text-center transition-colors flex items-center justify-center gap-1.5 font-medium cursor-pointer ${
                   activeTab === "whatsapp" 
                     ? "text-emerald-400 border-b-2 border-emerald-400 bg-secondaryBg" 
                     : "text-secondaryText hover:text-primaryText"
@@ -241,7 +256,7 @@ export default function ConciergeChatWidget() {
 
               <button
                 onClick={() => setActiveTab("call")}
-                className={`py-2.5 text-center transition-colors flex items-center justify-center gap-1.5 font-medium ${
+                className={`py-2.5 text-center transition-colors flex items-center justify-center gap-1.5 font-medium cursor-pointer ${
                   activeTab === "call" 
                     ? "text-luxuryGold border-b-2 border-luxuryGold bg-secondaryBg" 
                     : "text-secondaryText hover:text-primaryText"
