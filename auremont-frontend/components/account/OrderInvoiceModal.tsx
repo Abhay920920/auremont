@@ -1,7 +1,6 @@
-"use client";
-
+import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Download, X, Printer, ShieldCheck, FileText, CheckCircle } from "lucide-react";
+import { X, Printer, ShieldCheck, FileText, CheckCircle } from "lucide-react";
 import SquirrelLogo from "@/components/ui/SquirrelLogo";
 
 export default function OrderInvoiceModal({
@@ -13,6 +12,20 @@ export default function OrderInvoiceModal({
   onClose: () => void;
   order: any;
 }) {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen || !order) return null;
 
   const invoiceNumber = `INV-${new Date(order.createdAt).getFullYear()}-${order.orderNumber.replace(/[^0-9]/g, '').slice(-6) || '894102'}`;
@@ -22,32 +35,37 @@ export default function OrderInvoiceModal({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
+      <div 
+        className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-md overflow-y-auto flex items-start justify-center p-4 sm:p-6 md:p-8 pt-16 sm:pt-20 md:pt-24 pb-12"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) onClose();
+        }}
+      >
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          transition={{ duration: 0.3 }}
-          className="bg-background border border-luxuryGold/40 rounded-card p-6 md:p-10 max-w-2xl w-full space-y-6 shadow-[0_25px_80px_rgba(0,0,0,0.95)] relative text-left"
+          exit={{ opacity: 0, scale: 0.95, y: 15 }}
+          transition={{ duration: 0.25 }}
+          className="bg-background border border-luxuryGold/40 rounded-card p-6 md:p-8 max-w-2xl w-full space-y-6 shadow-[0_25px_80px_rgba(0,0,0,0.95)] relative text-left my-auto"
         >
           {/* Header Controls */}
-          <div className="flex justify-between items-center border-b border-divider pb-4 print:hidden">
-            <div className="flex items-center gap-2 text-luxuryGold font-mono text-xs uppercase tracking-widest">
+          <div className="flex justify-between items-center border-b border-divider/80 pb-4 print:hidden sticky top-0 bg-background/95 backdrop-blur-md z-10 -mt-2 pt-2">
+            <div className="flex items-center gap-2 text-luxuryGold font-mono text-xs uppercase tracking-widest font-medium">
               <FileText size={16} /> Official Tax Invoice
             </div>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => window.print()}
-                className="px-4 py-2 bg-luxuryGold/10 border border-luxuryGold/30 text-luxuryGold hover:bg-luxuryGold hover:text-background text-xs rounded transition-all font-mono uppercase tracking-wider flex items-center gap-2"
+                className="px-3.5 py-1.5 bg-luxuryGold/10 border border-luxuryGold/30 text-luxuryGold hover:bg-luxuryGold hover:text-background text-xs rounded transition-all font-mono uppercase tracking-wider flex items-center gap-2"
               >
                 <Printer size={14} /> Print / Save PDF
               </button>
               <button
                 onClick={onClose}
-                className="text-secondaryText hover:text-luxuryGold transition-colors p-1"
+                className="p-1.5 rounded-full border border-divider hover:border-luxuryGold text-secondaryText hover:text-luxuryGold transition-colors"
                 aria-label="Close invoice"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
           </div>
@@ -147,6 +165,16 @@ export default function OrderInvoiceModal({
             <div className="text-[9px] text-mutedText text-center font-mono border-t border-divider pt-4 flex items-center justify-center gap-1.5">
               <ShieldCheck size={12} className="text-luxuryGold" />
               This is a computer-generated tax invoice issued by RARE NUTS Private Limited. No signature required.
+            </div>
+
+            <div className="flex justify-end pt-2 print:hidden">
+              <button
+                type="button"
+                onClick={onClose}
+                className="luxury-button-outline text-xs px-6 py-2"
+              >
+                Close Invoice
+              </button>
             </div>
           </div>
         </motion.div>
