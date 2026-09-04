@@ -7,7 +7,7 @@ import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './all-exceptions.filter';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
-import cookieParser from 'cookie-parser';
+const cookieParser = require('cookie-parser');
 import * as compression from 'compression';
 import helmet from 'helmet';
 
@@ -91,7 +91,7 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization', 'x-razorpay-signature', 'x-worker-secret', 'Accept', 'X-Requested-With', 'x-correlation-id'],
   });
   
-  app.use(cookieParser());
+  app.use(typeof cookieParser === 'function' ? cookieParser() : (cookieParser as any).default());
   app.use(compression());
 
   // Observability & Request Correlation Tracking
