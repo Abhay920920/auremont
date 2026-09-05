@@ -4,8 +4,8 @@
 This document provides an exhaustive technical and functional breakdown of the **Auremont Luxury E-Commerce Platform**. Auremont is an ultra-premium artisanal e-commerce application designed for high-end gourmet almond products, bespoke gift boxes, and corporate gifting. 
 
 The application features a decoupled architecture composed of:
-1. **Frontend**: Next.js 14 App Router, TypeScript, React 18, TailwindCSS, Framer Motion, Zustand state management, and Axios.
-2. **Backend**: NestJS, TypeScript, Prisma ORM, PostgreSQL database, JWT authentication, and modular REST micro-services.
+1. **Frontend**: Next.js 15 (App Router), TypeScript, React 19, TailwindCSS, Framer Motion, Zustand state management, and Axios.
+2. **Backend**: NestJS 11, TypeScript, Prisma ORM, PostgreSQL database, JWT authentication, and modular REST micro-services.
 
 ---
 
@@ -14,7 +14,7 @@ The application features a decoupled architecture composed of:
 ### 1.1 Technical Stack Breakdown
 | Tier | Technology / Library | Purpose |
 | :--- | :--- | :--- |
-| **Frontend Framework** | Next.js 14 (App Router) | Server-Side Rendering (SSR), Static Site Generation (SSG), Client Components |
+| **Frontend Framework** | Next.js 15.1.7 (App Router) | Server-Side Rendering (SSR), Static Site Generation (SSG), Client Components |
 | **Language** | TypeScript | Strict type safety across client and server |
 | **Styling & UI** | Tailwind CSS, Framer Motion | Dynamic animations, glassmorphism, responsive luxury design |
 | **Icons & Media** | Lucide React | Modern SVG icons |

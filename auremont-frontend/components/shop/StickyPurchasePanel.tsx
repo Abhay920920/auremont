@@ -29,7 +29,11 @@ export default function StickyPurchasePanel({ product }: { product: any }) {
         <button
           onClick={() => {
             if (!user) { router.push('/login'); return; }
-            isWishlisted ? removeWishlist(user.id, product.id) : addWishlist(user.id, product.id);
+            if (isWishlisted) {
+              removeWishlist(user.id, product.id);
+            } else {
+              addWishlist(user.id, product.id);
+            }
           }}
           className={`h-13 sm:h-14 px-6 sm:px-8 border rounded-btn flex items-center justify-center transition-all duration-300 ${
             isWishlisted 
@@ -58,7 +62,11 @@ export default function StickyPurchasePanel({ product }: { product: any }) {
             <button
               onClick={() => {
                 if (!user) { router.push('/login'); return; }
-                isWishlisted ? removeWishlist(user.id, product.id) : addWishlist(user.id, product.id);
+                if (isWishlisted) {
+                  removeWishlist(user.id, product.id);
+                } else {
+                  addWishlist(user.id, product.id);
+                }
               }}
               className={`h-10 w-10 border rounded-btn flex items-center justify-center transition-colors ${
                 isWishlisted 

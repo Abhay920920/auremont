@@ -176,6 +176,26 @@ export const handlers = [
   http.post('*/payments/verify', async () => {
     return HttpResponse.json({ status: 'success', message: 'Payment verified' });
   }),
+
+  // Blog / Journal Handlers
+  http.get('*/blogs/:slug', ({ params }) => {
+    const { slug } = params;
+    if (slug === 'the-art-of-slow-roasting') {
+      return HttpResponse.json({
+        id: 'blog-001',
+        title: 'The Art of Slow Roasting',
+        slug: 'the-art-of-slow-roasting',
+        excerpt: 'Mastering the delicate science of low-temperature almond roasting.',
+        content: 'Article content goes here...',
+        publishedAt: '2026-08-01T00:00:00.000Z',
+        author: 'Chef Vance',
+      });
+    }
+    return new HttpResponse(JSON.stringify({ message: 'Blog post not found' }), { status: 404 });
+  }),
+  http.options('*/blogs/:slug', () => {
+    return new HttpResponse(null, { status: 204 });
+  }),
 ];
 
 export const server = setupServer(...handlers);

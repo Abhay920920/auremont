@@ -45,6 +45,7 @@ export default function AdminOrdersPage() {
       fetchOrders();
     }, 500);
     return () => clearTimeout(handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, search, statusFilter]);
 
   const getStatusBadge = (status: string) => {

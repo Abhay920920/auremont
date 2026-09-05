@@ -28,6 +28,7 @@ export default function CartPage() {
     if (!items || items.length === 0) {
       fetchCart();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   if (!mounted) return null;
@@ -247,7 +248,7 @@ export default function CartPage() {
 
             {/* GIFT NOTE & PACKING OPTIONS */}
             <GiftOptions 
-              onSave={(message, includeReceipt) => {
+              onSave={(_message, _includeReceipt) => {
                 // Stored in session/checkout
               }} 
             />

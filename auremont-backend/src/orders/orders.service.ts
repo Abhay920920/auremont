@@ -155,7 +155,7 @@ export class OrdersService {
       const rawProductIds = Array.from(new Set(cart.items.map((i) => i.productId)));
       const sortedProductIds = rawProductIds.sort();
 
-      let productMap = new Map<string, any>();
+      const productMap = new Map<string, any>();
       try {
         const rows = await tx.$queryRaw<any[]>(
           Prisma.sql`SELECT id, name, sku, price, "sale_price", "stock_qty", "thumbnail_url"

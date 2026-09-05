@@ -33,6 +33,7 @@ export default function AdminInventoryPage() {
       fetchInventory();
     }, 500);
     return () => clearTimeout(handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
   const handleAdjustClick = (product: any) => {

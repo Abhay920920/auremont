@@ -30,7 +30,7 @@ describe('RARE NUTS — Adversarial Security Tests', () => {
   });
 
 
-  const JWT_SECRET = process.env.JWT_SECRET || 'AUREMONT_LUXURY_SECRET_KEY';
+  const JWT_SECRET = process.env.JWT_SECRET || 'dev_jwt_secret_only_local';
 
   describe('Admin Authorization & Escalation Checks', () => {
     it('should reject non-admin users attempting to perform administrative actions', async () => {

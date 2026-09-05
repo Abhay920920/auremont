@@ -33,13 +33,13 @@ export default function Header() {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
   // One-shot mount effect: fetch cart and wishlist once
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     setMounted(true);
     fetchCart();
     if (user && useAuthStore.getState().token) {
       fetchWishlist(user.id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // intentionally empty — runs only on mount
 
   // Scroll listener — separate effect for clarity and stability

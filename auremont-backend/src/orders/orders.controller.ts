@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, UseGuards, Delete, Patch, Query, ParseUUIDPipe, HttpCode } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, UseGuards, Delete, Patch, Query, ParseUUIDPipe } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { OrdersService } from './orders.service';
 import { PaymentsService } from '../payments/payments.service';

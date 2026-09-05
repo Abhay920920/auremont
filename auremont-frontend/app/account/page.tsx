@@ -98,6 +98,7 @@ export default function AccountDashboard() {
     fetchProfile();
     fetchOrders();
     fetchAddresses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mounted, user?.id]);
 
   if (!mounted || !user) {

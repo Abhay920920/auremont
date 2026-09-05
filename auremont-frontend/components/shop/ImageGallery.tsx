@@ -13,6 +13,7 @@ export default function ImageGallery({ images }: { images: string[] }) {
         setSelectedImage(images[0]);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [images]);
 
   return (
