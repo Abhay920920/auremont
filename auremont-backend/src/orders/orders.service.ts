@@ -113,12 +113,31 @@ export class OrdersService {
     if (!isMockEnv) {
       const _tInv = process.hrtime.bigint();
       for (const item of sortedItems) {
-        const updatedRows: any[] = await (this.prisma as any).$queryRaw(
-          Prisma.sql`UPDATE "products"
-                     SET "stock_qty" = "stock_qty" - ${item.quantity}
-                     WHERE "id" = ${item.productId}::uuid AND "stock_qty" >= ${item.quantity}
-                     RETURNING id, "stock_qty", price, "sale_price", name, sku, "thumbnail_url"`
-        );
+        let updatedRows: any[] = [];
+        let attempt = 0;
+        const maxRetries = 2;
+
+        while (true) {
+          try {
+            updatedRows = await (this.prisma as any).$queryRaw(
+              Prisma.sql`UPDATE "products"
+                         SET "stock_qty" = "stock_qty" - ${item.quantity}
+                         WHERE "id" = ${item.productId}::uuid AND "stock_qty" >= ${item.quantity}
+                         RETURNING id, "stock_qty", price, "sale_price", name, sku, "thumbnail_url"`
+            );
+            break;
+          } catch (err: any) {
+            const isTransient = err.message?.includes("Can't reach database server") ||
+                                err.message?.includes('connection pool') ||
+                                err.message?.includes('Timed out fetching');
+            if (isTransient && attempt < maxRetries) {
+              attempt++;
+              await new Promise(r => setTimeout(r, 50 * attempt));
+              continue;
+            }
+            throw err;
+          }
+        }
 
         if (!updatedRows || updatedRows.length === 0) {
           if (reservedItems.length > 0) {
