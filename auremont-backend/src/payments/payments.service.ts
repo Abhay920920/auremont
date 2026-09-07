@@ -382,6 +382,7 @@ export class PaymentsService {
     razorpayOrderId: string,
     razorpayPaymentId: string,
     signature: string,
+    internalOrderId?: string,
   ) {
     if (!razorpayOrderId || !razorpayPaymentId || !signature) {
       throw new BadRequestException({
@@ -392,33 +393,31 @@ export class PaymentsService {
 
     const secret = process.env.RAZORPAY_KEY_SECRET;
 
-    // ── Step 1: Verify signature ─────────────────────────────────────────────
-    if (!this.isMock) {
-      if (!secret) {
-        throw new BadRequestException({
-          code: 'GATEWAY_SECRET_UNCONFIGURED',
-          message: 'Payment gateway secret is not configured.',
-        });
-      }
+    // ── Step 1: Cryptographic signature verification ─────────────────────────
+    if (!secret) {
+      throw new BadRequestException({
+        code: 'GATEWAY_SECRET_UNCONFIGURED',
+        message: 'Payment gateway secret is not configured on the server.',
+      });
+    }
 
-      const expectedSignature = crypto
-        .createHmac('sha256', secret)
-        .update(`${razorpayOrderId}|${razorpayPaymentId}`)
-        .digest('hex');
+    const expectedSignature = crypto
+      .createHmac('sha256', secret)
+      .update(`${razorpayOrderId}|${razorpayPaymentId}`)
+      .digest('hex');
 
-      let isValid = false;
-      try {
-        isValid = crypto.timingSafeEqual(Buffer.from(expectedSignature, 'hex'), Buffer.from(signature, 'hex'));
-      } catch {
-        isValid = false;
-      }
+    let isValid = false;
+    try {
+      isValid = crypto.timingSafeEqual(Buffer.from(expectedSignature, 'hex'), Buffer.from(signature, 'hex'));
+    } catch {
+      isValid = false;
+    }
 
-      if (!isValid) {
-        throw new BadRequestException({
-          code: 'INVALID_SIGNATURE',
-          message: 'Payment signature verification failed.',
-        });
-      }
+    if (!isValid) {
+      throw new BadRequestException({
+        code: 'INVALID_SIGNATURE',
+        message: 'Payment signature verification failed.',
+      });
     }
 
     // ── Step 2: Find our order by the razorpay order id ─────────────────────
@@ -433,9 +432,25 @@ export class PaymentsService {
       });
     }
 
+    // Cross-verify with internal order ID if provided
+    if (internalOrderId && orderRef.id !== internalOrderId) {
+      throw new BadRequestException({
+        code: 'ORDER_MISMATCH',
+        message: 'Payment reference does not belong to the specified internal order.',
+      });
+    }
+
     // Fast path: already paid — idempotent return without re-fetching gateway
     if (orderRef.paymentStatus === 'paid') {
       return this.buildConfirmedOrderResponse(orderRef.id);
+    }
+
+    // Terminal state check: cannot verify an order that was cancelled or failed
+    if (orderRef.paymentStatus === 'cancelled' || orderRef.paymentStatus === 'failed') {
+      throw new BadRequestException({
+        code: 'ORDER_TERMINAL_STATE',
+        message: `Cannot verify payment: Order is already in terminal state '${orderRef.paymentStatus}'.`,
+      });
     }
 
     // ── Step 3: Mark as 'processing' so polling sees intermediate state ──────
@@ -468,8 +483,8 @@ export class PaymentsService {
     let gatewayCurrency: string;
     let gatewayOrderId: string;
 
-    if (this.isMock) {
-      // Dev/test: skip API call, use order total. All DB transitions still run.
+    if (this.isMock && !this.razorpay?.payments?.fetch) {
+      // Dev/test: skip API call only if gateway fetch is completely missing
       gatewayAmountPaise = Math.round(Number(orderRef.total) * 100);
       gatewayPaymentStatus = 'captured';
       gatewayCurrency = 'INR';
@@ -483,6 +498,7 @@ export class PaymentsService {
         gatewayCurrency = rzpPayment.currency;
         gatewayOrderId = rzpPayment.order_id;
       } catch (err: any) {
+        if (err instanceof BadRequestException) throw err;
         // Network / Razorpay API failure — revert to pending so retry is possible
         try {
           await this.prisma.order.updateMany({
@@ -529,7 +545,7 @@ export class PaymentsService {
     }
 
     // ── Step 8: Payment belongs to this checkout ─────────────────────────────
-    if (!this.isMock && gatewayOrderId !== razorpayOrderId) {
+    if (gatewayOrderId !== razorpayOrderId) {
       await this.markPaymentFailed(orderRef.id, razorpayPaymentId, `Order ID mismatch: expected ${razorpayOrderId}, got ${gatewayOrderId}`);
       throw new BadRequestException({
         code: 'ORDER_MISMATCH',

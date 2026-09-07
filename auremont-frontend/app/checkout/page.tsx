@@ -241,19 +241,20 @@ export default function CheckoutPage() {
       verificationAttemptedRef.current = true;
 
       setPaymentState("VERIFYING");
-      setStateMessage("Verifying payment with our server...");
+      setStateMessage("Payment processing… Verifying your payment with secure vault servers...");
 
       try {
         const res = await api.post("/payments/verify", {
           razorpay_order_id: razorpayOrderId,
           razorpay_payment_id: razorpayPaymentId,
           razorpay_signature: razorpaySignature,
+          order_id: createdOrderId,
         });
 
         const { success, order: serverOrder } = res.data;
 
         // Backend is authoritative — only show confirmed if backend says paid
-        if (success && serverOrder?.paymentStatus === "paid") {
+        if (success && serverOrder?.paymentStatus === "paid" && serverOrder?.orderStatus === "confirmed") {
           clearCart();
           window.sessionStorage.removeItem("checkout_idempotency_key");
           setConfirmedOrder(serverOrder);
@@ -265,31 +266,31 @@ export default function CheckoutPage() {
           );
         } else {
           // Backend returned success: false or non-paid status — do NOT confirm
-          setPaymentState("UNKNOWN");
+          setPaymentState("FAILED");
           setStateMessage(
-            "Payment verification is pending. Your order has been saved. " +
-              "We will confirm once payment is verified.",
+            "Payment could not be verified. Your order has not been charged.",
           );
-          // Begin polling the authoritative status
-          startPollingStatus(createdOrderId);
         }
       } catch (err: any) {
         const code = err.response?.data?.code;
-        const message = err.response?.data?.message || "Payment verification failed.";
+        const message = err.response?.data?.message;
 
-        if (code === "PAYMENT_NOT_CAPTURED" || code === "AMOUNT_MISMATCH" || code === "CURRENCY_MISMATCH") {
+        if (code === "PAYMENT_NOT_CAPTURED" || code === "AMOUNT_MISMATCH" || code === "CURRENCY_MISMATCH" || code === "ORDER_MISMATCH" || code === "ORDER_TERMINAL_STATE") {
           setPaymentState("FAILED");
-          setStateMessage(message);
+          setStateMessage(message || "Payment could not be verified.");
         } else if (code === "INVALID_SIGNATURE") {
           setPaymentState("FAILED");
           setStateMessage("Payment signature is invalid. Your order has not been confirmed.");
-        } else {
-          // Network error or unknown — don't confirm, show pending
+        } else if (code === "GATEWAY_FETCH_FAILED") {
+          // Gateway timeout / network failure — poll backend status to reconcile
           setPaymentState("UNKNOWN");
           setStateMessage(
-            "We couldn't confirm your payment right now. Please check 'My Orders' in a few minutes.",
+            "Payment verification is in progress. We are checking status with the payment network...",
           );
           startPollingStatus(createdOrderId);
+        } else {
+          setPaymentState("FAILED");
+          setStateMessage(message || "Payment could not be verified. Please try again.");
         }
       }
   };
@@ -346,17 +347,9 @@ export default function CheckoutPage() {
   const openRazorpayModal = (paymentSession: any, createdOrderId: string) => {
     const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
 
-    // ── Dev/mock mode ──────────────────────────────────────────────────────────
-    // Even in mock mode, we ALWAYS call /payments/verify on the backend.
-    // The backend mock path skips the Razorpay API call but still performs
-    // full DB state transitions (amount validation, atomic paid→confirmed).
-    if (!keyId || paymentSession.razorpayOrderId?.startsWith("order_mock_")) {
-      handleVerifyPayment(
-        paymentSession.razorpayOrderId,
-        `pay_mock_${Date.now()}`,
-        "mock_signature",
-        createdOrderId,
-      );
+    if (!keyId) {
+      setPaymentState("FAILED");
+      setStateMessage("Payment gateway is temporarily unconfigured. Please contact concierge or try again later.");
       return;
     }
 
@@ -448,19 +441,11 @@ export default function CheckoutPage() {
       if (paymentSession?.razorpayOrderId && window.Razorpay) {
         openRazorpayModal(paymentSession, createdOrderId);
       } else if (paymentSession?.razorpayOrderId) {
-        // Razorpay SDK not loaded yet — verify directly (mock/dev path)
-        handleVerifyPayment(
-          paymentSession.razorpayOrderId,
-          `pay_mock_${Date.now()}`,
-          "mock_signature",
-          createdOrderId,
-        );
+        setPaymentState("FAILED");
+        setStateMessage("Payment gateway script is unavailable. Please refresh and try again.");
       } else {
-        // No payment session returned — verify with backend to determine status
-        // This should not happen in normal flow but we handle it safely
-        setPaymentState("UNKNOWN");
+        setPaymentState("FAILED");
         setStateMessage("Payment session unavailable. Please check your orders.");
-        if (createdOrderId) startPollingStatus(createdOrderId, orderToken);
       }
     } catch (err: any) {
       const errorMsg = Array.isArray(err.response?.data?.message)
@@ -543,12 +528,14 @@ export default function CheckoutPage() {
               {paymentState === "ORDER_CREATING"
                 ? "Preparing Your Order..."
                 : paymentState === "VERIFYING"
-                ? "Verifying Payment..."
+                ? "Verifying your payment…"
                 : "Connecting to Secure Gateway"}
             </p>
-            {stateMessage && (
-              <p className="text-secondaryText text-xs">{stateMessage}</p>
-            )}
+            <p className="text-secondaryText text-xs">
+              {paymentState === "VERIFYING"
+                ? "Payment processing… Please do not close or refresh this window."
+                : stateMessage || "Securing order details with the gateway."}
+            </p>
           </div>
         </div>
       )}
@@ -575,8 +562,8 @@ export default function CheckoutPage() {
         <div className="fixed inset-0 bg-background/90 backdrop-blur-md z-50 flex items-center justify-center animate-fade-in">
           <div className="bg-secondaryBg border border-error/30 p-12 text-center max-w-md w-full space-y-6">
             <AlertCircle className="w-10 h-10 text-error mx-auto" />
-            <h2 className="font-serif text-2xl text-primaryText">Payment Failed</h2>
-            <p className="text-secondaryText text-sm leading-relaxed">{stateMessage}</p>
+            <h2 className="font-serif text-2xl text-primaryText">Payment Could Not Be Verified</h2>
+            <p className="text-secondaryText text-sm leading-relaxed">{stateMessage || "Payment could not be verified. Your order has not been charged."}</p>
             <div className="flex gap-3 justify-center pt-2">
               <button
                 onClick={() => { setPaymentState("IDLE"); setError(""); verificationAttemptedRef.current = false; }}

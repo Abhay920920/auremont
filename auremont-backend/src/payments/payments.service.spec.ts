@@ -39,6 +39,9 @@ describe('PaymentsService Unit Tests', () => {
   };
 
   beforeEach(async () => {
+    process.env.RAZORPAY_KEY_SECRET = 'secret_12345';
+    process.env.RAZORPAY_KEY_ID = 'rzp_test_12345';
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PaymentsService,
@@ -47,6 +50,17 @@ describe('PaymentsService Unit Tests', () => {
     }).compile();
 
     service = module.get<PaymentsService>(PaymentsService);
+    (service as any).razorpay = {
+      payments: {
+        fetch: jest.fn().mockResolvedValue({
+          id: 'pay_mock_5678',
+          order_id: 'order_mock_1234',
+          amount: 129900,
+          currency: 'INR',
+          status: 'captured',
+        }),
+      },
+    };
     mockPrismaService.order.findUnique.mockResolvedValue(mockOrder);
     jest.clearAllMocks();
     mockPrismaService.order.findUnique.mockResolvedValue(mockOrder);
@@ -104,11 +118,19 @@ describe('PaymentsService Unit Tests', () => {
       // FOR UPDATE lock returns a row with payment_status = 'paid'
       mockPrismaService.$queryRaw.mockResolvedValue([{ id: 'ord-1234', payment_status: 'paid' }]);
 
-      const result = await service.verifyPayment('order_mock_1234', 'pay_mock_5678', 'signature');
+      const secret = 'secret_12345';
+      const orderId = 'order_mock_1234';
+      const paymentId = 'pay_mock_5678';
+      const validSignature = crypto
+        .createHmac('sha256', secret)
+        .update(`${orderId}|${paymentId}`)
+        .digest('hex');
+
+      const result = await service.verifyPayment(orderId, paymentId, validSignature);
 
       // The method returns {success: true} regardless; duplicate guard fires inside the tx callback
       expect(result.success).toBe(true);
-      // payment.upsert should NOT have been called because the FOR UPDATE lock saw payment_status='paid'
+      // payment.upsert should NOT have been called because the order is already paid
       expect(mockPrismaService.payment.upsert).not.toHaveBeenCalled();
     });
   });

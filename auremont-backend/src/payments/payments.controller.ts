@@ -23,9 +23,10 @@ export class PaymentsController {
   async verifyPayment(
     @Body('razorpay_order_id') razorpayOrderId: string,
     @Body('razorpay_payment_id') razorpayPaymentId: string,
-    @Body('razorpay_signature') razorpaySignature: string
+    @Body('razorpay_signature') razorpaySignature: string,
+    @Body('order_id') internalOrderId?: string
   ) {
-    return this.paymentsService.verifyPayment(razorpayOrderId, razorpayPaymentId, razorpaySignature);
+    return this.paymentsService.verifyPayment(razorpayOrderId, razorpayPaymentId, razorpaySignature, internalOrderId);
   }
 }
 
