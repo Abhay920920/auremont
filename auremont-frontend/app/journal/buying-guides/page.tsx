@@ -1,10 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import Breadcrumbs from '@/components/seo/Breadcrumbs';
 import JsonLd from '@/components/JsonLd';
 import { Metadata } from 'next';
-import { Award, CheckCircle2, Star, ShieldCheck, ArrowRight, Sparkles } from 'lucide-react';
+import { Award, ShieldCheck, ArrowRight, Sparkles } from 'lucide-react';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in';
 

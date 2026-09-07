@@ -70,7 +70,7 @@ export default function AdminEditProductPage() {
           canonicalUrl: p.canonicalUrl || "",
           ogImageUrl: p.ogImageUrl || "",
         });
-      } catch (err) {
+      } catch {
         console.error("Failed to fetch initial data");
         setError("Could not load product data. It may not exist.");
       } finally {

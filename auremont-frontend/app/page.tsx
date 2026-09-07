@@ -79,7 +79,7 @@ async function getProducts() {
     if (!res.ok) return FALLBACK_PRODUCTS;
     const json = await res.json();
     return json.data && json.data.length > 0 ? json.data : FALLBACK_PRODUCTS;
-  } catch (e) {
+  } catch {
     return FALLBACK_PRODUCTS;
   }
 }

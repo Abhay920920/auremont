@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Breadcrumbs from '@/components/seo/Breadcrumbs';
 import SquirrelLogo from '@/components/ui/SquirrelLogo';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Luxury Diwali Gifts & Festive Nut Hampers | RARE NUTS',

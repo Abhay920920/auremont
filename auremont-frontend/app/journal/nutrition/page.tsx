@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Breadcrumbs from '@/components/seo/Breadcrumbs';
 import JsonLd from '@/components/JsonLd';
 import { Metadata } from 'next';
-import { Activity, ShieldCheck, Zap, Sparkles, ArrowRight } from 'lucide-react';
+import { Activity, ShieldCheck, Zap, ArrowRight } from 'lucide-react';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in';
 

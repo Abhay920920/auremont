@@ -26,7 +26,7 @@ async function getProduct(slug: string): Promise<CatalogProduct | null> {
         };
       }
     }
-  } catch (error) {
+  } catch {
     // Graceful fallback to local catalog dictionary
   }
 

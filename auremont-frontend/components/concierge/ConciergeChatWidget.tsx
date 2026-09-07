@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   X, 
-  Send, 
   Sparkles, 
   Phone, 
   MessageCircle, 
@@ -16,7 +15,6 @@ import {
   Gift,
   Building2,
   Leaf,
-  CheckCircle2,
   ArrowRight,
   Minus
 } from "lucide-react";

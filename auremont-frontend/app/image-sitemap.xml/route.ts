@@ -36,7 +36,7 @@ export async function GET() {
         'Content-Type': 'application/xml',
       },
     });
-  } catch (e) {
+  } catch {
     return new NextResponse('<error>Failed to generate sitemap</error>', { status: 500 });
   }
 }

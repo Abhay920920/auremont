@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         images: [blog.ogImageUrl || imageUrl],
       }
     };
-  } catch (error) {
+  } catch {
     return {
       title: 'Article Not Found',
     };
@@ -97,7 +97,7 @@ export default async function JournalArticleLayout({ children, params }: { child
         articleJsonLd = { ...articleJsonLd, ...blog.schemaOverride };
       }
     }
-  } catch (e) {
+  } catch {
     // silently fail JSON-LD on error
   }
 

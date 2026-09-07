@@ -11,14 +11,12 @@ export default function Footer() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !email.includes("@")) return;
 
     setStatus('loading');
-    setErrorMessage("");
 
     try {
       await api.post('/newsletter/subscribe', { 

@@ -62,7 +62,7 @@ export default function OrderDetailPage() {
       setErrorMsg(null);
       setSuccessMsg(null);
       setPaymentLoading(true);
-      const res = await api.patch(`/admin/orders/${id}/payment`, { status: newPayStatus });
+      await api.patch(`/admin/orders/${id}/payment`, { status: newPayStatus });
       setOrder((prev: any) => ({ ...prev, paymentStatus: newPayStatus }));
       setSuccessMsg(`Payment status successfully marked as "${newPayStatus}".`);
     } catch (err: any) {

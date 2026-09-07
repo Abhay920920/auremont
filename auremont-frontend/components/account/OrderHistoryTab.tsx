@@ -28,7 +28,7 @@ export default function OrderHistoryTab({ orders, loadingOrders }: OrderHistoryT
     ];
   };
 
-  const getPaymentBadge = (paymentStatus: string, orderStatus: string) => {
+  const getPaymentBadge = (paymentStatus: string) => {
     const ps = (paymentStatus || "").toLowerCase();
     if (ps === "paid") {
       return {
@@ -108,7 +108,7 @@ export default function OrderHistoryTab({ orders, loadingOrders }: OrderHistoryT
       ) : (
         <div className="space-y-8">
           {orders.map((order) => {
-            const paymentBadge = getPaymentBadge(order.paymentStatus, order.orderStatus);
+            const paymentBadge = getPaymentBadge(order.paymentStatus);
             const orderBadge = getOrderStatusBadge(order.orderStatus);
             const isPaid = (order.paymentStatus || "").toLowerCase() === "paid";
             const isFailed = (order.paymentStatus || "").toLowerCase() === "failed";

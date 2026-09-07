@@ -48,7 +48,7 @@ export default function AdminEditBlogPage() {
           canonicalUrl: data.canonicalUrl || "",
           ogImageUrl: data.ogImageUrl || "",
         });
-      } catch (err: any) {
+      } catch {
         setError("Failed to load blog post details.");
       } finally {
         setLoading(false);

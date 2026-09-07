@@ -188,7 +188,7 @@ export class OrdersService {
         let attempt = 0;
         const maxRetries = 2;
 
-        while (true) {
+        while (attempt <= maxRetries) {
           try {
             updatedRows = await (this.prisma as any).$queryRaw(
               Prisma.sql`UPDATE "products"
@@ -269,7 +269,7 @@ export class OrdersService {
       
       let userAttempt = 0;
       let guestUser: any;
-      while (true) {
+      while (userAttempt <= 2) {
         try {
           guestUser = await this.prisma.user.create({
             data: { email: guestInternalEmail, firstName, lastName, role: 'customer' },
@@ -303,7 +303,7 @@ export class OrdersService {
     let txAttempt = 0;
     const maxTxRetries = 2;
 
-    while (true) {
+    while (txAttempt <= maxTxRetries) {
       try {
         createdOrder = await this.prisma.$transaction(async (tx) => {
           // In mock environment only: execute in-memory inventory reservation

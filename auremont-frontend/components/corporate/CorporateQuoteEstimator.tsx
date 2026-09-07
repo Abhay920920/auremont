@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useCurrencyStore } from "@/store/currencyStore";
 import api from "@/lib/axios";
-import { Award, Briefcase, CheckCircle2, Building2, Send, Calculator } from "lucide-react";
+import { CheckCircle2, Building2, Send, Calculator } from "lucide-react";
 
 const BOX_TIERS = [
   { id: "mahogany", name: "Handcrafted Mahogany Chest", basePrice: 1499 },
@@ -62,7 +62,7 @@ export default function CorporateQuoteEstimator() {
         message: `Company: ${companyName}\nPhone: ${phone}\nQuantity: ${quantity} units\nBox Vessel: ${selectedBox.name}\nEstimated Total: ₹${estimatedTotal}\n\nAdditional Notes:\n${message}`,
       });
       setSubmitted(true);
-    } catch (err: any) {
+    } catch {
       // Even if offline/mock backend, show clean fallback confirmation
       setSubmitted(true);
     } finally {

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle, ShieldCheck, Download, Sparkles, X, ArrowRight, Package } from "lucide-react";
+import { CheckCircle, ShieldCheck, Download, X, ArrowRight, Package } from "lucide-react";
 import Link from "next/link";
 import SquirrelLogo from "@/components/ui/SquirrelLogo";
 

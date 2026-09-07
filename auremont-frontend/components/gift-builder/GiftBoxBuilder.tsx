@@ -8,7 +8,6 @@ import { PackageCheck, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import { useAuthStore } from "@/store/authStore";
 import { useCurrencyStore } from "@/store/currencyStore";
-import api from "@/lib/axios";
 
 const BOX_STYLES = [
   {

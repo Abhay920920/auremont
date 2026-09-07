@@ -1,4 +1,3 @@
-import { NextResponse } from 'next/server';
 import { generateSitemapResponse, generateSitemapError } from '../sitemap-helper';
 
 const EDITORIAL_GUIDE_HUBS = [
@@ -73,7 +72,7 @@ export async function GET() {
 </urlset>`;
 
     return generateSitemapResponse(sitemap);
-  } catch (e) {
+  } catch {
     return generateSitemapError();
   }
 }

@@ -1,4 +1,3 @@
-import { NextResponse } from 'next/server';
 import { generateSitemapResponse, generateSitemapError } from '../sitemap-helper';
 
 const FALLBACK_PRODUCT_SLUGS = [
@@ -65,7 +64,7 @@ export async function GET() {
 </urlset>`;
 
     return generateSitemapResponse(sitemap);
-  } catch (e) {
+  } catch {
     return generateSitemapError();
   }
 }

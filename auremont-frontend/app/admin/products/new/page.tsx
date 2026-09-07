@@ -42,7 +42,7 @@ export default function AdminNewProductPage() {
         if (data.length > 0) {
           setForm(f => ({ ...f, categoryId: data[0].id }));
         }
-      } catch (err) {
+      } catch {
         console.error("Failed to fetch categories");
       }
     };

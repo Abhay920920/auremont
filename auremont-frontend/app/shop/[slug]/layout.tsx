@@ -128,7 +128,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         images: [product.ogImageUrl || imageUrl],
       }
     };
-  } catch (error) {
+  } catch {
     const formatted = slug ? slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'Product';
     return {
       title: `${formatted} | RARE NUTS`,
@@ -257,7 +257,7 @@ export default async function ProductLayout({ children, params }: { children: Re
           ]
         });
       }
-    } catch (e) {
+    } catch {
       // Silently continue without schema if fetch fails
     }
   }

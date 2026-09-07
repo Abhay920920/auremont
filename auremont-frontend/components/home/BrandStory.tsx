@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import SquirrelLogo from "@/components/ui/SquirrelLogo";
-import { Clock, ShieldCheck, Sparkles, Compass } from "lucide-react";
+import { Clock } from "lucide-react";
 
 export default function BrandStory() {
   const [activeMilestone, setActiveMilestone] = useState(0);

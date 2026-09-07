@@ -65,7 +65,7 @@ export async function getValidAccessToken(): Promise<string | null> {
         useAuthStore.getState().setRefreshToken(new_refresh_token);
       }
       return access_token;
-    } catch (err) {
+    } catch {
       useAuthStore.getState().logout();
       useWishlistStore.getState().clearWishlist();
       return null;

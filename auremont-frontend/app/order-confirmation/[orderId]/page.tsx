@@ -64,7 +64,7 @@ export default function OrderConfirmationPage() {
         setOrder(res.data);
         setPageState("PENDING");
       }
-    } catch (err: any) {
+    } catch {
       if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
       setPageState("NOT_FOUND");
     }

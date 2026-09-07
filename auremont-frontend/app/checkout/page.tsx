@@ -419,7 +419,8 @@ export default function CheckoutPage() {
         `${Date.now()}-${randomUuid}`;
       window.sessionStorage.setItem("checkout_idempotency_key", idempotencyKey);
 
-      const { email: addrEmail, ...cleanAddress } = address;
+      const cleanAddress = { ...address };
+      delete (cleanAddress as any).email;
 
       const res = await api.post("/orders", {
         cartId,

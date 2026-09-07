@@ -248,7 +248,7 @@ export default function CartPage() {
 
             {/* GIFT NOTE & PACKING OPTIONS */}
             <GiftOptions 
-              onSave={(_message, _includeReceipt) => {
+              onSave={() => {
                 // Stored in session/checkout
               }} 
             />

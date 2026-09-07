@@ -146,7 +146,7 @@ export default function AdminCustomersPage() {
         message: `Successfully removed ${deletedCount} testing customer(s)`,
       });
       setTimeout(() => setNotification(null), 4000);
-    } catch (err: any) {
+    } catch {
       setNotification({ type: 'error', message: 'Failed during cleanup process' });
     } finally {
       setCleanupLoading(false);

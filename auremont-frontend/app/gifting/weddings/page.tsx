@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Breadcrumbs from '@/components/seo/Breadcrumbs';
 import SquirrelLogo from '@/components/ui/SquirrelLogo';
-import { Gift, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Luxury Wedding Gifts & Custom Bridal Hampers | RARE NUTS',
