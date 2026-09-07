@@ -1,32 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ForbiddenException, UnauthorizedException } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
-import { AppModule } from '../../auremont-backend/src/app.module';
-import { UsersService } from '../../auremont-backend/src/users/users.service';
 import { AdminAuthGuard } from '../../auremont-backend/src/admin/auth/admin-auth.guard';
 import { JwtService } from '@nestjs/jwt';
 
 describe('RARE NUTS — Adversarial Security Tests', () => {
-  let app: INestApplication;
-  let usersService: UsersService;
   let jwtService: JwtService;
 
-  beforeAll(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
-    await app.init();
-
-    usersService = moduleFixture.get<UsersService>(UsersService, { strict: false });
+  beforeAll(() => {
     jwtService = new JwtService({ secret: process.env.JWT_SECRET || 'AUREMONT_LUXURY_SECRET_KEY' });
-  }, 30000);
-
-  afterAll(async () => {
-    if (app) {
-      await app.close();
-    }
   });
 
 

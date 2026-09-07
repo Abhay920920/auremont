@@ -61,10 +61,10 @@ export const metadata: Metadata = {
   }
 };
 
-import JsonLd from "@/components/JsonLd";
 import StorefrontWrapper from "@/components/StorefrontWrapper";
 import TransitionProvider from "@/components/providers/TransitionProvider";
 import WebSiteSchema from "@/components/seo/WebSiteSchema";
+import ClientSecurityGuards from "@/components/providers/ClientSecurityGuards";
 import dynamic from "next/dynamic";
 
 // Lazy-load non-critical components — split into independent async chunks
@@ -75,8 +75,6 @@ const ConciergeChatWidget = dynamic(() => import("@/components/concierge/Concier
 const MobileBottomBar = dynamic(() => import("@/components/mobile/MobileBottomBar"));
 const CookieBanner = dynamic(() => import("@/components/CookieBanner"));
 const PageProgressLoader = dynamic(() => import("@/components/providers/PageProgressLoader"));
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in';
 
 export default function RootLayout({
   children,
@@ -96,23 +94,8 @@ export default function RootLayout({
         <div className="print:hidden">
           <FilmGrain />
         </div>
+        <ClientSecurityGuards />
         <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
-        <Script
-          id="sw-register"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js').catch(function(err) {
-                    console.log('ServiceWorker registration failed: ', err);
-                  });
-                });
-              }
-            `,
-          }}
-        />
-        
         <CustomCursor />
         <StorefrontWrapper>
           <TransitionProvider>

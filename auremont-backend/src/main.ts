@@ -82,8 +82,7 @@ async function bootstrap() {
       if (!origin) return callback(null, true);
       const normalizedOrigin = origin.replace(/\/$/, '');
       const isLocalhost = isDev && (/^http:\/\/localhost(:\d+)?$/.test(normalizedOrigin) || /^http:\/\/127\.0\.0\.1(:\d+)?$/.test(normalizedOrigin));
-      const isVercel = /^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(normalizedOrigin);
-      if (trustedOrigins.has(normalizedOrigin) || isLocalhost || isVercel) {
+      if (trustedOrigins.has(normalizedOrigin) || isLocalhost) {
         callback(null, true);
       } else {
         callback(new Error(`CORS policy: origin '${origin}' not allowed`), false);

@@ -96,10 +96,12 @@ export class PaymentsService {
         rpOrder = await this.razorpay.orders.create(options);
       }
 
-      // Save the razorpay order id to our database as paymentRef
-      await this.prisma.order.update({
-        where: { id: orderId },
-        data: { paymentRef: rpOrder.id },
+      // Save the razorpay order id to our database as paymentRef (fire-and-forget — not on the critical path)
+      setImmediate(() => {
+        this.prisma.order.update({
+          where: { id: orderId },
+          data: { paymentRef: rpOrder.id },
+        }).catch((err: any) => console.error('paymentRef update failed:', err?.message));
       });
 
       return {

@@ -95,6 +95,7 @@ export class HealthController {
   private readonly DB_PING_TTL_MS = 3000;
 
   @Get('health/readiness')
+  @Get('ready')
   @HttpCode(HttpStatus.OK)
   async getReadiness() {
     const now = Date.now();

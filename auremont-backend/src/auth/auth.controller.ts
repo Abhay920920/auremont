@@ -18,14 +18,9 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Throttle({ default: { limit: 60, ttl: 60000 } })
   async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
-    const existingUser = await this.authService.findUserByEmail(dto.email);
-    if (!existingUser) {
-      throw new UnauthorizedException('No account found with this email. Please sign up first to access your account.');
-    }
-
     const user = await this.authService.validateUser(dto.email, dto.password);
     if (!user) {
-      throw new UnauthorizedException('Incorrect password. Please verify your password or reset it.');
+      throw new UnauthorizedException('Invalid email or password. Please verify your credentials.');
     }
     
     const tokens = await this.authService.login(user);

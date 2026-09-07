@@ -85,13 +85,21 @@ export class AdminCustomersService {
     const lifetimeValue = allPaidOrders.reduce((sum, order) => sum + Number(order.total), 0);
     const averageOrderValue = totalOrders > 0 ? lifetimeValue / totalOrders : 0;
 
+    const {
+      passwordHash: _passwordHash,
+      refreshToken: _refreshToken,
+      resetToken: _resetToken,
+      resetTokenExpiry: _resetTokenExpiry,
+      ...safeUser
+    } = user;
+
     return {
-      ...user,
+      ...safeUser,
       metrics: {
         totalOrders,
         lifetimeValue,
         averageOrderValue,
-      }
+      },
     };
   }
 
@@ -104,6 +112,18 @@ export class AdminCustomersService {
     const updated = await this.prisma.user.update({
       where: { id },
       data: { status },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        phone: true,
+        role: true,
+        status: true,
+        emailVerified: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
 
     await this.prisma.adminAuditLog.create({

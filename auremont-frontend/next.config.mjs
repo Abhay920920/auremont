@@ -1,10 +1,17 @@
 /** @type {import('next').NextConfig} */
+const isDev = process.env.NODE_ENV !== 'production';
+
 const nextConfig = {
   // Tree-shake large icon/animation libraries — eliminates unused bundle weight
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion'],
   },
   async headers() {
+    // In dev mode, Next.js hot-reloading / fast-refresh uses eval for source maps.
+    // Return empty headers in development so browser dev tools and HMR aren't blocked.
+    if (isDev) {
+      return [];
+    }
     return [
       {
         source: '/(.*)',
@@ -17,12 +24,16 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://cdn.razorpay.com https://*.razorpay.com",
-              `connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'} https://checkout.razorpay.com https://api.razorpay.com https://lumberjack.razorpay.com`,
+              "script-src 'self' 'unsafe-inline' https://checkout.razorpay.com https://cdn.razorpay.com https://*.razorpay.com",
+              `connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'} https://checkout.razorpay.com https://api.razorpay.com https://lumberjack.razorpay.com https://cdn.razorpay.com https://*.razorpay.com`,
               "frame-src 'self' https://checkout.razorpay.com https://api.razorpay.com https://*.razorpay.com",
               "img-src 'self' data: https:",
               "style-src 'self' 'unsafe-inline'",
               "font-src 'self' data:",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self' https://checkout.razorpay.com https://api.razorpay.com",
+              "frame-ancestors 'self'",
             ].join('; '),
           },
           {
@@ -44,6 +55,14 @@ const nextConfig = {
           {
             key: 'Strict-Transport-Security',
             value: 'max-age=31536000; includeSubDomains; preload'
+          },
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin-allow-popups'
+          },
+          {
+            key: 'Cross-Origin-Resource-Policy',
+            value: 'same-origin'
           }
         ]
       }

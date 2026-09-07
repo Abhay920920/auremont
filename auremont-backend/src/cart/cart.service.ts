@@ -165,7 +165,7 @@ export class CartService {
     }
 
     let activeCart = cartValidation;
-    if (activeCart && activeCart.userId && dto.userId && activeCart.userId !== dto.userId) {
+    if (activeCart && activeCart.userId && (!dto.userId || activeCart.userId !== dto.userId)) {
       throw new ForbiddenException('You do not have permission to access this cart');
     }
 
@@ -273,8 +273,8 @@ export class CartService {
         throw new ForbiddenException('You do not have permission to modify this cart');
       }
     } else {
-      // Guest cart check: caller must match the item's cartId if provided, or be unauthenticated for that cart
-      if (cartId && item.cartId !== cartId) {
+      // Guest cart check: caller MUST supply matching cartId to prove ownership of the guest cart
+      if (!cartId || item.cartId !== cartId) {
         throw new ForbiddenException('You do not have permission to modify this cart');
       }
     }
@@ -310,8 +310,8 @@ export class CartService {
         throw new ForbiddenException('You do not have permission to modify this cart');
       }
     } else {
-      // Guest cart check: caller must match the item's cartId if provided
-      if (cartId && item.cartId !== cartId) {
+      // Guest cart check: caller MUST supply matching cartId to prove ownership of the guest cart
+      if (!cartId || item.cartId !== cartId) {
         throw new ForbiddenException('You do not have permission to modify this cart');
       }
     }

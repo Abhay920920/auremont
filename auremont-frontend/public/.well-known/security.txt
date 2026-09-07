@@ -1,0 +1,7 @@
+# RARE NUTS / Auremont — Security Vulnerability Disclosure Policy
+Contact: mailto:security@rarenuts.in
+Expires: 2027-12-31T23:59:59.000Z
+Preferred-Languages: en
+Policy: https://rarenuts.in/privacy-policy
+Acknowledgments: https://rarenuts.in/about
+Canonical: https://rarenuts.in/.well-known/security.txt

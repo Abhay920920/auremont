@@ -89,15 +89,25 @@ describe('OrdersService Unit Tests', () => {
 
   describe('createOrder', () => {
     it('creates an order, calculates 5% tax, and marks cart as ordered', async () => {
-      mockPrismaService.order.findUnique.mockResolvedValue(null); // idempotency check
       mockPrismaService.cart.findUnique.mockResolvedValue(mockCart);
-      mockPrismaService.product.findUnique.mockResolvedValue(mockCart.items[0].product);
-      mockPrismaService.$queryRaw.mockResolvedValue([mockCart.items[0].product]);
+      // $queryRaw is called inside the $transaction callback with the tx object (same mock)
+      mockPrismaService.$queryRaw.mockResolvedValue([{
+        id: 'prod-1',
+        stock_qty: 18,
+        price: '799.00',
+        sale_price: null,
+        name: 'California Almonds 250g',
+        sku: 'RN-RAW-250',
+        thumbnail_url: null,
+      }]);
       mockPrismaService.address.create.mockResolvedValue({ id: 'addr-1' });
+      mockPrismaService.cart.update.mockResolvedValue({ id: 'cart-1234', status: 'ordered' });
       mockPrismaService.order.create.mockResolvedValue({
         id: 'ord-1234',
         orderNumber: 'ORD-2026-99',
         total: '1677.90',
+        items: [],
+        address: { id: 'addr-1' },
       });
 
       const order = await service.createOrder({
@@ -115,6 +125,9 @@ describe('OrdersService Unit Tests', () => {
       });
 
       expect(order.id).toBe('ord-1234');
+
+      // cart.update runs in setImmediate (fire-and-forget) — await next tick to capture it
+      await new Promise<void>((resolve) => setImmediate(resolve));
       expect(mockPrismaService.cart.update).toHaveBeenCalledWith({
         where: { id: 'cart-1234' },
         data: { status: 'ordered' },

@@ -22,27 +22,34 @@ export class OrdersController {
 
   @Post()
   @UseGuards(OptionalJwtAuthGuard)
-  @Throttle({ default: { limit: 20, ttl: 60000 } })
+  @Throttle({ default: { limit: Number(process.env.THROTTLE_CHECKOUT_LIMIT) || 1000, ttl: 60000 } })
   async placeOrder(@Body() dto: CreateOrderDto, @GetUser() user: any) {
-    const order = await this.ordersService.createOrder({
+    const tEntry = process.hrtime.bigint();
+    const timings: Record<string, number> = {};
+
+    const order: any = await this.ordersService.createOrder({
       ...dto,
       userId: user?.id
-    });
+    }, timings);
 
+    const tPay0 = process.hrtime.bigint();
     const paymentSession = await this.ordersService.initializePayment(
       order.id,
       Number(order.total),
     );
+    timings['payment_init_ms'] = Math.round((Number(process.hrtime.bigint() - tPay0) / 1e6) * 100) / 100;
 
-    // Generate a guest order token so unauthenticated users can poll payment status
-    // and view their confirmation without authentication.
-    // Guests store this token in sessionStorage alongside the orderId.
+    const tToken0 = process.hrtime.bigint();
     const orderToken = this.paymentsService.generateOrderToken(order.id);
+    timings['token_gen_ms'] = Math.round((Number(process.hrtime.bigint() - tToken0) / 1e6) * 100) / 100;
+
+    timings['total_server_ms'] = Math.round((Number(process.hrtime.bigint() - tEntry) / 1e6) * 100) / 100;
 
     return {
       ...order,
       paymentSession,
-      orderToken, // Frontend must store this for guest confirmation polling
+      orderToken,
+      _timings: timings,
     };
   }
 

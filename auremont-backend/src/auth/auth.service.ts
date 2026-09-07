@@ -17,60 +17,8 @@ export class AuthService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    // Only auto-seed test fixtures in local development environments
-    if (process.env.NODE_ENV === 'production' || (process.env.NODE_ENV as string) === 'staging') {
-      return;
-    }
-
-    try {
-      // Parallelize both hash operations — each takes ~100ms, so concurrent saves ~100ms
-      const [adminPassword, testPassword] = await Promise.all([
-        bcrypt.hash('Admin@12345', 10),
-        bcrypt.hash('password123', 10),
-      ]);
-
-      // Upsert admin and test fixtures
-      await Promise.all([
-        this.prisma.user.upsert({
-          where: { email: 'admin@rarenuts.com' },
-          update: { passwordHash: adminPassword, role: 'admin' },
-          create: {
-            firstName: 'RARE NUTS',
-            lastName: 'Concierge',
-            email: 'admin@rarenuts.com',
-            passwordHash: adminPassword,
-            role: 'admin',
-            emailVerified: true,
-          },
-        }),
-        this.prisma.user.upsert({
-          where: { email: 'admin@example.com' },
-          update: { passwordHash: testPassword, role: 'admin' },
-          create: {
-            firstName: 'Admin',
-            lastName: 'User',
-            email: 'admin@example.com',
-            passwordHash: testPassword,
-            role: 'admin',
-            emailVerified: true,
-          },
-        }),
-        this.prisma.user.upsert({
-          where: { email: 'example@gmail.com' },
-          update: { passwordHash: testPassword, role: 'customer' },
-          create: {
-            firstName: 'Test',
-            lastName: 'Customer',
-            email: 'example@gmail.com',
-            passwordHash: testPassword,
-            role: 'customer',
-            emailVerified: true,
-          },
-        }),
-      ]);
-    } catch (e) {
-      // Auto-seed on startup complete
-    }
+    // Security (V-10): Privileged accounts are managed strictly via explicit database seed workflows (prisma/seed.ts).
+    // Application startup never silently creates or resets default administrative credentials.
   }
 
   async findUserByEmail(email: string) {
@@ -80,7 +28,13 @@ export class AuthService implements OnModuleInit {
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.usersService.findByEmail(email);
     if (user && user.passwordHash && await bcrypt.compare(pass, user.passwordHash)) {
-      const { passwordHash, refreshToken, resetToken, resetTokenExpiry, ...result } = user as any;
+      const {
+        passwordHash: _passwordHash,
+        refreshToken: _refreshToken,
+        resetToken: _resetToken,
+        resetTokenExpiry: _resetTokenExpiry,
+        ...result
+      } = user as any;
       return result;
     }
     return null;
@@ -134,7 +88,7 @@ export class AuthService implements OnModuleInit {
       });
 
       return { access_token, refresh_token: new_refresh_token };
-    } catch (e) {
+    } catch {
       throw new UnauthorizedException('Invalid refresh token');
     }
   }
@@ -158,7 +112,13 @@ export class AuthService implements OnModuleInit {
       email: data.email,
       passwordHash: hashedPassword,
     });
-    const { passwordHash, refreshToken, resetToken, resetTokenExpiry, ...user } = newUser as any;
+    const {
+      passwordHash: _passwordHash,
+      refreshToken: _refreshToken,
+      resetToken: _resetToken,
+      resetTokenExpiry: _resetTokenExpiry,
+      ...user
+    } = newUser as any;
     
     // Automatically issue login tokens upon registration
     const tokens = await this.login(user);
@@ -213,7 +173,12 @@ export class AuthService implements OnModuleInit {
     const hashedPassword = await bcrypt.hash(data.newPassword, 10);
     await this.prisma.user.update({
       where: { id: user.id },
-      data: { passwordHash: hashedPassword, resetToken: null, resetTokenExpiry: null }
+      data: {
+        passwordHash: hashedPassword,
+        refreshToken: null, // Revoke all active sessions upon password reset (V-08)
+        resetToken: null,
+        resetTokenExpiry: null,
+      },
     });
 
     return { message: 'Password reset successfully' };

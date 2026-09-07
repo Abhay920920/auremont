@@ -228,7 +228,7 @@ export class ProductsService {
     this.clearCache();
     const product = await this.prisma.product.create({ data: { ...dto } });
     if (adminId) {
-      try { await this.audit.log({ userId: adminId, action: 'CREATE_PRODUCT', entity: 'Product', entityId: product.id }); } catch (e) { /* noop */ }
+      try { await this.audit.log({ userId: adminId, action: 'CREATE_PRODUCT', entity: 'Product', entityId: product.id }); } catch { /* noop */ }
     }
     return product;
   }
@@ -238,7 +238,7 @@ export class ProductsService {
     await this.findProductOrThrow(id);
     const product = await this.prisma.product.update({ where: { id }, data: { ...dto } });
     if (adminId) {
-      try { await this.audit.log({ userId: adminId, action: 'UPDATE_PRODUCT', entity: 'Product', entityId: id }); } catch (e) { /* noop */ }
+      try { await this.audit.log({ userId: adminId, action: 'UPDATE_PRODUCT', entity: 'Product', entityId: id }); } catch { /* noop */ }
     }
     return product;
   }
@@ -248,7 +248,7 @@ export class ProductsService {
     await this.findProductOrThrow(id);
     const product = await this.prisma.product.update({ where: { id }, data: { status: false } });
     if (adminId) {
-      try { await this.audit.log({ userId: adminId, action: 'DELETE_PRODUCT', entity: 'Product', entityId: id }); } catch (e) { /* noop */ }
+      try { await this.audit.log({ userId: adminId, action: 'DELETE_PRODUCT', entity: 'Product', entityId: id }); } catch { /* noop */ }
     }
     return product;
   }
@@ -258,7 +258,7 @@ export class ProductsService {
     await this.findProductOrThrow(productId);
     const image = await this.prisma.productImage.create({ data: { productId, ...dto } });
     if (adminId) {
-      try { await this.audit.log({ userId: adminId, action: 'ADD_PRODUCT_IMAGE', entity: 'ProductImage', entityId: image.id }); } catch (e) { /* noop */ }
+      try { await this.audit.log({ userId: adminId, action: 'ADD_PRODUCT_IMAGE', entity: 'ProductImage', entityId: image.id }); } catch { /* noop */ }
     }
     return image;
   }
@@ -269,7 +269,7 @@ export class ProductsService {
     if (!image || image.productId !== productId) throw new NotFoundException('Image not found');
     await this.prisma.productImage.delete({ where: { id: imageId } });
     if (adminId) {
-      try { await this.audit.log({ userId: adminId, action: 'REMOVE_PRODUCT_IMAGE', entity: 'ProductImage', entityId: imageId }); } catch (e) { /* noop */ }
+      try { await this.audit.log({ userId: adminId, action: 'REMOVE_PRODUCT_IMAGE', entity: 'ProductImage', entityId: imageId }); } catch { /* noop */ }
     }
     return { success: true };
   }
@@ -279,7 +279,7 @@ export class ProductsService {
     await this.findProductOrThrow(productId);
     const attr = await this.prisma.productAttribute.create({ data: { productId, ...dto } });
     if (adminId) {
-      try { await this.audit.log({ userId: adminId, action: 'ADD_PRODUCT_ATTRIBUTE', entity: 'ProductAttribute', entityId: attr.id }); } catch (e) { /* noop */ }
+      try { await this.audit.log({ userId: adminId, action: 'ADD_PRODUCT_ATTRIBUTE', entity: 'ProductAttribute', entityId: attr.id }); } catch { /* noop */ }
     }
     return attr;
   }
@@ -290,7 +290,7 @@ export class ProductsService {
     if (!attr || attr.productId !== productId) throw new NotFoundException('Attribute not found');
     await this.prisma.productAttribute.delete({ where: { id: attrId } });
     if (adminId) {
-      try { await this.audit.log({ userId: adminId, action: 'REMOVE_PRODUCT_ATTRIBUTE', entity: 'ProductAttribute', entityId: attrId }); } catch (e) { /* noop */ }
+      try { await this.audit.log({ userId: adminId, action: 'REMOVE_PRODUCT_ATTRIBUTE', entity: 'ProductAttribute', entityId: attrId }); } catch { /* noop */ }
     }
     return { success: true };
   }
@@ -309,7 +309,7 @@ export class ProductsService {
       return updated;
     });
     if (adminId) {
-      try { await this.audit.log({ userId: adminId, action: 'ADJUST_INVENTORY', entity: 'Product', entityId: productId }); } catch (e) { /* noop */ }
+      try { await this.audit.log({ userId: adminId, action: 'ADJUST_INVENTORY', entity: 'Product', entityId: productId }); } catch { /* noop */ }
     }
     return product;
   }

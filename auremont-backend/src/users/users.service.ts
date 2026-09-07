@@ -113,7 +113,10 @@ export class UsersService {
     const hashedPassword = await bcrypt.hash(data.newPassword, 10);
     await this.prisma.user.update({
       where: { id: userId },
-      data: { passwordHash: hashedPassword }
+      data: {
+        passwordHash: hashedPassword,
+        refreshToken: null, // Revoke all active sessions upon password change (V-08)
+      },
     });
 
     return { message: 'Password updated successfully' };
@@ -356,14 +359,21 @@ export class UsersService {
       .reduce((sum, order) => sum + Number(order.total), 0);
     const averageOrderValue = totalOrders > 0 ? lifetimeValue / totalOrders : 0;
 
+    const {
+      passwordHash: _passwordHash,
+      refreshToken: _refreshToken,
+      resetToken: _resetToken,
+      resetTokenExpiry: _resetTokenExpiry,
+      ...safeUser
+    } = user;
+
     return {
-      ...user,
-      passwordHash: undefined,
+      ...safeUser,
       metrics: {
         totalOrders,
         lifetimeValue,
-        averageOrderValue
-      }
+        averageOrderValue,
+      },
     };
   }
 }

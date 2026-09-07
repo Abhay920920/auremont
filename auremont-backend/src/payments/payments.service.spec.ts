@@ -60,6 +60,9 @@ describe('PaymentsService Unit Tests', () => {
 
       expect(session.paymentProvider).toBe('razorpay');
       expect(session.amount).toBe(129900); // 1299 * 100 paise
+
+      // order.update (paymentRef) runs in setImmediate (fire-and-forget) — await next tick
+      await new Promise<void>((resolve) => setImmediate(resolve));
       expect(mockPrismaService.order.update).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { id: 'ord-1234' },
