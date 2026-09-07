@@ -36,6 +36,7 @@ export class OrdersController {
     const paymentSession = await this.ordersService.initializePayment(
       order.id,
       Number(order.total),
+      order.paymentRef,
     );
     timings['payment_init_ms'] = Math.round((Number(process.hrtime.bigint() - tPay0) / 1e6) * 100) / 100;
 

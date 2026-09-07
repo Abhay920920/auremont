@@ -76,6 +76,21 @@ export class PaymentsService {
     // Store in paise (integer) — never use floats for money
     const amountPaise = Math.round(amount * 100);
 
+    // 1. Fast path: check if order already has an active payment reference (idempotent retry)
+    const existingOrder = await this.prisma.order.findUnique({
+      where: { id: orderId },
+      select: { id: true, paymentRef: true, total: true },
+    });
+
+    if (existingOrder?.paymentRef) {
+      return {
+        paymentProvider: 'razorpay',
+        razorpayOrderId: existingOrder.paymentRef,
+        amount: amountPaise,
+        currency,
+      };
+    }
+
     const options = {
       amount: amountPaise,
       currency,
@@ -93,21 +108,31 @@ export class PaymentsService {
           currency: options.currency,
         };
       } else {
-        rpOrder = await this.razorpay.orders.create(options);
+        // Query Razorpay API for existing order with this receipt before creating a new one (prevents duplicate on network timeout/retry)
+        try {
+          const existingList = await this.razorpay.orders.all({ receipt: orderId, count: 1 });
+          if (existingList && Array.isArray(existingList.items) && existingList.items.length > 0) {
+            rpOrder = existingList.items[0];
+          }
+        } catch (queryErr: any) {
+          console.warn('Razorpay receipt query failed, proceeding to create:', queryErr?.message);
+        }
+
+        if (!rpOrder) {
+          rpOrder = await this.razorpay.orders.create(options);
+        }
       }
 
-      // Save the razorpay order id to our database as paymentRef (fire-and-forget — not on the critical path)
-      setImmediate(() => {
-        this.prisma.order.update({
-          where: { id: orderId },
-          data: { paymentRef: rpOrder.id },
-        }).catch((err: any) => console.error('paymentRef update failed:', err?.message));
-      });
+      // Save the razorpay order id to our database as paymentRef
+      this.prisma.order.update({
+        where: { id: orderId },
+        data: { paymentRef: rpOrder.id },
+      }).catch((err: any) => console.error('paymentRef update failed:', err?.message));
 
       return {
         paymentProvider: 'razorpay',
         razorpayOrderId: rpOrder.id,
-        amount: rpOrder.amount,        // paise
+        amount: rpOrder.amount, // paise
         currency: rpOrder.currency,
       };
     } catch (error) {
@@ -227,6 +252,29 @@ export class PaymentsService {
               where: { eventId },
               data: { status: 'already_paid' }
             });
+            return;
+          }
+
+          if (lockedOrder?.payment_status === 'cancelled' || lockedOrder?.payment_status === 'failed') {
+            await (tx as any).webhookLog.update({
+              where: { eventId },
+              data: { status: `order_${lockedOrder.payment_status}` }
+            });
+            if ((tx as any).outboxEvent?.create) {
+              await (tx as any).outboxEvent.create({
+                data: {
+                  eventType: 'payment_received_for_terminal_order',
+                  payload: {
+                    orderId: order.id,
+                    orderNumber: lockedOrder.order_number,
+                    gatewayPaymentId,
+                    paidAmountINR,
+                    orderPaymentStatus: lockedOrder.payment_status,
+                    source: 'webhook',
+                  },
+                },
+              });
+            }
             return;
           }
 
@@ -501,6 +549,13 @@ export class PaymentsService {
       // Already paid — idempotent exit
       if (lockedOrder?.payment_status === 'paid') {
         return;
+      }
+
+      if (lockedOrder?.payment_status === 'cancelled' || lockedOrder?.payment_status === 'failed') {
+        throw new BadRequestException({
+          code: 'ORDER_TERMINAL_STATE',
+          message: `Cannot verify payment: Order is already in terminal state '${lockedOrder.payment_status}'.`,
+        });
       }
 
       const now = new Date();

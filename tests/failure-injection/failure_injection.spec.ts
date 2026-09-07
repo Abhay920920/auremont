@@ -74,5 +74,61 @@ describe('RARE NUTS — Failure Injection Tests', () => {
 
       expect(transactionWasRolledBack).toBe(true); // Confirms transaction rolled back all changes
     });
+
+    it('should rollback transaction if order insert fails', async () => {
+      const product = {
+        id: 'prod-2',
+        name: 'Fine Walnuts',
+        stockQty: 50,
+        price: '300.00',
+        salePrice: null,
+      };
+
+      const cart = {
+        id: 'cart-2',
+        userId: 'user-2',
+        status: 'active',
+        items: [{ id: 'item-2', productId: 'prod-2', quantity: 1, product }],
+      };
+
+      await prismaMock.product.create({ data: product });
+      prismaMock.cart.findUnique = jest.fn().mockResolvedValue(cart);
+      prismaMock.product.findUnique = jest.fn().mockResolvedValue(product);
+      prismaMock.$queryRaw = jest.fn().mockResolvedValue([product]);
+      prismaMock.address.create = jest.fn().mockResolvedValue({ id: 'addr-2' });
+
+      // Force failure on order creation
+      prismaMock.order.create = jest.fn().mockImplementation(() => {
+        throw new Error('Database write failure: OrderInsertFailed');
+      });
+
+      let transactionWasRolledBack = false;
+      prismaMock.$transaction = jest.fn().mockImplementation(async (callback: any) => {
+        try {
+          return await callback(prismaMock);
+        } catch (err) {
+          transactionWasRolledBack = true;
+          throw err;
+        }
+      });
+
+      await expect(
+        ordersService.createOrder({
+          userId: 'user-2',
+          cartId: 'cart-2',
+          address: {
+            fullName: 'Order Fail Test',
+            phone: '+919999999998',
+            addressLine1: 'Fail St',
+            city: 'FaultCity',
+            state: 'FaultState',
+            postalCode: '000000',
+            country: 'Faultland',
+          },
+        })
+      ).rejects.toThrow('Database write failure: OrderInsertFailed');
+
+      expect(transactionWasRolledBack).toBe(true);
+    });
   });
 });

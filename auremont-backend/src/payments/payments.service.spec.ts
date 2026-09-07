@@ -54,6 +54,7 @@ describe('PaymentsService Unit Tests', () => {
 
   describe('createRazorpayOrder', () => {
     it('creates razorpay order session and attaches paymentRef to order', async () => {
+      mockPrismaService.order.findUnique.mockResolvedValueOnce({ ...mockOrder, paymentRef: null });
       mockPrismaService.order.update.mockResolvedValue(mockOrder);
 
       const session = await service.createRazorpayOrder('ord-1234', 1299.00, 'INR');

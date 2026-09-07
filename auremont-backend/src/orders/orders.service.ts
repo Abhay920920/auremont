@@ -45,6 +45,51 @@ export class OrdersService {
     private notifications: NotificationsService,
   ) {}
 
+  private validateIdempotencyPayload(
+    existingOrder: any,
+    currentData: {
+      userId?: string;
+      cartItems: { productId: string; quantity: number }[];
+      address: any;
+      couponId?: string;
+    },
+  ): boolean {
+    if (currentData.userId && existingOrder.userId !== currentData.userId) {
+      return false;
+    }
+    if ((currentData.couponId || null) !== (existingOrder.couponId || null)) {
+      return false;
+    }
+    if (!existingOrder.items || existingOrder.items.length !== currentData.cartItems.length) {
+      return false;
+    }
+    const sortedExisting = [...existingOrder.items].sort((a, b) => a.productId.localeCompare(b.productId));
+    const sortedCurrent = [...currentData.cartItems].sort((a, b) => a.productId.localeCompare(b.productId));
+    for (let i = 0; i < sortedExisting.length; i++) {
+      if (
+        sortedExisting[i].productId !== sortedCurrent[i].productId ||
+        sortedExisting[i].quantity !== sortedCurrent[i].quantity
+      ) {
+        return false;
+      }
+    }
+    if (existingOrder.address && currentData.address) {
+      const existPhone = (existingOrder.address.phone || '').replace(/\D/g, '');
+      const currPhone = (currentData.address.phone || '').replace(/\D/g, '');
+      if (existPhone && currPhone && existPhone !== currPhone) {
+        return false;
+      }
+      if (
+        existingOrder.address.postalCode &&
+        currentData.address.postalCode &&
+        existingOrder.address.postalCode !== currentData.address.postalCode
+      ) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   async createOrder(data: {
     userId?: string;
     guestEmail?: string;
@@ -91,6 +136,32 @@ export class OrdersService {
 
     if (cart.userId && cart.userId !== userId) {
       throw new ForbiddenException({ code: 'CART_ACCESS_DENIED', message: 'You do not have access to this cart.', _timings: timings });
+    }
+
+    // ── Stage 1b: Fast-path Idempotency Pre-Check (before reserving stock or creating guest) ──
+    if (idempotencyKey) {
+      const existingOrder = await this.prisma.order.findUnique({
+        where: { idempotencyKey },
+        include: { items: true, address: true },
+      });
+      if (existingOrder) {
+        const matches = this.validateIdempotencyPayload(existingOrder, {
+          userId,
+          cartItems: cart.items || [],
+          address,
+          couponId,
+        });
+        if (!matches) {
+          throw new ConflictException({
+            code: 'IDEMPOTENCY_PAYLOAD_MISMATCH',
+            message: 'Idempotency key was previously used with a different request payload.',
+            _timings: timings,
+          });
+        }
+        mark('total_service_ms', _t0);
+        (existingOrder as any)._timings = timings;
+        return existingOrder;
+      }
     }
 
     if (cart.status !== 'active') {
@@ -352,9 +423,34 @@ export class OrdersService {
             orderStatus: 'placed',
             items: { create: orderItems },
           },
-          include: { items: true, address: true },
+          select: {
+            id: true,
+            orderNumber: true,
+            userId: true,
+            addressId: true,
+            couponId: true,
+            subtotal: true,
+            discount: true,
+            shipping: true,
+            tax: true,
+            total: true,
+            paymentStatus: true,
+            orderStatus: true,
+            idempotencyKey: true,
+            paymentRef: true,
+            createdAt: true,
+            updatedAt: true,
+          },
         });
         mark('order_create_ms', _tOrder);
+
+        // Attach pre-calculated relations in-memory to avoid 2-3 extra DB round trips inside the transaction
+        (order as any).items = orderItems.map((item, idx) => ({
+          id: `item-${order.id}-${idx}`,
+          orderId: order.id,
+          ...item,
+        }));
+        (order as any).address = newAddress;
 
         return order;
       }, { maxWait: 30000, timeout: 60000 });
@@ -378,7 +474,21 @@ export class OrdersService {
           where: { idempotencyKey },
           include: { items: true, address: true },
         });
-        if (existing) return existing;
+        if (existing) {
+          const matches = this.validateIdempotencyPayload(existing, {
+            userId,
+            cartItems: cart.items,
+            address,
+            couponId,
+          });
+          if (!matches) {
+            throw new ConflictException({
+              code: 'IDEMPOTENCY_PAYLOAD_MISMATCH',
+              message: 'Idempotency key was previously used with a different request payload.',
+            });
+          }
+          return existing;
+        }
       }
       if (err?.code === 'P2002' && err?.meta?.target?.includes('order_number')) {
         throw new ConflictException({ code: 'ORDER_NUMBER_COLLISION', message: 'Order creation collision, please retry.' });
@@ -433,8 +543,16 @@ export class OrdersService {
     return createdOrder;
   }
 
-  async initializePayment(orderId: string, amount: number) {
+  async initializePayment(orderId: string, amount: number, existingPaymentRef?: string) {
     try {
+      if (existingPaymentRef) {
+        return {
+          paymentProvider: 'razorpay',
+          razorpayOrderId: existingPaymentRef,
+          amount: Math.round(amount * 100),
+          currency: 'INR',
+        };
+      }
       return await this.payments.createRazorpayOrder(orderId, amount);
     } catch (err) {
       // Log but don't fail the checkout — order is already created
