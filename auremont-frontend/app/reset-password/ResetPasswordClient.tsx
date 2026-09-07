@@ -74,7 +74,7 @@ export default function ResetPasswordClient() {
         )}
         
         {!success ? (
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} method="POST" action="#" className="space-y-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">New Password</label>
               <input 

@@ -119,7 +119,7 @@ function RegisterForm() {
         )}
 
         {/* Form */}
-        <form onSubmit={handleRegister} className="space-y-4">
+        <form onSubmit={handleRegister} method="POST" action="#" className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-3.5">
             <div className="space-y-1.5">
               <label className="block text-[10px] uppercase tracking-widest text-secondaryText font-medium">

@@ -190,7 +190,7 @@ export default function ContactClient() {
                   </div>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} method="POST" action="#" className="space-y-6">
                   <div>
                     <h2 className="text-2xl font-serif text-primaryText mb-2">Direct Concierge Dispatch</h2>
                     <p className="text-secondaryText text-xs sm:text-sm font-light">

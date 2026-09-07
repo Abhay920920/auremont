@@ -52,20 +52,9 @@ function LoginForm() {
         router.push('/account');
       }
     } catch (err: any) {
-      const msg = err.response?.data?.message || 'Authentication failed. Please verify your credentials.';
-      const notFound = typeof msg === 'string' && (
-        msg.toLowerCase().includes('no account found') || 
-        msg.toLowerCase().includes('sign up first') ||
-        msg.toLowerCase().includes('not found')
-      );
-      
-      if (notFound) {
-        setIsNotRegistered(true);
-        setError(`No account found for "${email.trim()}". Please sign up first to access your account.`);
-      } else {
-        setIsNotRegistered(false);
-        setError(msg);
-      }
+      const msg = err.response?.data?.message || 'Invalid email or password. Please verify your credentials.';
+      setIsNotRegistered(false);
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -152,7 +141,7 @@ function LoginForm() {
         ) : null}
 
         {/* Credentials Form */}
-        <form onSubmit={handleLogin} className="space-y-4 sm:space-y-5">
+        <form onSubmit={handleLogin} method="POST" action="#" className="space-y-4 sm:space-y-5">
           {/* Email Field */}
           <div className="space-y-1.5">
             <label className="block text-[10px] uppercase tracking-widest text-secondaryText font-medium">

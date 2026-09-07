@@ -101,7 +101,7 @@ export default function Footer() {
                 <span>{message}</span>
               </div>
             ) : (
-              <form onSubmit={handleSubscribe} className="flex border-b border-zinc-700 pb-2.5 group focus-within:border-luxuryGold transition-colors max-w-sm">
+              <form onSubmit={handleSubscribe} method="POST" action="#" className="flex border-b border-zinc-700 pb-2.5 group focus-within:border-luxuryGold transition-colors max-w-sm">
                 <input 
                   type="email" 
                   value={email}
