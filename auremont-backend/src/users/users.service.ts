@@ -376,4 +376,77 @@ export class UsersService {
       },
     };
   }
+
+  async cleanupTestCustomers() {
+    const PRESERVED_EMAILS = [
+      'kulkarniabhay620@gmail.com',
+      'kulkarniabhay920@gmail.com',
+      'admin@rarenuts.com',
+      'admin@auremont.com',
+      'admin@example.com',
+    ];
+
+    const testUsers = await this.prisma.user.findMany({
+      where: {
+        role: { not: 'admin' },
+        email: { notIn: PRESERVED_EMAILS },
+        OR: [
+          { email: { contains: 'test', mode: 'insensitive' } },
+          { email: { contains: 'guest_', mode: 'insensitive' } },
+          { email: { contains: 'buyer', mode: 'insensitive' } },
+          { email: { contains: 'audit', mode: 'insensitive' } },
+          { email: { contains: 'chaos', mode: 'insensitive' } },
+          { email: { contains: 'stress', mode: 'insensitive' } },
+          { email: { contains: 'idor', mode: 'insensitive' } },
+          { email: { endsWith: '@guest.rarenuts.internal' } },
+          { email: { endsWith: '@test.com' } },
+          { email: { endsWith: '@rarenuts-test.com' } },
+          { email: 'example@gmail.com' },
+        ],
+      },
+      select: { id: true },
+    });
+
+    const testUserIds = testUsers.map((u) => u.id);
+    if (testUserIds.length === 0) {
+      return { message: 'No test customers found to clean up', deletedCount: 0 };
+    }
+
+    const testOrders = await this.prisma.order.findMany({
+      where: { userId: { in: testUserIds } },
+      select: { id: true },
+    });
+    const testOrderIds = testOrders.map((o) => o.id);
+
+    const testCarts = await this.prisma.cart.findMany({
+      where: { userId: { in: testUserIds } },
+      select: { id: true },
+    });
+    const testCartIds = testCarts.map((c) => c.id);
+
+    if (testOrderIds.length > 0) {
+      await this.prisma.payment.deleteMany({ where: { orderId: { in: testOrderIds } } });
+      await this.prisma.orderItem.deleteMany({ where: { orderId: { in: testOrderIds } } });
+      await this.prisma.order.deleteMany({ where: { id: { in: testOrderIds } } });
+    }
+
+    if (testCartIds.length > 0) {
+      await this.prisma.cartItem.deleteMany({ where: { cartId: { in: testCartIds } } });
+      await this.prisma.cart.deleteMany({ where: { id: { in: testCartIds } } });
+    }
+
+    await this.prisma.wishlist.deleteMany({ where: { userId: { in: testUserIds } } });
+    await this.prisma.review.deleteMany({ where: { userId: { in: testUserIds } } });
+    await this.prisma.notification.deleteMany({ where: { userId: { in: testUserIds } } });
+    await this.prisma.auditLog.deleteMany({ where: { userId: { in: testUserIds } } });
+    await this.prisma.adminAuditLog.deleteMany({ where: { adminId: { in: testUserIds } } });
+    await this.prisma.address.deleteMany({ where: { userId: { in: testUserIds } } });
+    const delResult = await this.prisma.user.deleteMany({ where: { id: { in: testUserIds } } });
+
+    this.clearUsersCache();
+    return {
+      message: `Successfully removed ${delResult.count} test customer(s)`,
+      deletedCount: delResult.count,
+    };
+  }
 }

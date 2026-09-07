@@ -102,6 +102,20 @@ export default function AdminCustomersPage() {
   const handleCleanupTestingCustomers = async () => {
     try {
       setCleanupLoading(true);
+      try {
+        const res = await api.post('/users/admin/cleanup-test-customers');
+        await fetchCustomers();
+        setShowCleanupModal(false);
+        setNotification({
+          type: 'success',
+          message: res.data?.message || 'Successfully removed test customers',
+        });
+        setTimeout(() => setNotification(null), 4000);
+        return;
+      } catch (postErr) {
+        console.warn('Batch cleanup endpoint unavailable, falling back to individual delete:', postErr);
+      }
+
       const PRESERVED_EMAILS = [
         'kulkarniabhay620@gmail.com',
         'kulkarniabhay920@gmail.com',

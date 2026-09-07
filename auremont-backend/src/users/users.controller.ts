@@ -71,6 +71,13 @@ export class UsersController {
     return this.usersService.getAllUsers();
   }
 
+  @Post('admin/cleanup-test-customers')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  async cleanupTestCustomers() {
+    return this.usersService.cleanupTestCustomers();
+  }
+
   @Get('admin/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
