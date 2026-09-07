@@ -135,4 +135,13 @@ export class AdminOrdersController {
   ) {
     return this.ordersService.updateOrderStatus(id, dto, user?.id);
   }
+
+  @Patch(':id/payment')
+  async updatePaymentStatus(
+    @Param('id') id: string,
+    @Body('status') status: any,
+    @GetUser() user: any
+  ) {
+    return this.ordersService.updatePaymentStatus(id, status, user?.id);
+  }
 }

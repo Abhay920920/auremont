@@ -10,7 +10,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
 import { PaymentsService } from '../payments/payments.service';
-import { Order, Prisma } from '@prisma/client';
+import { Order, Prisma, PayStatus } from '@prisma/client';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import * as crypto from 'crypto';
 
@@ -860,6 +860,32 @@ export class OrdersService {
         await this.audit.log({ userId: adminId, action: 'UPDATE_ORDER_STATUS', entity: 'Order', entityId: orderId });
       } catch (err) {
         console.warn('Failed to record audit log for order status update:', err);
+      }
+    }
+
+    return updatedOrder;
+  }
+
+  async updatePaymentStatus(orderId: string, status: PayStatus, adminId?: string): Promise<Order> {
+    const order = await this.prisma.order.findUnique({ where: { id: orderId } });
+    if (!order) throw new NotFoundException('Order not found');
+
+    this.invalidateAdminOrders();
+
+    if (order.paymentStatus === 'paid' && (status === 'pending' || status === 'failed')) {
+      throw new BadRequestException(`Cannot downgrade payment status from 'paid' to '${status}'.`);
+    }
+
+    const updatedOrder = await this.prisma.order.update({
+      where: { id: orderId },
+      data: { paymentStatus: status },
+    });
+
+    if (adminId) {
+      try {
+        await this.audit.log({ userId: adminId, action: 'UPDATE_PAYMENT_STATUS', entity: 'Order', entityId: orderId });
+      } catch (err) {
+        console.warn('Failed to record audit log for payment status update:', err);
       }
     }
 

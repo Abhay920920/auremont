@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, Package, Printer, Info, CreditCard, Box } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Package, Printer, Info, CreditCard, Box, AlertCircle, RefreshCw } from "lucide-react";
 import { format } from "date-fns";
 import api from "@/lib/axios";
 import { useCurrencyStore } from "@/store/currencyStore";
@@ -16,6 +16,9 @@ export default function OrderDetailPage() {
   const { formatPrice } = useCurrencyStore();
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [paymentLoading, setPaymentLoading] = useState(false);
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -39,13 +42,52 @@ export default function OrderDetailPage() {
 
   const updateStatus = async (newStatus: string) => {
     try {
+      setErrorMsg(null);
+      setSuccessMsg(null);
       setLoading(true);
       const res = await api.patch(`/admin/orders/${id}/status`, { status: newStatus });
       setOrder(res.data);
-    } catch (err) {
+      setSuccessMsg(`Order status successfully updated to "${newStatus}".`);
+    } catch (err: any) {
+      const msg = err.response?.data?.message || err.message || "Failed to update order status.";
+      setErrorMsg(msg);
       console.error("Failed to update status:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const updatePaymentStatus = async (newPayStatus: string) => {
+    try {
+      setErrorMsg(null);
+      setSuccessMsg(null);
+      setPaymentLoading(true);
+      const res = await api.patch(`/admin/orders/${id}/payment`, { status: newPayStatus });
+      setOrder((prev: any) => ({ ...prev, paymentStatus: newPayStatus }));
+      setSuccessMsg(`Payment status successfully marked as "${newPayStatus}".`);
+    } catch (err: any) {
+      const msg = err.response?.data?.message || err.message || "Failed to update payment status.";
+      setErrorMsg(msg);
+      console.error("Failed to update payment status:", err);
+    } finally {
+      setPaymentLoading(false);
+    }
+  };
+
+  const markPaidAndConfirm = async () => {
+    try {
+      setErrorMsg(null);
+      setSuccessMsg(null);
+      setPaymentLoading(true);
+      await api.patch(`/admin/orders/${id}/payment`, { status: 'paid' });
+      const statusRes = await api.patch(`/admin/orders/${id}/status`, { status: 'confirmed' });
+      setOrder(statusRes.data);
+      setSuccessMsg('Order payment marked as Paid and status updated to Confirmed.');
+    } catch (err: any) {
+      const msg = err.response?.data?.message || err.message || "Failed to process payment and confirm order.";
+      setErrorMsg(msg);
+    } finally {
+      setPaymentLoading(false);
     }
   };
 
@@ -90,6 +132,46 @@ export default function OrderDetailPage() {
         </div>
       </div>
 
+      {errorMsg && (
+        <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-xl flex items-start gap-3 print:hidden">
+          <AlertCircle size={20} className="shrink-0 mt-0.5 text-red-400" />
+          <div className="flex-1">
+            <p className="font-medium text-sm">Action Blocked by System Invariant</p>
+            <p className="text-xs text-red-300/90 mt-1">{errorMsg}</p>
+            {order.paymentStatus !== 'paid' && (
+              <div className="mt-3 flex items-center gap-3">
+                <button
+                  onClick={markPaidAndConfirm}
+                  disabled={paymentLoading || loading}
+                  className="text-xs bg-luxuryGold text-black font-semibold px-3 py-1.5 rounded-lg hover:bg-luxuryGold/90 transition-all shadow-sm flex items-center gap-1.5"
+                >
+                  {paymentLoading ? <RefreshCw size={12} className="animate-spin" /> : <CreditCard size={12} />}
+                  Mark as Paid & Confirm Order Now
+                </button>
+                <button
+                  onClick={() => updatePaymentStatus('paid')}
+                  disabled={paymentLoading || loading}
+                  className="text-xs bg-surface text-primaryText border border-divider font-medium px-3 py-1.5 rounded-lg hover:bg-secondaryBg transition-all"
+                >
+                  Mark as Paid Only
+                </button>
+              </div>
+            )}
+          </div>
+          <button onClick={() => setErrorMsg(null)} className="text-red-400/60 hover:text-red-400 text-xs">✕</button>
+        </div>
+      )}
+
+      {successMsg && (
+        <div className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 p-4 rounded-xl flex items-center justify-between print:hidden">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 size={18} />
+            <p className="text-sm font-medium">{successMsg}</p>
+          </div>
+          <button onClick={() => setSuccessMsg(null)} className="text-emerald-400/60 hover:text-emerald-400 text-xs">✕</button>
+        </div>
+      )}
+
       <div className="bg-secondaryBg p-8 rounded-2xl shadow-sm border border-divider print:hidden">
         <h3 className="text-lg font-medium text-primaryText mb-6">Fulfillment Pipeline</h3>
         <div className="relative">
@@ -114,12 +196,30 @@ export default function OrderDetailPage() {
                     {step.replace('_', ' ')}
                   </span>
                   {isActive && idx < STEPS.length - 1 && (
-                    <button 
-                      onClick={() => updateStatus(STEPS[idx+1])}
-                      className="mt-2 text-xs bg-luxuryGold/10 text-luxuryGold px-3 py-1 rounded-full border border-luxuryGold/20 hover:bg-luxuryGold/20 transition-colors"
-                    >
-                      Mark {STEPS[idx+1]}
-                    </button>
+                    <div className="flex flex-col items-center">
+                      {STEPS[idx+1] === 'confirmed' && order.paymentStatus !== 'paid' ? (
+                        <div className="flex flex-col items-center mt-2">
+                          <button 
+                            onClick={markPaidAndConfirm}
+                            disabled={paymentLoading || loading}
+                            className="text-xs bg-luxuryGold text-black font-semibold px-3 py-1 rounded-full hover:bg-luxuryGold/90 transition-all flex items-center gap-1 shadow-sm"
+                            title="Order payment is pending. Click to mark paid and confirm."
+                          >
+                            {paymentLoading ? <RefreshCw size={12} className="animate-spin" /> : <CheckCircle2 size={12} />}
+                            Mark Paid & Confirm
+                          </button>
+                          <span className="text-[10px] text-yellow-500/80 mt-1">Payment pending</span>
+                        </div>
+                      ) : (
+                        <button 
+                          onClick={() => updateStatus(STEPS[idx+1])}
+                          disabled={loading}
+                          className="mt-2 text-xs bg-luxuryGold/10 text-luxuryGold px-3 py-1 rounded-full border border-luxuryGold/20 hover:bg-luxuryGold/20 transition-colors"
+                        >
+                          Mark {STEPS[idx+1]}
+                        </button>
+                      )}
+                    </div>
                   )}
                 </div>
               );
@@ -209,19 +309,39 @@ export default function OrderDetailPage() {
           </div>
 
           <div className="bg-secondaryBg rounded-2xl shadow-sm border border-divider overflow-hidden">
-            <div className="p-5 border-b border-divider flex items-center gap-2">
-              <CreditCard size={18} className="text-luxuryGold" />
-              <h3 className="font-medium text-primaryText">Payment Info</h3>
+            <div className="p-5 border-b border-divider flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CreditCard size={18} className="text-luxuryGold" />
+                <h3 className="font-medium text-primaryText">Payment Info</h3>
+              </div>
+              {order.paymentStatus !== 'paid' && order.orderStatus !== 'cancelled' && (
+                <button
+                  onClick={() => updatePaymentStatus('paid')}
+                  disabled={paymentLoading || loading}
+                  className="text-xs bg-luxuryGold text-black font-semibold px-3 py-1.5 rounded-lg hover:bg-luxuryGold/90 transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50"
+                  title="Record manual / offline payment verification"
+                >
+                  {paymentLoading ? <RefreshCw size={12} className="animate-spin" /> : <CreditCard size={12} />}
+                  {paymentLoading ? 'Updating...' : 'Mark as Paid'}
+                </button>
+              )}
             </div>
-            <div className="p-5 space-y-2 text-sm text-secondaryText">
-              <div className="flex justify-between">
+            <div className="p-5 space-y-3 text-sm text-secondaryText">
+              <div className="flex justify-between items-center">
                 <span>Status</span>
                 {getPaymentBadge(order.paymentStatus)}
               </div>
               {order.payment && (
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                   <span>Provider</span>
                   <span className="capitalize">{order.payment.provider || 'Razorpay'}</span>
+                </div>
+              )}
+              {order.paymentStatus !== 'paid' && order.orderStatus !== 'cancelled' && (
+                <div className="pt-2 border-t border-divider">
+                  <p className="text-xs text-mutedText leading-relaxed">
+                    If payment was completed offline (wire transfer, direct UPI, or corporate invoice), click <strong>Mark as Paid</strong> to verify payment and unlock fulfillment.
+                  </p>
                 </div>
               )}
             </div>
