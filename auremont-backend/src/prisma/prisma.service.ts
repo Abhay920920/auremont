@@ -5,11 +5,15 @@ import { PrismaClient } from '@prisma/client';
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   constructor() {
     let dbUrl = process.env.DATABASE_URL || '';
-    if (dbUrl && !dbUrl.includes('connection_limit=')) {
-      const sep = dbUrl.includes('?') ? '&' : '?';
-      dbUrl = `${dbUrl}${sep}connection_limit=25&pool_timeout=45&pgbouncer=true`;
-    } else if (dbUrl && dbUrl.includes('connection_limit=50')) {
-      dbUrl = dbUrl.replace('connection_limit=50', 'connection_limit=25');
+    if (dbUrl) {
+      // Ensure clean base URL without query parameters before applying standard production pool flags
+      const [baseUrl, query] = dbUrl.split('?');
+      const params = new URLSearchParams(query || '');
+      params.set('connection_limit', '25');
+      params.set('pool_timeout', '60');
+      params.set('connect_timeout', '30');
+      params.set('pgbouncer', 'true');
+      dbUrl = `${baseUrl}?${params.toString()}`;
     }
     super(dbUrl ? { datasources: { db: { url: dbUrl } } } : undefined);
   }

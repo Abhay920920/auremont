@@ -200,10 +200,13 @@ export class OrdersService {
           } catch (err: any) {
             const isTransient = err.message?.includes("Can't reach database server") ||
                                 err.message?.includes('connection pool') ||
-                                err.message?.includes('Timed out fetching');
+                                err.message?.includes('Timed out fetching') ||
+                                err.code === 'P1001' ||
+                                err.code === 'P2024' ||
+                                err.code === 'P2028';
             if (isTransient && attempt < maxRetries) {
               attempt++;
-              await new Promise(r => setTimeout(r, 50 * attempt));
+              await new Promise(r => setTimeout(r, 50 * attempt + Math.floor(Math.random() * 50)));
               continue;
             }
             throw err;
@@ -263,9 +266,30 @@ export class OrdersService {
       const firstName = nameParts[0] || 'Guest';
       const lastName = nameParts.slice(1).join(' ') || 'Customer';
       const guestInternalEmail = `guest_${Date.now()}_${crypto.randomBytes(4).toString('hex')}@guest.rarenuts.internal`;
-      const guestUser = await this.prisma.user.create({
-        data: { email: guestInternalEmail, firstName, lastName, role: 'customer' },
-      });
+      
+      let userAttempt = 0;
+      let guestUser: any;
+      while (true) {
+        try {
+          guestUser = await this.prisma.user.create({
+            data: { email: guestInternalEmail, firstName, lastName, role: 'customer' },
+          });
+          break;
+        } catch (err: any) {
+          const isTransient = err.message?.includes("Can't reach database server") ||
+                              err.message?.includes('connection pool') ||
+                              err.message?.includes('Timed out fetching') ||
+                              err.code === 'P1001' ||
+                              err.code === 'P2024' ||
+                              err.code === 'P2028';
+          if (isTransient && userAttempt < 2) {
+            userAttempt++;
+            await new Promise(r => setTimeout(r, 50 * userAttempt + Math.floor(Math.random() * 50)));
+            continue;
+          }
+          throw err;
+        }
+      }
       effectiveUserId = guestUser.id;
       mark('guest_user_create_ms', _tUser);
     } else {
@@ -276,225 +300,243 @@ export class OrdersService {
 
     // ── Stage 4: Transactional order creation ──
     const _tTx0 = process.hrtime.bigint();
-    try {
-      createdOrder = await this.prisma.$transaction(async (tx) => {
-        // In mock environment only: execute in-memory inventory reservation
-        if (isMockEnv) {
-          const _tInv = process.hrtime.bigint();
-          for (const item of sortedItems) {
-            const p = await tx.product.findUnique({ where: { id: item.productId } });
-            const curStock = p ? (p.stockQty ?? (p as any).stock_qty ?? 0) : 0;
-            if (!p || curStock < item.quantity) {
-              mark('inv_atomic_check_ms', _tInv);
+    let txAttempt = 0;
+    const maxTxRetries = 2;
+
+    while (true) {
+      try {
+        createdOrder = await this.prisma.$transaction(async (tx) => {
+          // In mock environment only: execute in-memory inventory reservation
+          if (isMockEnv) {
+            const _tInv = process.hrtime.bigint();
+            for (const item of sortedItems) {
+              const p = await tx.product.findUnique({ where: { id: item.productId } });
+              const curStock = p ? (p.stockQty ?? (p as any).stock_qty ?? 0) : 0;
+              if (!p || curStock < item.quantity) {
+                mark('inv_atomic_check_ms', _tInv);
+                throw new ConflictException({
+                  code: 'INSUFFICIENT_STOCK',
+                  message: `Insufficient stock for product ${item.productId}`,
+                  _timings: timings,
+                });
+              }
+              const updated = await tx.product.update({
+                where: { id: item.productId },
+                data: { stockQty: { decrement: item.quantity } },
+              });
+              const prod = {
+                id: updated.id,
+                stock_qty: updated.stockQty ?? (updated as any).stock_qty,
+                price: updated.price,
+                sale_price: updated.salePrice,
+                name: updated.name,
+                sku: updated.sku,
+                thumbnail_url: updated.thumbnailUrl,
+              };
+              const salePrice = prod.sale_price;
+              const finalPrice = salePrice !== null && salePrice !== undefined ? salePrice : prod.price;
+              const unitPrice = new Prisma.Decimal(finalPrice);
+              const itemSubtotal = unitPrice.mul(item.quantity);
+              subtotal = subtotal.add(itemSubtotal);
+              orderItems.push({
+                productId: prod.id,
+                productName: prod.name,
+                sku: prod.sku,
+                imageUrl: prod.thumbnail_url,
+                quantity: item.quantity,
+                price: unitPrice,
+                subtotal: itemSubtotal,
+              });
+              inventoryLogs.push({ productId: prod.id, changeQty: -item.quantity, reason: 'order_placed' });
+            }
+            mark('inv_atomic_check_ms', _tInv);
+          }
+
+          // ── Step B: Coupon validation ──
+          const _tCoupon = process.hrtime.bigint();
+          let discount = new Prisma.Decimal(0);
+          if (couponId) {
+            let coupon: any = null;
+            try {
+              const couponRows = await (tx as any).$queryRaw(
+                Prisma.sql`SELECT * FROM "coupons" WHERE id = ${couponId}::uuid FOR UPDATE`,
+              );
+              coupon = couponRows?.[0];
+            } catch {
+              coupon = await tx.coupon.findUnique({ where: { id: couponId } });
+            }
+
+            if (!coupon || !coupon.status) throw new BadRequestException('Coupon is invalid or no longer active');
+            const now = new Date();
+            const startDate = new Date(coupon.startDate ?? coupon.start_date);
+            const endDate = new Date(coupon.endDate ?? coupon.end_date);
+            if (now < startDate || now > endDate) throw new BadRequestException('Coupon is expired or not active yet');
+            const minOrder = coupon.minimumOrder ?? coupon.minimum_order;
+            if (minOrder && subtotal.lessThan(minOrder)) throw new BadRequestException(`Minimum order of ${minOrder} required for this coupon`);
+            const usageLimit = coupon.usageLimit ?? coupon.usage_limit;
+            if (usageLimit) {
+              const usageCount = await tx.order.count({ where: { couponId: coupon.id } });
+              if (usageCount >= usageLimit) throw new BadRequestException('Coupon usage limit reached');
+            }
+
+            const normalizedPhone = address.phone ? address.phone.replace(/\D/g, '') : '';
+            const normalizedGuestEmail = (guestEmail || '').trim().toLowerCase();
+            const usageConditions: any[] = [];
+            if (userId) usageConditions.push({ userId });
+            if (normalizedPhone && normalizedPhone.length >= 7) {
+              const phoneSuffix = normalizedPhone.length >= 10 ? normalizedPhone.slice(-10) : normalizedPhone;
+              usageConditions.push({ address: { phone: { contains: phoneSuffix } } });
+            }
+            if (normalizedGuestEmail && !normalizedGuestEmail.includes('@guest.rarenuts.internal')) {
+              usageConditions.push({ user: { email: { equals: normalizedGuestEmail, mode: 'insensitive' } } });
+            }
+            if (usageConditions.length > 0) {
+              const customerUsage = await tx.order.count({
+                where: { couponId: coupon.id, orderStatus: { not: 'cancelled' }, OR: usageConditions },
+              });
+              if (customerUsage > 0) throw new BadRequestException('You have already used this coupon');
+            }
+
+            if (coupon.type === 'percentage') {
+              discount = subtotal.mul(coupon.value).div(100);
+              if (coupon.maxDiscount && discount.greaterThan(coupon.maxDiscount)) {
+                discount = new Prisma.Decimal(coupon.maxDiscount);
+              }
+            } else {
+              discount = new Prisma.Decimal(coupon.value);
+            }
+          }
+          mark('coupon_lookup_ms', _tCoupon);
+
+          // ── Step C: Totals ──
+          const _tTotals = process.hrtime.bigint();
+          const shipping = new Prisma.Decimal('0.00');
+          const tax = subtotal.mul(new Prisma.Decimal('0.05'));
+          let total = subtotal.add(shipping).add(tax).sub(discount);
+          if (total.lessThan(0)) total = new Prisma.Decimal(0);
+          mark('totals_calc_ms', _tTotals);
+
+          // ── Step D: Address & Order Creation ──
+          const _tAddr = process.hrtime.bigint();
+          const newAddress = await tx.address.create({
+            data: {
+              userId: effectiveUserId,
+              fullName: address.fullName,
+              phone: address.phone,
+              addressLine1: address.addressLine1,
+              addressLine2: address.addressLine2,
+              city: address.city,
+              state: address.state,
+              postalCode: address.postalCode,
+              country: address.country,
+            },
+          });
+          mark('address_create_ms', _tAddr);
+
+          const _tOrder = process.hrtime.bigint();
+          const orderNumber = `ORD-${Date.now()}-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
+          const order = await tx.order.create({
+            data: {
+              orderNumber,
+              userId: effectiveUserId,
+              addressId: newAddress.id,
+              couponId: couponId ?? null,
+              idempotencyKey: idempotencyKey ?? null,
+              subtotal,
+              discount: discount.greaterThan(0) ? discount : null,
+              shipping,
+              tax,
+              total,
+              paymentStatus: 'pending',
+              orderStatus: 'placed',
+              items: { create: orderItems },
+            },
+            select: {
+              id: true,
+              orderNumber: true,
+              userId: true,
+              addressId: true,
+              couponId: true,
+              subtotal: true,
+              discount: true,
+              shipping: true,
+              tax: true,
+              total: true,
+              paymentStatus: true,
+              orderStatus: true,
+              idempotencyKey: true,
+              paymentRef: true,
+              createdAt: true,
+              updatedAt: true,
+            },
+          });
+          mark('order_create_ms', _tOrder);
+
+          // Attach pre-calculated relations in-memory to avoid 2-3 extra DB round trips inside the transaction
+          (order as any).items = orderItems.map((item, idx) => ({
+            id: `item-${order.id}-${idx}`,
+            orderId: order.id,
+            ...item,
+          }));
+          (order as any).address = newAddress;
+
+          return order;
+        }, { maxWait: 30000, timeout: 60000 });
+        break;
+      } catch (err: any) {
+        const isTransient = err.message?.includes("Can't reach database server") ||
+                            err.message?.includes('connection pool') ||
+                            err.message?.includes('Timed out fetching') ||
+                            err.code === 'P1001' ||
+                            err.code === 'P2024' ||
+                            err.code === 'P2028';
+        if (isTransient && txAttempt < maxTxRetries) {
+          txAttempt++;
+          await new Promise(r => setTimeout(r, 75 * txAttempt + Math.floor(Math.random() * 50)));
+          continue;
+        }
+
+        // Compensating inventory rollback if order transaction failed
+        if (reservedItems.length > 0) {
+          await Promise.all(
+            reservedItems.map((r) =>
+              this.prisma.product.update({
+                where: { id: r.productId },
+                data: { stockQty: { increment: r.quantity } },
+              }).catch(() => {})
+            )
+          );
+        }
+        // Idempotency replay: order already exists with this key
+        if (err?.code === 'P2002' && (err?.meta?.target?.includes('idempotency') || err?.message?.includes('idempotency'))) {
+          const existing = await this.prisma.order.findUnique({
+            where: { idempotencyKey },
+            include: { items: true, address: true },
+          });
+          if (existing) {
+            const matches = this.validateIdempotencyPayload(existing, {
+              userId,
+              cartItems: cart.items,
+              address,
+              couponId,
+            });
+            if (!matches) {
               throw new ConflictException({
-                code: 'INSUFFICIENT_STOCK',
-                message: `Insufficient stock for product ${item.productId}`,
-                _timings: timings,
+                code: 'IDEMPOTENCY_PAYLOAD_MISMATCH',
+                message: 'Idempotency key was previously used with a different request payload.',
               });
             }
-            const updated = await tx.product.update({
-              where: { id: item.productId },
-              data: { stockQty: { decrement: item.quantity } },
-            });
-            const prod = {
-              id: updated.id,
-              stock_qty: updated.stockQty ?? (updated as any).stock_qty,
-              price: updated.price,
-              sale_price: updated.salePrice,
-              name: updated.name,
-              sku: updated.sku,
-              thumbnail_url: updated.thumbnailUrl,
-            };
-            const salePrice = prod.sale_price;
-            const finalPrice = salePrice !== null && salePrice !== undefined ? salePrice : prod.price;
-            const unitPrice = new Prisma.Decimal(finalPrice);
-            const itemSubtotal = unitPrice.mul(item.quantity);
-            subtotal = subtotal.add(itemSubtotal);
-            orderItems.push({
-              productId: prod.id,
-              productName: prod.name,
-              sku: prod.sku,
-              imageUrl: prod.thumbnail_url,
-              quantity: item.quantity,
-              price: unitPrice,
-              subtotal: itemSubtotal,
-            });
-            inventoryLogs.push({ productId: prod.id, changeQty: -item.quantity, reason: 'order_placed' });
-          }
-          mark('inv_atomic_check_ms', _tInv);
-        }
-
-        // ── Step B: Coupon validation ──
-        const _tCoupon = process.hrtime.bigint();
-        let discount = new Prisma.Decimal(0);
-        if (couponId) {
-          let coupon: any = null;
-          try {
-            const couponRows = await (tx as any).$queryRaw(
-              Prisma.sql`SELECT * FROM "coupons" WHERE id = ${couponId}::uuid FOR UPDATE`,
-            );
-            coupon = couponRows?.[0];
-          } catch {
-            coupon = await tx.coupon.findUnique({ where: { id: couponId } });
-          }
-
-          if (!coupon || !coupon.status) throw new BadRequestException('Coupon is invalid or no longer active');
-          const now = new Date();
-          const startDate = new Date(coupon.startDate ?? coupon.start_date);
-          const endDate = new Date(coupon.endDate ?? coupon.end_date);
-          if (now < startDate || now > endDate) throw new BadRequestException('Coupon is expired or not active yet');
-          const minOrder = coupon.minimumOrder ?? coupon.minimum_order;
-          if (minOrder && subtotal.lessThan(minOrder)) throw new BadRequestException(`Minimum order of ${minOrder} required for this coupon`);
-          const usageLimit = coupon.usageLimit ?? coupon.usage_limit;
-          if (usageLimit) {
-            const usageCount = await tx.order.count({ where: { couponId: coupon.id } });
-            if (usageCount >= usageLimit) throw new BadRequestException('Coupon usage limit reached');
-          }
-
-          const normalizedPhone = address.phone ? address.phone.replace(/\D/g, '') : '';
-          const normalizedGuestEmail = (guestEmail || '').trim().toLowerCase();
-          const usageConditions: any[] = [];
-          if (userId) usageConditions.push({ userId });
-          if (normalizedPhone && normalizedPhone.length >= 7) {
-            const phoneSuffix = normalizedPhone.length >= 10 ? normalizedPhone.slice(-10) : normalizedPhone;
-            usageConditions.push({ address: { phone: { contains: phoneSuffix } } });
-          }
-          if (normalizedGuestEmail && !normalizedGuestEmail.includes('@guest.rarenuts.internal')) {
-            usageConditions.push({ user: { email: { equals: normalizedGuestEmail, mode: 'insensitive' } } });
-          }
-          if (usageConditions.length > 0) {
-            const customerUsage = await tx.order.count({
-              where: { couponId: coupon.id, orderStatus: { not: 'cancelled' }, OR: usageConditions },
-            });
-            if (customerUsage > 0) throw new BadRequestException('You have already used this coupon');
-          }
-
-          if (coupon.type === 'percentage') {
-            discount = subtotal.mul(coupon.value).div(100);
-            if (coupon.maxDiscount && discount.greaterThan(coupon.maxDiscount)) {
-              discount = new Prisma.Decimal(coupon.maxDiscount);
-            }
-          } else {
-            discount = new Prisma.Decimal(coupon.value);
+            return existing;
           }
         }
-        mark('coupon_lookup_ms', _tCoupon);
-
-        // ── Step C: Totals ──
-        const _tTotals = process.hrtime.bigint();
-        const shipping = new Prisma.Decimal('0.00');
-        const tax = subtotal.mul(new Prisma.Decimal('0.05'));
-        let total = subtotal.add(shipping).add(tax).sub(discount);
-        if (total.lessThan(0)) total = new Prisma.Decimal(0);
-        mark('totals_calc_ms', _tTotals);
-
-        // ── Step D: Address & Order Creation ──
-        const _tAddr = process.hrtime.bigint();
-        const newAddress = await tx.address.create({
-          data: {
-            userId: effectiveUserId,
-            fullName: address.fullName,
-            phone: address.phone,
-            addressLine1: address.addressLine1,
-            addressLine2: address.addressLine2,
-            city: address.city,
-            state: address.state,
-            postalCode: address.postalCode,
-            country: address.country,
-          },
-        });
-        mark('address_create_ms', _tAddr);
-
-        const _tOrder = process.hrtime.bigint();
-        const orderNumber = `ORD-${Date.now()}-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
-        const order = await tx.order.create({
-          data: {
-            orderNumber,
-            userId: effectiveUserId,
-            addressId: newAddress.id,
-            couponId: couponId ?? null,
-            idempotencyKey: idempotencyKey ?? null,
-            subtotal,
-            discount: discount.greaterThan(0) ? discount : null,
-            shipping,
-            tax,
-            total,
-            paymentStatus: 'pending',
-            orderStatus: 'placed',
-            items: { create: orderItems },
-          },
-          select: {
-            id: true,
-            orderNumber: true,
-            userId: true,
-            addressId: true,
-            couponId: true,
-            subtotal: true,
-            discount: true,
-            shipping: true,
-            tax: true,
-            total: true,
-            paymentStatus: true,
-            orderStatus: true,
-            idempotencyKey: true,
-            paymentRef: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        });
-        mark('order_create_ms', _tOrder);
-
-        // Attach pre-calculated relations in-memory to avoid 2-3 extra DB round trips inside the transaction
-        (order as any).items = orderItems.map((item, idx) => ({
-          id: `item-${order.id}-${idx}`,
-          orderId: order.id,
-          ...item,
-        }));
-        (order as any).address = newAddress;
-
-        return order;
-      }, { maxWait: 30000, timeout: 60000 });
-
-      mark('order_tx_total_ms', _tTx0);
-    } catch (err: any) {
-      // Compensating inventory rollback if order transaction failed
-      if (reservedItems.length > 0) {
-        await Promise.all(
-          reservedItems.map((r) =>
-            this.prisma.product.update({
-              where: { id: r.productId },
-              data: { stockQty: { increment: r.quantity } },
-            }).catch(() => {})
-          )
-        );
-      }
-      // Idempotency replay: order already exists with this key
-      if (err?.code === 'P2002' && (err?.meta?.target?.includes('idempotency') || err?.message?.includes('idempotency'))) {
-        const existing = await this.prisma.order.findUnique({
-          where: { idempotencyKey },
-          include: { items: true, address: true },
-        });
-        if (existing) {
-          const matches = this.validateIdempotencyPayload(existing, {
-            userId,
-            cartItems: cart.items,
-            address,
-            couponId,
-          });
-          if (!matches) {
-            throw new ConflictException({
-              code: 'IDEMPOTENCY_PAYLOAD_MISMATCH',
-              message: 'Idempotency key was previously used with a different request payload.',
-            });
-          }
-          return existing;
+        if (err?.code === 'P2002' && err?.meta?.target?.includes('order_number')) {
+          throw new ConflictException({ code: 'ORDER_NUMBER_COLLISION', message: 'Order creation collision, please retry.' });
         }
+        throw err;
       }
-      if (err?.code === 'P2002' && err?.meta?.target?.includes('order_number')) {
-        throw new ConflictException({ code: 'ORDER_NUMBER_COLLISION', message: 'Order creation collision, please retry.' });
-      }
-      throw err;
     }
+
+    mark('order_tx_total_ms', _tTx0);
 
     // ── Phase 2: Fire-and-forget non-critical side effects — do NOT await these, they add RTTs to the hot path ──
     mark('total_service_ms', _t0);
