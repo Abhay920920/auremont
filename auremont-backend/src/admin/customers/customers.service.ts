@@ -7,7 +7,9 @@ export class AdminCustomersService {
   constructor(private prisma: PrismaService) {}
 
   async findAll(page: number = 1, limit: number = 10, search?: string) {
-    const skip = (page - 1) * limit;
+    const safePage = Math.max(1, Number(page) || 1);
+    const safeLimit = Math.min(100, Math.max(1, Number(limit) || 10));
+    const skip = (safePage - 1) * safeLimit;
 
     const where: any = { role: 'customer' };
     if (search) {
@@ -22,7 +24,7 @@ export class AdminCustomersService {
       this.prisma.user.findMany({
         where,
         skip,
-        take: limit,
+        take: safeLimit,
         orderBy: { createdAt: 'desc' },
         include: {
           _count: {
@@ -49,9 +51,9 @@ export class AdminCustomersService {
       data,
       meta: {
         total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
+        page: safePage,
+        limit: safeLimit,
+        totalPages: Math.ceil(total / safeLimit),
       },
     };
   }

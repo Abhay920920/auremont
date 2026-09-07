@@ -95,6 +95,14 @@ api.interceptors.request.use(async (config) => {
     }
   }
 
+  if (config.headers && !config.headers['x-request-id']) {
+    const randomId = typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `cli_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    config.headers['x-request-id'] = randomId;
+    config.headers['x-correlation-id'] = randomId;
+  }
+
   return config;
 });
 

@@ -2,11 +2,15 @@ import { Controller, Get, HttpCode, HttpStatus, ServiceUnavailableException, Hea
 import { SkipThrottle } from '@nestjs/throttler';
 import { Response } from 'express';
 import { PrismaService } from './prisma/prisma.service';
+import { NotificationsService } from './notifications/notifications.service';
 
 @Controller()
 @SkipThrottle()
 export class HealthController {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private notifications: NotificationsService,
+  ) {}
 
   @Get('favicon.ico')
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -139,14 +143,41 @@ export class HealthController {
       };
     } catch (err: any) {
       this.lastDbPing = null;
+      const isDev = process.env.NODE_ENV !== 'production';
       throw new ServiceUnavailableException({
         status: 'unready',
         database: {
           status: 'disconnected',
-          error: err?.message || 'Database ping failed',
+          error: isDev ? err?.message : 'Database ping check failed',
         },
         timestamp: new Date().toISOString(),
       });
     }
+  }
+
+  @Get('health/outbox')
+  @HttpCode(HttpStatus.OK)
+  async getOutboxHealth() {
+    const metrics = await this.notifications.getOutboxMetrics();
+    return {
+      status: metrics.status,
+      timestamp: new Date().toISOString(),
+      outbox: metrics,
+    };
+  }
+
+  @Get('health/detailed')
+  @HttpCode(HttpStatus.OK)
+  async getDetailedHealth() {
+    const readiness = await this.getReadiness();
+    const outbox = await this.notifications.getOutboxMetrics();
+    const poolConfig = this.prisma.getPoolConfig();
+    return {
+      status: readiness.status === 'ready' && outbox.status !== 'warning' ? 'healthy' : 'degraded',
+      timestamp: new Date().toISOString(),
+      readiness,
+      outbox,
+      pool: poolConfig,
+    };
   }
 }

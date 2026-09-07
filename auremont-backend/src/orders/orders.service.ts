@@ -13,6 +13,7 @@ import { PaymentsService } from '../payments/payments.service';
 import { Order, Prisma, PayStatus } from '@prisma/client';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import * as crypto from 'crypto';
+import { structuredLogger } from '../common/structured-logger.service';
 
 import { NotificationsService } from '../notifications/notifications.service';
 
@@ -152,12 +153,25 @@ export class OrdersService {
           couponId,
         });
         if (!matches) {
+          structuredLogger.warn('Idempotency payload mismatch rejected', {
+            service: 'orders',
+            operation: 'idempotency_mismatch',
+            orderId: existingOrder.id,
+            idempotencyKeyHash: crypto.createHash('sha256').update(idempotencyKey).digest('hex').substring(0, 16),
+          });
           throw new ConflictException({
             code: 'IDEMPOTENCY_PAYLOAD_MISMATCH',
             message: 'Idempotency key was previously used with a different request payload.',
             _timings: timings,
           });
         }
+        structuredLogger.log(`Idempotency replay: returning existing order #${existingOrder.orderNumber}`, {
+          service: 'orders',
+          operation: 'idempotency_replay',
+          orderId: existingOrder.id,
+          orderNumber: existingOrder.orderNumber,
+          idempotencyKeyHash: crypto.createHash('sha256').update(idempotencyKey).digest('hex').substring(0, 16),
+        });
         mark('total_service_ms', _t0);
         (existingOrder as any)._timings = timings;
         return existingOrder;
@@ -537,9 +551,23 @@ export class OrdersService {
     }
 
     mark('order_tx_total_ms', _tTx0);
-
-    // ── Phase 2: Fire-and-forget non-critical side effects — do NOT await these, they add RTTs to the hot path ──
     mark('total_service_ms', _t0);
+
+    const idempotencyHash = idempotencyKey
+      ? crypto.createHash('sha256').update(idempotencyKey).digest('hex').substring(0, 16)
+      : undefined;
+
+    structuredLogger.log(`Checkout order placed: #${createdOrder.orderNumber}`, {
+      service: 'orders',
+      operation: 'checkout_order_placed',
+      orderId: createdOrder.id,
+      orderNumber: createdOrder.orderNumber,
+      userId: effectiveUserId,
+      total: createdOrder.total?.toString?.() ?? String(createdOrder.total ?? ''),
+      itemCount: orderItems.length,
+      idempotencyKeyHash: idempotencyHash,
+      timings,
+    });
     const _orderId = createdOrder.id;
     const _orderNumber = createdOrder.orderNumber;
     const _effectiveUserId = effectiveUserId;
@@ -815,7 +843,9 @@ export class OrdersService {
         ];
       }
 
-      const skip = (Number(page) - 1) * Number(limit);
+      const pageNum = Math.max(1, Number(page) || 1);
+      const take = Math.min(100, Math.max(1, Number(limit) || 20));
+      const skip = (pageNum - 1) * take;
 
       const [data, total] = await Promise.all([
         this.prisma.order.findMany({
@@ -823,7 +853,7 @@ export class OrdersService {
           include: { user: { select: { firstName: true, lastName: true, email: true } } },
           orderBy: { createdAt: 'desc' },
           skip,
-          take: Number(limit),
+          take,
         }),
         this.prisma.order.count({ where }),
       ]);

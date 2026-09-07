@@ -1,6 +1,7 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as crypto from 'crypto';
+import { structuredLogger } from '../common/structured-logger.service';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Razorpay = require('razorpay');
@@ -414,6 +415,11 @@ export class PaymentsService {
     }
 
     if (!isValid) {
+      structuredLogger.warn(`Payment signature verification failed for order ${razorpayOrderId}`, {
+        service: 'payments',
+        operation: 'signature_verification_failed',
+        razorpayOrderId,
+      });
       throw new BadRequestException({
         code: 'INVALID_SIGNATURE',
         message: 'Payment signature verification failed.',
@@ -506,7 +512,13 @@ export class PaymentsService {
             data: { paymentStatus: 'pending' },
           });
         } catch { /* ignore */ }
-        console.error('Razorpay payments.fetch failed:', err?.message);
+        structuredLogger.error(`Razorpay payments.fetch failed for order ${orderRef.id}: ${err?.message}`, err?.stack, {
+          service: 'payments',
+          operation: 'razorpay_fetch_failed',
+          orderId: orderRef.id,
+          razorpayOrderId,
+          razorpayPaymentId,
+        });
         throw new BadRequestException({
           code: 'GATEWAY_FETCH_FAILED',
           message: 'Unable to verify payment with gateway. Please try again.',
@@ -640,6 +652,14 @@ export class PaymentsService {
         } catch { /* notification failure must not block payment confirmation */ }
       }
     }, { maxWait: 15000, timeout: 30000 });
+
+    structuredLogger.log(`Payment verified and order confirmed: #${orderRef.id}`, {
+      service: 'payments',
+      operation: 'payment_verified',
+      orderId: orderRef.id,
+      gatewayPaymentId: razorpayPaymentId,
+      amountINR: gatewayAmountPaise / 100,
+    });
 
     // Fetch and return the authoritative confirmed order state
     return this.buildConfirmedOrderResponse(orderRef.id);

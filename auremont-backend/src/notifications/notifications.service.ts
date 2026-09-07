@@ -147,4 +147,45 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
       }
     }
   }
+
+  /**
+   * Returns operational visibility metrics for the outbox event queue.
+   */
+  async getOutboxMetrics() {
+    const db = this.prisma as any;
+    try {
+      if (!db?.outboxEvent?.count) {
+        return { status: 'mock', pendingCount: 0, processingCount: 0, failedCount: 0, processedCount: 0, oldestPendingAgeSeconds: 0 };
+      }
+      const [pendingCount, processingCount, failedCount, processedCount, oldestPending] = await Promise.all([
+        db.outboxEvent.count({ where: { status: 'pending' } }),
+        db.outboxEvent.count({ where: { status: 'processing' } }),
+        db.outboxEvent.count({ where: { status: 'failed' } }),
+        db.outboxEvent.count({ where: { status: 'processed' } }),
+        db.outboxEvent.findFirst({
+          where: { status: 'pending' },
+          orderBy: { createdAt: 'asc' },
+          select: { createdAt: true },
+        }),
+      ]);
+
+      const oldestPendingAgeSeconds = oldestPending?.createdAt
+        ? Math.floor((Date.now() - new Date(oldestPending.createdAt).getTime()) / 1000)
+        : 0;
+
+      return {
+        status: failedCount > 20 ? 'warning' : 'healthy',
+        pendingCount,
+        processingCount,
+        failedCount,
+        processedCount,
+        oldestPendingAgeSeconds,
+      };
+    } catch {
+      return {
+        status: 'unavailable',
+        error: 'Unable to query outbox metrics',
+      };
+    }
+  }
 }

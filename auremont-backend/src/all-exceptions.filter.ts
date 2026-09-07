@@ -1,82 +1,174 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
 import { Request, Response } from 'express';
 import * as crypto from 'crypto';
+import { structuredLogger } from './common/structured-logger.service';
+
+export enum ErrorCategory {
+  VALIDATION_ERROR = 'VALIDATION_ERROR',
+  AUTHENTICATION_ERROR = 'AUTHENTICATION_ERROR',
+  AUTHORIZATION_ERROR = 'AUTHORIZATION_ERROR',
+  NOT_FOUND = 'NOT_FOUND',
+  CONFLICT = 'CONFLICT',
+  OUT_OF_STOCK = 'OUT_OF_STOCK',
+  IDEMPOTENCY_CONFLICT = 'IDEMPOTENCY_CONFLICT',
+  PAYMENT_ERROR = 'PAYMENT_ERROR',
+  PAYMENT_VERIFICATION_ERROR = 'PAYMENT_VERIFICATION_ERROR',
+  DATABASE_ERROR = 'DATABASE_ERROR',
+  DATABASE_TIMEOUT = 'DATABASE_TIMEOUT',
+  EXTERNAL_SERVICE_ERROR = 'EXTERNAL_SERVICE_ERROR',
+  RATE_LIMIT = 'RATE_LIMIT',
+  INTERNAL_ERROR = 'INTERNAL_ERROR',
+}
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  private readonly logger = new Logger(AllExceptionsFilter.name);
-
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    // Request & Correlation Tracking
     const requestId =
       (request.headers['x-request-id'] as string) ||
       (request.headers['x-correlation-id'] as string) ||
+      (request as any).requestId ||
       `req_${crypto.randomBytes(8).toString('hex')}`;
 
     response.setHeader('X-Request-ID', requestId);
+    response.setHeader('x-correlation-id', requestId);
 
     const isHttp = exception instanceof HttpException;
-    const status = isHttp ? (exception as HttpException).getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
-    const exceptionResponse = isHttp ? (exception as HttpException).getResponse() : null;
+    const isDev = process.env.NODE_ENV !== 'production';
 
-    // Server-side structured diagnostic logging
-    if (status >= 500) {
-      this.logger.error(
-        `[${requestId}] ${request.method} ${request.url} - ${status} Error: ${(exception as any)?.message}`,
-        (exception as any)?.stack,
-      );
-    } else {
-      this.logger.warn(
-        `[${requestId}] ${request.method} ${request.url} - ${status} Client Error: ${(exception as any)?.message}`,
-      );
-    }
+    let status = HttpStatus.INTERNAL_SERVER_ERROR;
+    let errorCode: ErrorCategory | string = ErrorCategory.INTERNAL_ERROR;
+    let message = 'An unexpected internal error occurred. Please try again later.';
+    let details: any = undefined;
+
+    const err = exception as any;
+    const prismaCode = err?.code;
+    const isPrismaError =
+      Boolean(prismaCode && typeof prismaCode === 'string' && prismaCode.startsWith('P')) ||
+      err?.name?.includes('Prisma');
 
     if (isHttp) {
-      const responseBody: Record<string, any> = {
-        statusCode: status,
-        requestId,
-        timestamp: new Date().toISOString(),
-        path: request.url,
-      };
+      status = (exception as HttpException).getStatus();
+      const exceptionResponse = (exception as HttpException).getResponse();
 
       if (typeof exceptionResponse === 'string') {
-        responseBody.message = exceptionResponse;
+        message = exceptionResponse;
       } else if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
-        Object.assign(responseBody, exceptionResponse);
-        responseBody.statusCode = status;
-        responseBody.requestId = requestId;
+        const respObj = exceptionResponse as Record<string, any>;
+        message = respObj.message || 'Request failed';
+        errorCode = respObj.code || this.mapStatusToErrorCode(status, respObj);
+        details = respObj.error || respObj.errors || respObj.details;
       }
-
-      return response.status(status).json(responseBody);
+    } else if (isPrismaError) {
+      // Prisma error taxonomy mapping
+      if (prismaCode === 'P1001' || prismaCode === 'P2024' || prismaCode === 'P2028') {
+        status = HttpStatus.SERVICE_UNAVAILABLE;
+        errorCode = ErrorCategory.DATABASE_TIMEOUT;
+        message = 'Database service temporarily unavailable under heavy load. Please retry in a moment.';
+      } else if (prismaCode === 'P2002') {
+        status = HttpStatus.CONFLICT;
+        errorCode = ErrorCategory.CONFLICT;
+        message = 'A record with this identifier or unique property already exists.';
+      } else if (prismaCode === 'P2025') {
+        status = HttpStatus.NOT_FOUND;
+        errorCode = ErrorCategory.NOT_FOUND;
+        message = 'The requested database record was not found.';
+      } else {
+        status = HttpStatus.INTERNAL_SERVER_ERROR;
+        errorCode = ErrorCategory.DATABASE_ERROR;
+        message = 'A database integrity operation failed.';
+      }
+    } else {
+      const errStatus = err?.status || err?.statusCode;
+      if (typeof errStatus === 'number' && errStatus >= 400 && errStatus < 600) {
+        status = errStatus;
+        message = err?.message || 'Request error';
+        errorCode = this.mapStatusToErrorCode(status);
+      } else if (err?.name === 'ThrottlerException') {
+        status = HttpStatus.TOO_MANY_REQUESTS;
+        errorCode = ErrorCategory.RATE_LIMIT;
+        message = 'Too many requests. Please slow down and try again.';
+      } else {
+        status = HttpStatus.INTERNAL_SERVER_ERROR;
+        errorCode = ErrorCategory.INTERNAL_ERROR;
+        message = isDev ? `Internal server error: ${err?.message}` : 'Internal server error';
+      }
     }
 
-    // Check if error has status / statusCode (e.g. from body-parser 413 PayloadTooLarge)
-    const errStatus = (exception as any)?.status || (exception as any)?.statusCode;
-    if (typeof errStatus === 'number' && errStatus >= 400 && errStatus < 600) {
-      return response.status(errStatus).json({
-        statusCode: errStatus,
-        requestId,
-        timestamp: new Date().toISOString(),
-        path: request.url,
-        message: (exception as any)?.message || 'Request error',
-      });
+    // Server-side structured diagnostic logging with full redaction
+    const logContext = {
+      service: 'auremont-api',
+      operation: 'http_exception',
+      requestId,
+      method: request.method,
+      route: request.originalUrl || request.url,
+      statusCode: status,
+      errorCode,
+      errorType: err?.name || 'Error',
+      prismaCode: isPrismaError ? prismaCode : undefined,
+      userId: (request as any).user?.id,
+    };
+
+    if (status >= 500) {
+      structuredLogger.error(
+        `[${requestId}] ${request.method} ${request.url} - ${status} [${errorCode}]: ${err?.message || message}`,
+        err?.stack,
+        logContext,
+      );
+    } else {
+      structuredLogger.warn(
+        `[${requestId}] ${request.method} ${request.url} - ${status} [${errorCode}]: ${err?.message || message}`,
+        logContext,
+      );
     }
 
-    // Non-HTTP exception — safe 500
-    const isDev = process.env.NODE_ENV !== 'production';
-    return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+    // Client response payload (sanitized in production)
+    const responsePayload: Record<string, any> = {
+      statusCode: status,
+      errorCode,
+      message,
       requestId,
       timestamp: new Date().toISOString(),
       path: request.url,
-      message: isDev
-        ? `Internal server error: ${(exception as any)?.message}`
-        : 'Internal server error',
-      ...(isDev && { stack: (exception as any)?.stack }),
-    });
+    };
+
+    if (details !== undefined && isHttp) {
+      responsePayload.details = details;
+    }
+
+    if (isDev && err?.stack) {
+      responsePayload.stack = err.stack;
+    }
+
+    return response.status(status).json(responsePayload);
+  }
+
+  private mapStatusToErrorCode(status: number, respObj?: Record<string, any>): ErrorCategory {
+    if (respObj?.code) {
+      return respObj.code;
+    }
+    switch (status) {
+      case HttpStatus.BAD_REQUEST:
+        return ErrorCategory.VALIDATION_ERROR;
+      case HttpStatus.UNAUTHORIZED:
+        return ErrorCategory.AUTHENTICATION_ERROR;
+      case HttpStatus.FORBIDDEN:
+        return ErrorCategory.AUTHORIZATION_ERROR;
+      case HttpStatus.NOT_FOUND:
+        return ErrorCategory.NOT_FOUND;
+      case HttpStatus.CONFLICT:
+        return ErrorCategory.CONFLICT;
+      case HttpStatus.TOO_MANY_REQUESTS:
+        return ErrorCategory.RATE_LIMIT;
+      case HttpStatus.SERVICE_UNAVAILABLE:
+        return ErrorCategory.DATABASE_TIMEOUT;
+      case HttpStatus.BAD_GATEWAY:
+        return ErrorCategory.EXTERNAL_SERVICE_ERROR;
+      default:
+        return ErrorCategory.INTERNAL_ERROR;
+    }
   }
 }

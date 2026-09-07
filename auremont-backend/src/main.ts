@@ -5,6 +5,7 @@ import { NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './all-exceptions.filter';
+import { LoggingInterceptor } from './common/logging.interceptor';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 const cookieParser = require('cookie-parser');
@@ -90,7 +91,7 @@ async function bootstrap() {
     },
     credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-razorpay-signature', 'x-worker-secret', 'Accept', 'X-Requested-With', 'x-correlation-id'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-razorpay-signature', 'x-worker-secret', 'Accept', 'X-Requested-With', 'x-correlation-id', 'x-request-id'],
   });
   
   app.use(typeof cookieParser === 'function' ? cookieParser() : (cookieParser as any).default());
@@ -103,7 +104,10 @@ async function bootstrap() {
       req.headers['x-request-id'] ||
       `req_${crypto.randomBytes(8).toString('hex')}`;
     req.headers['x-correlation-id'] = correlationId;
+    req.headers['x-request-id'] = correlationId;
+    req.requestId = correlationId;
     res.setHeader('x-correlation-id', correlationId);
+    res.setHeader('X-Request-ID', correlationId);
     next();
   });
 
@@ -118,9 +122,25 @@ async function bootstrap() {
   }));
   
   app.useGlobalFilters(new AllExceptionsFilter());
+  app.useGlobalInterceptors(new LoggingInterceptor());
 
   // Enterprise Hardening: Enable Graceful Shutdown Hooks
   app.enableShutdownHooks();
+
+  const signals: NodeJS.Signals[] = ['SIGTERM', 'SIGINT'];
+  for (const sig of signals) {
+    process.on(sig, async () => {
+      Logger.log(`Process ${process.pid} received ${sig}. Initiating graceful shutdown...`, 'Shutdown');
+      try {
+        await app.close();
+        Logger.log(`Graceful shutdown completed successfully for process ${process.pid}.`, 'Shutdown');
+        process.exit(0);
+      } catch (err: any) {
+        Logger.error(`Error during graceful shutdown: ${err?.message}`, err?.stack, 'Shutdown');
+        process.exit(1);
+      }
+    });
+  }
 
   const server = app.getHttpServer();
   server.keepAliveTimeout = 65000; // 65 seconds for reverse proxies / ALB / Cloudflare
