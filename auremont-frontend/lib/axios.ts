@@ -7,7 +7,7 @@ const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 const api = axios.create({
   baseURL,
   withCredentials: true,
-  timeout: 45000,
+  timeout: 75000,
 });
 
 let isRefreshing = false;
@@ -112,6 +112,15 @@ api.interceptors.response.use(
     const originalRequest = error.config;
 
     if (!originalRequest || !error.response) {
+      // If network error or timeout occurs on a safe GET request (e.g. backend waking up from cold-start), retry once
+      if (
+        originalRequest &&
+        !originalRequest._coldStartRetry &&
+        originalRequest.method?.toLowerCase() === 'get'
+      ) {
+        originalRequest._coldStartRetry = true;
+        return api(originalRequest);
+      }
       return Promise.reject(error);
     }
 

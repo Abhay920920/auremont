@@ -2,6 +2,7 @@ import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from
 import { Request, Response } from 'express';
 import * as crypto from 'crypto';
 import { structuredLogger } from './common/structured-logger.service';
+import { alertService } from './common/alert.service';
 
 export enum ErrorCategory {
   VALIDATION_ERROR = 'VALIDATION_ERROR',
@@ -118,6 +119,17 @@ export class AllExceptionsFilter implements ExceptionFilter {
         err?.stack,
         logContext,
       );
+
+      // Automated operational alert dispatch
+      alertService
+        .dispatchAlert(
+          errorCode === ErrorCategory.DATABASE_TIMEOUT ? 'DATABASE_TIMEOUT' : 'HIGH_5XX_RATE',
+          status === HttpStatus.SERVICE_UNAVAILABLE ? 'CRITICAL' : 'ERROR',
+          `HTTP ${status} [${errorCode}] on ${request.method} ${request.url}`,
+          err?.message || message,
+          { requestId, route: request.url, method: request.method, statusCode: status, prismaCode },
+        )
+        .catch(() => {});
     } else {
       structuredLogger.warn(
         `[${requestId}] ${request.method} ${request.url} - ${status} [${errorCode}]: ${err?.message || message}`,

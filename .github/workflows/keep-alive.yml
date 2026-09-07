@@ -1,0 +1,39 @@
+name: Production Keep-Alive & Synthetic Monitor
+
+on:
+  schedule:
+    # Trigger every 5 minutes to prevent Render free-tier idle sleep (15 min window)
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping-health:
+    name: Ping Production Health & Prevent Sleep
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - name: Ping Backend Health Endpoint
+        run: |
+          START=$(date +%s%N)
+          RESPONSE=$(curl -s -w "%{http_code}" -o /tmp/health_body.json --max-time 60 https://auremont.onrender.com/health)
+          END=$(date +%s%N)
+          DURATION=$(( (END - START) / 1000000 ))
+
+          echo "Status Code: $RESPONSE"
+          echo "Response Duration: ${DURATION}ms"
+          cat /tmp/health_body.json
+
+          if [ "$RESPONSE" != "200" ]; then
+            echo "::error::Health check failed with status $RESPONSE"
+            exit 1
+          fi
+
+      - name: Ping Frontend Storefront
+        run: |
+          FRONTEND_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 https://auremont-rose.vercel.app/)
+          echo "Frontend Status Code: $FRONTEND_STATUS"
+          if [ "$FRONTEND_STATUS" != "200" ]; then
+            echo "::error::Frontend check failed with status $FRONTEND_STATUS"
+            exit 1
+          fi

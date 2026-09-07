@@ -2,11 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HealthController } from './health.controller';
 import { PrismaService } from './prisma/prisma.service';
 import { NotificationsService } from './notifications/notifications.service';
+import { AlertService } from './common/alert.service';
 
 describe('HealthController (Observability & Production Hardening)', () => {
   let controller: HealthController;
   let mockPrisma: any;
   let mockNotifications: any;
+  let alertService: AlertService;
 
   beforeEach(async () => {
     mockPrisma = {
@@ -35,10 +37,12 @@ describe('HealthController (Observability & Production Hardening)', () => {
       providers: [
         { provide: PrismaService, useValue: mockPrisma },
         { provide: NotificationsService, useValue: mockNotifications },
+        AlertService,
       ],
     }).compile();
 
     controller = module.get<HealthController>(HealthController);
+    alertService = module.get<AlertService>(AlertService);
   });
 
   it('should return pure liveness without touching database', () => {
@@ -75,4 +79,18 @@ describe('HealthController (Observability & Production Hardening)', () => {
     expect(detailed.outbox.status).toBe('healthy');
     expect(detailed.pool.connectionLimit).toBe(25);
   });
+
+  it('should report alert status and channels', () => {
+    const alerts = controller.getAlerts();
+    expect(alerts.status).toBe('ok');
+    expect(alerts.alerts.configuredChannels).toContain('STRUCTURED_LOGS');
+  });
+
+  it('should execute non-destructive synthetic alert test drill', async () => {
+    const res = await controller.testAlert();
+    expect(res.status).toBe('ok');
+    expect(res.drill.success).toBe(true);
+    expect(res.drill.firedAlert.type).toBe('TEST_ALERT');
+  });
 });
+

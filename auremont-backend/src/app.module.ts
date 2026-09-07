@@ -19,6 +19,8 @@ import { ContactModule } from './contact/contact.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { AdminModule } from './admin/admin.module';
 
+import { AlertService } from './common/alert.service';
+
 @Module({
   imports: [
     AdminModule,
@@ -48,6 +50,7 @@ import { AdminModule } from './admin/admin.module';
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
+    AlertService,
   ],
   controllers: [HealthController],
 })

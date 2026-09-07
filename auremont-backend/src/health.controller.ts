@@ -1,8 +1,9 @@
-import { Controller, Get, HttpCode, HttpStatus, ServiceUnavailableException, Headers, Res } from '@nestjs/common';
+import { Controller, Get, Post, HttpCode, HttpStatus, ServiceUnavailableException, Headers, Res } from '@nestjs/common';
 import { SkipThrottle } from '@nestjs/throttler';
 import { Response } from 'express';
 import { PrismaService } from './prisma/prisma.service';
 import { NotificationsService } from './notifications/notifications.service';
+import { AlertService } from './common/alert.service';
 
 @Controller()
 @SkipThrottle()
@@ -10,6 +11,7 @@ export class HealthController {
   constructor(
     private prisma: PrismaService,
     private notifications: NotificationsService,
+    private alerts: AlertService,
   ) {}
 
   @Get('favicon.ico')
@@ -180,4 +182,28 @@ export class HealthController {
       pool: poolConfig,
     };
   }
+
+  @Get('health/alerts')
+  @HttpCode(HttpStatus.OK)
+  getAlerts() {
+    return {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      alerts: this.alerts.getAlertStatus(),
+    };
+  }
+
+  @Get('health/alerts/test')
+  @Post('health/alerts/test')
+  @HttpCode(HttpStatus.OK)
+  async testAlert() {
+    const drill = await this.alerts.testAlertPipeline();
+    return {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      drill,
+      message: 'Non-destructive synthetic monitoring drill completed successfully',
+    };
+  }
 }
+
