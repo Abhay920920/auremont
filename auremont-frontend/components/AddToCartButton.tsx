@@ -51,7 +51,7 @@ export default function AddToCartButton({
       onClick={handleAdd}
       className={`${baseClass} transition-all duration-200 ${success ? 'bg-emerald-700 text-white border-emerald-700 shadow-[0_0_20px_rgba(16,185,129,0.35)]' : ''}`}
     >
-      {success ? 'Added to Bag ✓' : 'Add to Cart'}
+      {success ? 'Added to Cart ✓' : 'Add to Cart'}
     </button>
   );
 }

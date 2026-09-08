@@ -51,7 +51,7 @@ const NUT_VARIETIES = [
     category: "Almonds",
     price: 899,
     image: "/images/roasted-almonds-jar.png",
-    tag: "Artisanal Salt",
+    tag: "Sea Salt",
   },
   {
     id: "jumbo-cashews-250",
@@ -157,13 +157,13 @@ export default function GiftBoxBuilder() {
     try {
       const bespokeProduct = {
         id: "ALM-EV-250",
-        name: `Bespoke ${selectedBox.name} (${compartmentCount} Compartments)`,
+        name: `Custom ${selectedBox.name} (${compartmentCount} Compartments)`,
         price: grandTotal,
         thumbnailUrl: selectedBox.image,
       };
       await addItem(bespokeProduct.id, 1, bespokeProduct);
     } catch (e) {
-      console.error("Failed to add bespoke gift box to cart", e);
+      console.error("Failed to add custom gift box to cart", e);
     } finally {
       setAddingToCart(false);
     }
@@ -193,7 +193,7 @@ export default function GiftBoxBuilder() {
               <div className="absolute inset-0 flex flex-col items-center justify-center p-8 pointer-events-none">
                 <div className="bg-black/50 backdrop-blur-md border border-luxuryGold/50 px-6 py-4 rounded-sm text-center max-w-xs transition-all duration-300 transform group-hover:scale-105">
                   <span className="text-[9px] uppercase tracking-ultra text-luxuryGold font-medium block mb-1">
-                    Bespoke Laser Engraving
+                    Custom Laser Engraving
                   </span>
                   <p className="font-serif text-xl md:text-2xl text-luxuryGold tracking-widest uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                     {engravingText || "YOUR INITIALS"}
@@ -310,7 +310,7 @@ export default function GiftBoxBuilder() {
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
               <div>
                 <h3 className="font-serif text-2xl md:text-3xl text-primaryText mb-2">Configure Box Compartments</h3>
-                <p className="text-secondaryText text-sm font-light">Select the number of inner compartments and customize each slot with any luxury botanical nut variety.</p>
+                <p className="text-secondaryText text-sm font-light">Select the number of inner compartments and fill each slot with your favorite premium almond varieties.</p>
               </div>
 
               {/* Compartment Count Toggle */}
@@ -385,8 +385,8 @@ export default function GiftBoxBuilder() {
           {currentStep === 3 && (
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
               <div>
-                <h3 className="font-serif text-2xl md:text-3xl text-primaryText mb-2">Bespoke Laser Engraving</h3>
-                <p className="text-secondaryText text-sm font-light font-light">Enter custom initials, family crest monogram, or personal gift message to be laser-engraved in 24k gold leaf on the box lid.</p>
+                <h3 className="font-serif text-2xl md:text-3xl text-primaryText mb-2">Custom Laser Engraving</h3>
+                <p className="text-secondaryText text-sm font-light font-light">Enter custom initials, family monogram, or personal gift message to be laser-engraved on the box lid.</p>
               </div>
 
               <div className="space-y-4 bg-secondaryBg p-6 border border-divider">
@@ -402,7 +402,7 @@ export default function GiftBoxBuilder() {
                   className="w-full h-14 bg-background border border-divider px-4 font-serif text-xl tracking-widest text-primaryText outline-none focus:border-luxuryGold transition-colors uppercase"
                 />
                 <p className="text-[10px] text-mutedText italic">
-                  Complimentary 24k gold foil leaf laser etching applied by our master artisans in San Francisco.
+                  Complimentary personalized laser engraving included with your gift box.
                 </p>
               </div>
 
@@ -411,7 +411,7 @@ export default function GiftBoxBuilder() {
                   ← Back
                 </button>
                 <button onClick={() => setCurrentStep(4)} className="luxury-button flex-1 h-12 text-xs uppercase tracking-ultra">
-                  Proceed to Wax Seal →
+                  Continue to Wax Seal →
                 </button>
               </div>
             </motion.div>
@@ -421,8 +421,8 @@ export default function GiftBoxBuilder() {
           {currentStep === 4 && (
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
               <div>
-                <h3 className="font-serif text-2xl md:text-3xl text-primaryText mb-2">Wax Seal & Concierge Summary</h3>
-                <p className="text-secondaryText text-sm font-light">Select your hand-stamped wax seal accent to complete your bespoke gift box.</p>
+                <h3 className="font-serif text-2xl md:text-3xl text-primaryText mb-2">Wax Seal & Order Summary</h3>
+                <p className="text-secondaryText text-sm font-light">Select your hand-stamped wax seal accent to complete your custom gift box.</p>
               </div>
 
               <div className="space-y-4">
@@ -447,7 +447,7 @@ export default function GiftBoxBuilder() {
 
               {/* Order Total Breakdown Card */}
               <div className="p-8 bg-secondaryBg border border-luxuryGold/40 space-y-6">
-                <h4 className="font-serif text-2xl text-primaryText border-b border-divider pb-4">Bespoke Summary</h4>
+                <h4 className="font-serif text-2xl text-primaryText border-b border-divider pb-4">Custom Gift Summary</h4>
                 
                 <div className="space-y-3 text-sm text-secondaryText">
                   <div className="flex justify-between">
@@ -459,12 +459,12 @@ export default function GiftBoxBuilder() {
                     <span className="text-primaryText" suppressHydrationWarning>{formatPrice(fillingsTotal)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>24k Gold Laser Engraving</span>
-                    <span className="text-luxuryGold uppercase text-xs font-medium">Complimentary</span>
+                    <span>Laser Engraving</span>
+                    <span className="text-emerald-400 uppercase text-xs font-medium">Included Free</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Insured Vault Dispatch</span>
-                    <span className="text-luxuryGold uppercase text-xs font-medium">Complimentary</span>
+                    <span>Insured Express Delivery</span>
+                    <span className="text-emerald-400 uppercase text-xs font-medium">Free</span>
                   </div>
                 </div>
 
@@ -479,7 +479,7 @@ export default function GiftBoxBuilder() {
                   className="luxury-button w-full py-4 text-xs tracking-ultra flex items-center justify-center gap-3 disabled:opacity-50"
                 >
                   <ShoppingBag size={18} />
-                  {addingToCart ? "Adding Custom Box..." : "Add Bespoke Box to Cart"}
+                  {addingToCart ? "Adding Custom Box..." : "Add Custom Gift Box to Cart"}
                 </button>
               </div>
             </motion.div>

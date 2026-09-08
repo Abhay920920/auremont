@@ -71,7 +71,7 @@ export default function FestivalGiftingHub() {
             The Royal Tradition of <span className="text-luxuryGold italic">Festive & Wedding</span> Gifting
           </h1>
           <p className="text-secondaryText text-lg font-light leading-relaxed max-w-2xl mx-auto">
-            In Indian culture and global royalty, gifting dry fruits signifies auspicious beginnings, prosperity, and enduring health. Discover how RARE NUTS reinterprets this timeless heritage through haute couture packaging.
+            In Indian culture and global royalty, gifting fine specialty nuts signifies auspicious beginnings, prosperity, and enduring health. Discover how RARE NUTS reinterprets this timeless heritage through haute couture packaging.
           </p>
         </header>
 

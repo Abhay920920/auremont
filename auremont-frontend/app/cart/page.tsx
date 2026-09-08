@@ -88,7 +88,7 @@ export default function CartPage() {
                 <span>/</span>
                 <span>2. Checkout</span>
                 <span>/</span>
-                <span>3. Dispatch</span>
+                <span>3. Delivery</span>
               </div>
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif text-primaryText flex items-center gap-3">
                 <span>Shopping Bag</span>
@@ -115,7 +115,7 @@ export default function CartPage() {
             
             {/* DESKTOP TABLE HEADER */}
             <div className="hidden md:grid grid-cols-12 gap-4 pb-3 border-b border-divider text-[11px] font-mono uppercase tracking-wider text-mutedText">
-              <div className="col-span-6">Botanical Creation</div>
+              <div className="col-span-6">Product</div>
               <div className="col-span-3 text-center">Quantity</div>
               <div className="col-span-3 text-right">Line Subtotal</div>
             </div>
@@ -260,8 +260,8 @@ export default function CartPage() {
                   <Truck size={14} />
                 </div>
                 <div className="text-[11px] leading-tight">
-                  <p className="font-medium text-primaryText">Vault Packed Dispatch</p>
-                  <p className="text-mutedText font-light">Dispatches within 24 hours</p>
+                  <p className="font-medium text-primaryText">Carefully Packed for Delivery</p>
+                  <p className="text-mutedText font-light">Ships within 24 hours</p>
                 </div>
               </div>
 
@@ -303,11 +303,11 @@ export default function CartPage() {
                   {subtotal >= FREE_SHIPPING_THRESHOLD ? (
                     <span className="text-emerald-400 font-medium flex items-center gap-1.5 font-mono text-[11px]">
                       <Check size={13} className="text-emerald-400" />
-                      Complimentary Express Shipping Unlocked
+                      Free Express Delivery Unlocked
                     </span>
                   ) : (
                     <span className="text-secondaryText text-[11px]">
-                      Add <strong className="text-luxuryGold font-mono">₹{amountNeededForFreeShipping}</strong> for Complimentary Shipping
+                      Add <strong className="text-luxuryGold font-mono">₹{amountNeededForFreeShipping}</strong> for Free Delivery
                     </span>
                   )}
                   <span className="text-[10px] font-mono text-mutedText">
@@ -336,14 +336,14 @@ export default function CartPage() {
                     <span>Insured Climate-Shield Shipping</span>
                   </div>
                   {shippingCost === 0 ? (
-                    <span className="text-emerald-400 font-mono text-xs uppercase tracking-wider font-medium">Complimentary</span>
+                    <span className="text-emerald-400 font-mono text-xs uppercase tracking-wider font-medium">Free</span>
                   ) : (
                     <span className="text-primaryText font-mono">₹{shippingCost.toFixed(2)}</span>
                   )}
                 </div>
 
                 <div className="flex justify-between items-center text-mutedText text-xs">
-                  <span>Applicable GST / Taxes</span>
+                  <span>GST / Taxes</span>
                   <span className="font-mono">Included in item prices</span>
                 </div>
               </div>
@@ -366,7 +366,7 @@ export default function CartPage() {
                 className="w-full luxury-button py-3.5 px-6 flex items-center justify-center gap-2.5 uppercase tracking-wider text-xs sm:text-sm font-medium disabled:opacity-50 active:scale-98 transition-all shadow-[0_4px_20px_rgba(212,175,55,0.25)]"
               >
                 <Lock size={15} />
-                <span>Proceed to Secure Checkout</span>
+                <span>Continue to Secure Checkout</span>
               </button>
 
               {/* TRUST & PAYMENT MARKS */}

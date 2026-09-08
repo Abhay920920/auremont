@@ -72,7 +72,7 @@ export default function Header() {
               className="w-full bg-secondaryBg border-b border-divider/60 flex items-center justify-center py-1.5 px-4 relative overflow-hidden"
             >
               <p className="text-[9px] md:text-[11px] uppercase tracking-widest text-primaryText font-medium text-center pr-6 truncate">
-                Complimentary shipping on all orders over ₹2000
+                Complimentary shipping on all orders over ₹2,000
               </p>
               <button
                 onClick={() => setShowAnnouncement(false)}
@@ -102,7 +102,7 @@ export default function Header() {
           {/* Desktop Nav Left */}
           <nav className="hidden md:flex flex-1 gap-8 text-[11px] tracking-widest uppercase items-center text-primaryText font-medium">
             <Link href="/shop" className="hover:text-luxuryGold transition-colors">Shop</Link>
-            <Link href="/custom-gift-box" className="hover:text-luxuryGold transition-colors">Bespoke</Link>
+            <Link href="/custom-gift-box" className="hover:text-luxuryGold transition-colors">Custom Gifts</Link>
           </nav>
 
           {/* Logo Center */}

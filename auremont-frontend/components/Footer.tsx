@@ -129,7 +129,7 @@ export default function Footer() {
           <div className="flex flex-wrap justify-center items-center gap-x-4 sm:gap-x-6 gap-y-1.5 text-zinc-400">
             <span>256-Bit Encryption</span>
             <span className="text-luxuryGold/40 hidden sm:inline">•</span>
-            <span>Global Concierge Shipping</span>
+            <span>Insured Express Shipping</span>
             <span className="text-luxuryGold/40 hidden sm:inline">•</span>
             <span>100% Ethically Sourced</span>
           </div>

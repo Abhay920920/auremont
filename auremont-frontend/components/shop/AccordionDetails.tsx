@@ -96,9 +96,9 @@ export default function AccordionDetails({ product }: { product: any }) {
               className="overflow-hidden"
             >
               <div className="pt-4 sm:pt-6 text-zinc-300 leading-relaxed text-sm font-light space-y-3.5">
-                <p><strong className="text-primaryText font-medium">Complimentary Shipping:</strong> Enjoy free express shipping on all orders over ₹2000. Delivered in sealed luxury climate-protected vaults.</p>
-                <p><strong className="text-primaryText font-medium">Global Delivery:</strong> Express dispatch within 24 hours to guarantee absolute orchard freshness upon arrival.</p>
-                <p><strong className="text-primaryText font-medium">Concierge Guarantee:</strong> In the rare event of transit damage or compromised seal, our concierge instantly arranges a replacement allocation.</p>
+                <p><strong className="text-primaryText font-medium">Complimentary Shipping:</strong> Enjoy complimentary express shipping on all orders over ₹2,000. Delivered in luxury freshness-sealed packaging.</p>
+                <p><strong className="text-primaryText font-medium">Express Delivery:</strong> Ships within 24 hours to guarantee fresh orchard taste when it arrives.</p>
+                <p><strong className="text-primaryText font-medium">Customer Guarantee:</strong> In the rare event of transit damage or a broken seal, our customer care team will promptly arrange a complimentary replacement.</p>
               </div>
             </motion.div>
           )}

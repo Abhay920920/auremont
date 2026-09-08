@@ -12,13 +12,13 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in';
 
 export const metadata: Metadata = {
   title: "Luxury Gifting & Keepsake Wooden Boxes | RARE NUTS",
-  description: "Explore bespoke luxury gifting: California reserve almonds presented in solid mahogany presentation chests, velvet lining, and personalized brass engraved plates.",
+  description: "Explore custom luxury gifting: California reserve almonds presented in solid mahogany gift boxes, velvet lining, and personalized brass engraved plates.",
   alternates: {
     canonical: `${siteUrl}/gifting`,
   },
   openGraph: {
     title: "Luxury Gifting & Keepsake Wooden Boxes | RARE NUTS",
-    description: "Solid mahogany presentation chests, gold foil accents, and bespoke almond assortments.",
+    description: "Solid mahogany gift boxes, gold foil accents, and handcrafted almond selections.",
     url: `${siteUrl}/gifting`,
     siteName: "RARE NUTS",
     images: [{ url: `${siteUrl}/images/rarenuts-packaging-showcase.png`, width: 1200, height: 630 }],
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Luxury Gifting & Keepsake Wooden Boxes | RARE NUTS",
-    description: "Solid mahogany presentation chests and bespoke almond assortments.",
+    description: "Solid mahogany gift boxes and handcrafted almond selections.",
     images: [`${siteUrl}/images/rarenuts-packaging-showcase.png`],
   },
 };
@@ -34,15 +34,15 @@ export const metadata: Metadata = {
 const giftingFaqs = [
   {
     question: "Why do premium nuts make memorable luxury gifts?",
-    answer: "Premium nuts symbolize prosperity, health, and thoughtful care. Presented in velvet-lined mahogany chests with custom gold engraving, RARE NUTS creates an enduring impression far beyond traditional gifting.",
+    answer: "Premium nuts symbolize prosperity, health, and thoughtful care. Presented in velvet-lined mahogany boxes with custom gold engraving, RARE NUTS creates an enduring impression far beyond traditional gifting.",
   },
   {
     question: "Can RARE NUTS gift boxes be personalized with custom names or corporate logos?",
-    answer: "Yes. Our Bespoke Gift Box Builder allows you to personalize solid brass plates with laser-engraved names, corporate emblems, or custom messages.",
+    answer: "Yes. Our Custom Gift Box Builder allows you to personalize solid brass plates with laser-engraved names, corporate emblems, or custom messages.",
   },
   {
-    question: "Do you provide white-glove corporate and festive gifting services across India?",
-    answer: "We provide nationwide express delivery across India with individual recipient tracking and concierge customization.",
+    question: "Do you provide premium corporate and festive gifting services across India?",
+    answer: "We provide nationwide express delivery across India with individual delivery tracking and custom gift box options.",
   },
 ];
 
@@ -70,7 +70,7 @@ export default function GiftingPage() {
             Exceptional by Nature. Distinct by Choice.
           </p>
           <p className="text-secondaryText text-base sm:text-lg font-light leading-relaxed max-w-2xl mx-auto">
-            Purveyors of exceptionally sourced extra-large California almonds, slow-roasted to peak crunch and presented in velvet-lined mahogany presentation chests.
+            Crafted from exceptionally sourced extra-large California almonds, slow-roasted to peak crunch and presented in velvet-lined mahogany gift boxes.
           </p>
         </section>
 
@@ -89,7 +89,7 @@ export default function GiftingPage() {
               </div>
               <h3 className="font-serif text-xl text-primaryText mb-2 group-hover:text-luxuryGold transition-colors">Diwali & Festive</h3>
               <p className="text-secondaryText text-sm font-light leading-relaxed">
-                Opulent festive gift boxes crafted for royal celebrations, family blessings, and corporate prosperity.
+                Luxurious festive gift boxes crafted for royal celebrations, family blessings, and corporate prosperity.
               </p>
             </Link>
 
@@ -100,7 +100,7 @@ export default function GiftingPage() {
               </div>
               <h3 className="font-serif text-xl text-primaryText mb-2 group-hover:text-luxuryGold transition-colors">Weddings & Bridal</h3>
               <p className="text-secondaryText text-sm font-light leading-relaxed">
-                Bespoke favor boxes and grand wedding hampers personalized with monogrammed brass crests.
+                Custom wedding favor boxes and luxury gift hampers personalized with monogrammed brass crests.
               </p>
             </Link>
 
@@ -111,7 +111,7 @@ export default function GiftingPage() {
               </div>
               <h3 className="font-serif text-xl text-primaryText mb-2 group-hover:text-luxuryGold transition-colors">Corporate & Executive</h3>
               <p className="text-secondaryText text-sm font-light leading-relaxed">
-                White-glove business gifting for valued clients, executives, board members, and team appreciation.
+                Premium business gifting for valued clients, executives, board members, and team appreciation.
               </p>
             </Link>
 
@@ -122,7 +122,7 @@ export default function GiftingPage() {
               </div>
               <h3 className="font-serif text-xl text-primaryText mb-2 group-hover:text-luxuryGold transition-colors">Custom Gift Builder</h3>
               <p className="text-secondaryText text-sm font-light leading-relaxed">
-                Design your custom gift chest with your choice of nut varieties, lining velvet, and brass plate text.
+                Design your custom gift box with your choice of nut varieties, lining velvet, and brass plate text.
               </p>
             </Link>
           </div>
@@ -137,7 +137,7 @@ export default function GiftingPage() {
             className="object-cover filter brightness-90"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent flex flex-col justify-end p-8 md:p-12">
-            <h2 className="text-3xl md:text-5xl font-serif text-primaryText mb-3">Uncompromising Presentation</h2>
+            <h2 className="text-3xl md:text-5xl font-serif text-primaryText mb-3">Signature Gift Presentation</h2>
             <p className="text-secondaryText max-w-xl font-light text-sm sm:text-base mb-6">
               Every RARE NUTS gift box features solid mahogany craftsmanship, hand-finished gold velvet lining, and our iconic gold squirrel seal of authenticity.
             </p>

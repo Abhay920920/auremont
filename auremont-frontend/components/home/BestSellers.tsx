@@ -62,10 +62,10 @@ export default function BestSellers({ products = [] }: { products?: Product[] })
             <span>The Reserve Editions</span>
           </div>
           <h2 className="text-3xl sm:text-5xl font-serif text-primaryText tracking-tight">
-            Curated Best-Sellers
+            Curated Bestsellers
           </h2>
           <p className="text-secondaryText text-sm sm:text-base font-light mt-2 max-w-xl">
-            Our most requested single-origin harvests and artisanal roasts, celebrated by connoisseurs for unmatched crunch and complexity.
+            Our most requested single-origin harvests and handcrafted roasts, celebrated by fine food enthusiasts for their exceptional crunch and rich flavour.
           </p>
         </div>
 
@@ -170,7 +170,7 @@ export default function BestSellers({ products = [] }: { products?: Product[] })
 
                 {/* Short Descriptor */}
                 <p className="text-secondaryText text-xs leading-relaxed line-clamp-2 font-light mb-4">
-                  {product.shortDescription || "Slow-roasted artisanal California reserve almonds sealed for extraordinary flavor depth."}
+                  {product.shortDescription || "Slow-roasted handcrafted California reserve almonds sealed for lasting freshness and rich flavor."}
                 </p>
               </div>
 

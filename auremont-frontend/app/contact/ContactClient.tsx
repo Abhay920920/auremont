@@ -17,10 +17,10 @@ export default function ContactClient() {
 
   const inquiryTopics = [
     "General Inquiries",
-    "Order Tracking & Dispatch",
-    "Bespoke Gifting Concierge",
+    "Order Tracking & Delivery",
+    "Luxury Gifting Concierge",
     "Corporate & Bulk Orders",
-    "Press & Editorial Media",
+    "Press & Media",
     "Culinary Partnerships"
   ];
 
@@ -159,7 +159,7 @@ export default function ContactClient() {
             <div className="p-6 border border-luxuryGold/20 rounded-card bg-luxuryGold/5 flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-serif text-primaryText">Looking for immediate answers?</h3>
-                <p className="text-xs text-secondaryText font-light mt-0.5">Explore our guide on sourcing, dispatch, and storage.</p>
+                <p className="text-xs text-secondaryText font-light mt-0.5">Explore our guide on sourcing, delivery, and storage.</p>
               </div>
               <Link href="/faq" className="text-xs text-luxuryGold hover:text-goldHover uppercase tracking-widest font-medium">
                 Visit FAQ &rarr;
@@ -192,9 +192,9 @@ export default function ContactClient() {
               ) : (
                 <form onSubmit={handleSubmit} method="POST" action="#" className="space-y-6">
                   <div>
-                    <h2 className="text-2xl font-serif text-primaryText mb-2">Direct Concierge Dispatch</h2>
+                    <h2 className="text-2xl font-serif text-primaryText mb-2">Contact Our Concierge Team</h2>
                     <p className="text-secondaryText text-xs sm:text-sm font-light">
-                      Please submit your message below. We prioritize personalized responses with complete discretion.
+                      Please submit your message below. We respond promptly with personal care and discretion.
                     </p>
                   </div>
 
@@ -218,7 +218,7 @@ export default function ContactClient() {
                         value={formData.name}
                         onChange={handleChange}
                         className="w-full bg-surface border border-divider px-4 py-3.5 rounded text-sm text-primaryText focus:border-luxuryGold outline-none transition-colors placeholder:text-mutedText/60"
-                        placeholder="e.g. Lord Alistair Vance"
+                        placeholder="e.g. Alexander Vance"
                       />
                     </div>
 
@@ -234,7 +234,7 @@ export default function ContactClient() {
                         value={formData.email}
                         onChange={handleChange}
                         className="w-full bg-surface border border-divider px-4 py-3.5 rounded text-sm text-primaryText focus:border-luxuryGold outline-none transition-colors placeholder:text-mutedText/60"
-                        placeholder="alistair@example.com"
+                        placeholder="alexander@example.com"
                       />
                     </div>
                   </div>
@@ -285,7 +285,7 @@ export default function ContactClient() {
                       ) : (
                         <>
                           <Send size={14} />
-                          <span>Dispatch to Concierge Desk</span>
+                          <span>Send Message to Concierge</span>
                         </>
                       )}
                     </button>

@@ -83,7 +83,7 @@ export default function ShopClient({
             The Royal Botanical Collection
           </h1>
           <p className="text-zinc-300 text-sm sm:text-base md:text-lg font-light leading-relaxed max-w-2xl">
-            Peruse our curated selection of the world&apos;s finest botanical nuts and artisanal reserves &mdash; from California Nonpareil Almonds and Mangalore King Cashews to Persian Akbari Pistachios, Kashmiri Walnuts, and Himalayan Chilgoza.
+            Explore our collection of the world&apos;s finest botanical nuts and handcrafted roasts &mdash; from California Nonpareil Almonds and Mangalore King Cashews to Persian Akbari Pistachios, Kashmiri Walnuts, and Himalayan Chilgoza.
           </p>
         </div>
       </div>
@@ -132,7 +132,7 @@ export default function ShopClient({
           {/* Results Count & Sort Dropdown */}
           <div className="flex justify-between items-center mb-6 sm:mb-8 pb-3.5 border-b border-divider/80">
             <span className="text-xs sm:text-sm text-zinc-400 font-mono tracking-wider">
-              {products.length} {products.length === 1 ? 'Creation' : 'Creations'}
+              {products.length} {products.length === 1 ? 'Product' : 'Products'}
             </span>
             <SortDropdown onSort={handleSort} />
           </div>

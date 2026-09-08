@@ -484,7 +484,7 @@ export default function CheckoutPage() {
           <div className="space-y-2">
             <h1 className="text-3xl sm:text-4xl font-serif text-primaryText">Your Cart is Empty</h1>
             <p className="text-xs uppercase tracking-widest text-secondaryText leading-relaxed">
-              Explore our master reserve collection and select your artisanal nuts before proceeding to checkout.
+              Explore our collection and select your premium nuts before continuing to checkout.
             </p>
           </div>
           <button onClick={() => router.push("/shop")} className="luxury-button inline-flex items-center gap-2">
@@ -626,7 +626,7 @@ export default function CheckoutPage() {
           </div>
 
           <div className="flex items-center gap-2 text-[10px] uppercase tracking-ultra text-luxuryGold font-medium">
-            <ShieldCheck size={14} /> Private Vault Dispatch · 256-Bit SSL
+            <ShieldCheck size={14} /> Insured Express Delivery · 256-Bit SSL
           </div>
         </div>
 
@@ -641,7 +641,7 @@ export default function CheckoutPage() {
                 <Lock className="text-luxuryGold" size={20} strokeWidth={1.5} />
               </h1>
               <p className="text-xs uppercase tracking-widest text-secondaryText">
-                Provide your dispatch details and complete your reserve order.
+                Enter your delivery details and complete your order.
               </p>
             </div>
 
@@ -793,7 +793,7 @@ export default function CheckoutPage() {
                       <div className="space-y-1">
                         <p className="font-serif text-lg text-primaryText">Razorpay Secure Checkout</p>
                         <p className="text-xs text-secondaryText leading-relaxed">
-                          Instant verification via UPI, Credit/Debit Cards, and Net Banking. All transactions are SSL encrypted.
+                          Instant verification via UPI, Credit/Debit Cards, and Net Banking. All payments are SSL encrypted.
                         </p>
                       </div>
                     </div>
@@ -914,13 +914,13 @@ export default function CheckoutPage() {
                 </div>
                 {appliedCoupon && (
                   <div className="flex justify-between text-luxuryGold">
-                    <span>Privilege Discount</span>
+                    <span>Coupon Discount</span>
                     <span suppressHydrationWarning>-{formatPrice(discount)}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
-                  <span>Insured Vault Dispatch</span>
-                  <span className="text-primaryText font-medium">Complimentary</span>
+                  <span>Insured Express Delivery</span>
+                  <span className="text-emerald-400 font-medium">Free</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Estimated GST (5%)</span>

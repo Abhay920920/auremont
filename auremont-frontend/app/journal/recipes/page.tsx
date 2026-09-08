@@ -8,8 +8,8 @@ import { Clock, ArrowRight } from 'lucide-react';
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in';
 
 export const metadata: Metadata = {
-  title: 'Artisanal Culinary Recipes Featuring California Almonds | RARE NUTS',
-  description: 'Elevate your gastronomy with chef-crafted recipes featuring RARE NUTS California almonds. From homemade artisanal almond butter to rosemary-truffle roasted nuts and almond flour confectionery.',
+  title: 'Gourmet Kitchen Recipes Featuring California Almonds | RARE NUTS',
+  description: 'Enjoy delicious kitchen creations with chef-crafted recipes featuring RARE NUTS California almonds. From homemade creamy almond butter to rosemary-truffle roasted nuts and almond flour treats.',
   keywords: [
     'gourmet almond recipes',
     'homemade artisanal almond butter',
@@ -21,11 +21,11 @@ export const metadata: Metadata = {
     canonical: `${siteUrl}/journal/recipes`,
   },
   openGraph: {
-    title: 'Artisanal Culinary Recipes Featuring California Almonds | RARE NUTS',
-    description: 'Elevate your gastronomy with chef-crafted recipes featuring RARE NUTS California almonds.',
+    title: 'Gourmet Kitchen Recipes Featuring California Almonds | RARE NUTS',
+    description: 'Enjoy delicious recipes featuring RARE NUTS California almonds.',
     url: `${siteUrl}/journal/recipes`,
     siteName: 'RARE NUTS',
-    images: [{ url: '/images/roasted-almonds-jar.png', width: 1200, height: 630, alt: 'Artisanal Almond Recipes' }],
+    images: [{ url: '/images/roasted-almonds-jar.png', width: 1200, height: 630, alt: 'Gourmet Almond Recipes' }],
     type: 'article',
   },
 };
@@ -35,8 +35,8 @@ export default function RecipesHub() {
     "@context": "https://schema.org",
     "@type": "Article",
     "@id": `${siteUrl}/journal/recipes#article`,
-    "headline": "Artisanal Culinary Recipes Featuring California Almonds and Gourmet Tree Nuts",
-    "description": "Chef-developed gourmet recipes utilizing raw kernels, slow-roasted nuts, and natural nut butters.",
+    "headline": "Gourmet Kitchen Recipes Featuring California Almonds and Gourmet Tree Nuts",
+    "description": "Chef-developed gourmet recipes using raw kernels, slow-roasted nuts, and natural nut butters.",
     "image": [`${siteUrl}/images/roasted-almonds-jar.png`],
     "datePublished": "2026-02-25T08:00:00+05:30",
     "dateModified": new Date().toISOString(),
@@ -65,13 +65,13 @@ export default function RecipesHub() {
         {/* Header */}
         <header className="max-w-4xl mx-auto text-center my-12 space-y-6">
           <span className="text-[10px] uppercase tracking-ultra text-luxuryGold font-medium bg-luxuryGold/10 px-4 py-1.5 border border-luxuryGold/20 rounded-full inline-block">
-            Haute Gastronomy • Chef’s Kitchen
+            Gourmet Kitchen • Chef’s Recipes
           </span>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif text-primaryText tracking-tight leading-tight">
-            Culinary Mastery: <span className="text-luxuryGold italic">Artisanal Almond Creations</span>
+            Culinary Mastery: <span className="text-luxuryGold italic">Gourmet Almond Recipes</span>
           </h1>
           <p className="text-secondaryText text-lg font-light leading-relaxed max-w-2xl mx-auto">
-            Transform reserve-grade California almonds into culinary masterpieces with these elevated, step-by-step epicurean recipes.
+            Transform reserve-grade California almonds into culinary creations with these easy, step-by-step gourmet recipes.
           </p>
         </header>
 
@@ -129,7 +129,7 @@ export default function RecipesHub() {
         {/* CTA */}
         <section className="my-20 bg-secondaryBg border border-luxuryGold/30 rounded-card p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="space-y-4 max-w-xl">
-            <span className="text-xs uppercase tracking-widest text-luxuryGold font-medium">The Epicurean Standard</span>
+            <span className="text-xs uppercase tracking-widest text-luxuryGold font-medium">The Gourmet Standard</span>
             <h3 className="text-3xl font-serif text-primaryText">Slow-Roasted Sea Salt Almonds (500g Jar)</h3>
             <p className="text-secondaryText text-sm font-light leading-relaxed">
               Arrives in a thick culinary glass jar with metallic gold cap to seal in crunch and aroma.

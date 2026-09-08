@@ -18,10 +18,10 @@ export default function WhyRareNuts() {
       description: "Our small-batch roasting preserves essential natural nutrient oils while developing crisp, buttery aromatic depth."
     },
     {
-      badge: "VAULT SEAL",
+      badge: "AIRTIGHT FRESHNESS SEAL",
       icon: <Hexagon size={28} strokeWidth={1} />,
-      title: "Bespoke Heirloom Packaging",
-      description: "Hermetically sealed in double-walled glass jars and velvet-lined mahogany boxes to lock in pristine garden freshness."
+      title: "Keepsake Gift Packaging",
+      description: "Airtight sealed in double-walled glass jars and velvet-lined mahogany boxes to lock in peak freshness."
     }
   ];
 

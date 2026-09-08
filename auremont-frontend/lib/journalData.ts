@@ -118,6 +118,6 @@ export const FALLBACK_ARTICLES: Record<string, BlogArticle> = {
 <p>Over 65% of the almond's lipid profile consists of oleic acid—the same heart-healthy monounsaturated fatty acid that forms the cornerstone of the Mediterranean diet. Clinical research demonstrates that regular consumption of unprocessed almonds actively helps maintain healthy LDL/HDL cholesterol ratios while promoting vascular endothelial elasticity.</p>
 
 <h3>The Non-Chemical Pasteurization Standard</h3>
-<p>To preserve botanical vitality without compromising microbiological safety, RARE NUTS rejects toxic chemical pasteurants such as propylene oxide (PPO). We utilize ultra-short, pure steam pasteurization that respects raw food standards, maintaining living enzymes and sensitive phytochemicals in their pristine natural equilibrium.</p>`
+<p>To preserve botanical vitality without compromising microbiological safety, RARE NUTS rejects toxic chemical pasteurants such as propylene oxide (PPO). We use ultra-short, pure steam pasteurization that respects raw food standards, maintaining living enzymes and sensitive phytochemicals in their pristine natural equilibrium.</p>`
   }
 };

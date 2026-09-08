@@ -22,7 +22,7 @@ export default function CorporateGiftsClient() {
           Exceptional by Nature. Distinct by Choice.
         </p>
         <p className="text-secondaryText text-base sm:text-lg font-light leading-relaxed max-w-2xl mx-auto">
-          Elevate business relationships with bespoke RARE NUTS almond assortments, presented in velvet-lined mahogany chests with custom-engraved company logos.
+          Strengthen business relationships with custom RARE NUTS almond gift sets, presented in velvet-lined mahogany boxes with custom-engraved company logos.
         </p>
       </section>
 
@@ -39,7 +39,7 @@ export default function CorporateGiftsClient() {
         <div className="absolute bottom-8 left-8 right-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
           <div>
             <span className="text-luxuryGold font-serif italic text-2xl tracking-widest block">Executive Distinction</span>
-            <span className="text-xs uppercase tracking-widest text-secondaryText">Bespoke Corporate Curation</span>
+            <span className="text-xs uppercase tracking-widest text-secondaryText">Custom Corporate Gifts</span>
           </div>
           <Link href="#quote-estimator" className="px-8 py-3 bg-luxuryGold text-black font-medium tracking-widest text-xs uppercase hover:bg-goldHover transition-colors">
             Request Corporate Catalog
@@ -67,7 +67,7 @@ export default function CorporateGiftsClient() {
             <Briefcase className="text-luxuryGold" size={28} />
             <h3 className="text-xl font-serif text-primaryText">2. Client Appreciation</h3>
             <p className="text-secondaryText text-sm font-light leading-relaxed">
-              Express gratitude and strengthen business partnerships with curated reserve roasts and gold-stamped luxury pouches.
+              Express gratitude and strengthen business partnerships with carefully selected premium roasts and gold-stamped luxury pouches.
             </p>
           </div>
 
@@ -83,7 +83,7 @@ export default function CorporateGiftsClient() {
             <Sparkles className="text-luxuryGold" size={28} />
             <h3 className="text-xl font-serif text-primaryText">4. Festive Corporate Gifting</h3>
             <p className="text-secondaryText text-sm font-light leading-relaxed">
-              Bespoke Diwali, New Year, and festival hampers combining raw California kernels and roasted sea salt almonds.
+              Custom Diwali, New Year, and festival hampers combining raw California almonds and roasted sea salt almonds.
             </p>
           </div>
 
@@ -107,7 +107,7 @@ export default function CorporateGiftsClient() {
             <PackageCheck className="text-luxuryGold" size={28} />
             <h3 className="text-xl font-serif text-primaryText">7. Bulk Order Privileges</h3>
             <p className="text-secondaryText text-sm font-light leading-relaxed">
-              Enjoy tiered pricing privileges, customized gift note insertion, and multi-address fulfillment support.
+              Enjoy volume pricing, custom gift note insertion, and multi-address delivery across India and worldwide.
             </p>
           </div>
 

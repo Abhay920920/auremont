@@ -8,8 +8,8 @@ import { Award, ShieldCheck, ArrowRight, Sparkles } from 'lucide-react';
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in';
 
 export const metadata: Metadata = {
-  title: 'The Connoisseur’s Guide to Buying Premium Almonds & Luxury Nuts | RARE NUTS',
-  description: 'Learn how to identify superior California almonds and luxury nuts. An insider guide to kernel grades, moisture levels, natural oils, unpasteurized reserves, and artisanal slow roasting.',
+  title: 'The Complete Guide to Buying Premium Almonds & Luxury Nuts | RARE NUTS',
+  description: 'Learn how to identify superior California almonds and luxury nuts. An insider guide to kernel grades, moisture levels, natural oils, unpasteurized nuts, and slow roasting.',
   keywords: [
     'how to buy premium almonds',
     'California almond grades',
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     canonical: `${siteUrl}/journal/buying-guides`,
   },
   openGraph: {
-    title: 'The Connoisseur’s Guide to Buying Premium Almonds | RARE NUTS',
+    title: 'The Complete Guide to Buying Premium Almonds | RARE NUTS',
     description: 'Learn how to identify superior California almonds and luxury nuts with our expert buying guide.',
     url: `${siteUrl}/journal/buying-guides`,
     siteName: 'RARE NUTS',
@@ -36,7 +36,7 @@ export default function BuyingGuidesHub() {
     "@context": "https://schema.org",
     "@type": "Article",
     "@id": `${siteUrl}/journal/buying-guides#article`,
-    "headline": "The Connoisseur’s Guide to Buying Premium Almonds and Luxury Nuts",
+    "headline": "The Complete Guide to Buying Premium Almonds and Luxury Nuts",
     "description": "Comprehensive buyer guide on assessing almond grades, kernel integrity, moisture retention, and roasting methods.",
     "image": [`${siteUrl}/images/california-almonds-250g.png`],
     "datePublished": "2026-01-15T08:00:00+05:30",
@@ -66,10 +66,10 @@ export default function BuyingGuidesHub() {
         {/* Hero Section */}
         <header className="max-w-4xl mx-auto text-center my-12 space-y-6">
           <span className="text-[10px] uppercase tracking-ultra text-luxuryGold font-medium bg-luxuryGold/10 px-4 py-1.5 border border-luxuryGold/20 rounded-full inline-block">
-            Curator’s Handbook • Editorial Edition
+            Buyer’s Guide • Quality Handbook
           </span>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif text-primaryText tracking-tight leading-tight">
-            The Connoisseur’s Guide to <span className="text-luxuryGold italic">Premium Almonds</span> & Luxury Nuts
+            The Complete Guide to <span className="text-luxuryGold italic">Premium Almonds</span> & Luxury Nuts
           </h1>
           <p className="text-secondaryText text-lg font-light leading-relaxed max-w-2xl mx-auto">
             Not all almonds are created equal. Discover the four botanical pillars that separate mass-market commercial harvests from exceptional reserve-grade kernels.
@@ -82,7 +82,7 @@ export default function BuyingGuidesHub() {
             <Award className="text-luxuryGold w-8 h-8" />
             <h3 className="font-serif text-2xl text-primaryText">1. Kernel Sizing & Uniformity</h3>
             <p className="text-secondaryText text-sm font-light leading-relaxed">
-              Premium California almonds are classified by count-per-ounce. Reserve-grade Nonpareil nuts range from 18/20 to 20/22 kernels per ounce, delivering superior plumpness, smooth skin, and an exquisite buttery mouthfeel.
+              Premium California almonds are classified by count-per-ounce. Reserve-grade Nonpareil nuts range from 18/20 to 20/22 kernels per ounce, delivering superior plumpness, smooth skin, and a rich, satisfying buttery crunch.
             </p>
           </div>
           <div className="bg-secondaryBg/40 border border-luxuryGold/20 p-8 rounded-card space-y-4">
@@ -94,9 +94,9 @@ export default function BuyingGuidesHub() {
           </div>
           <div className="bg-secondaryBg/40 border border-luxuryGold/20 p-8 rounded-card space-y-4">
             <Sparkles className="text-luxuryGold w-8 h-8" />
-            <h3 className="font-serif text-2xl text-primaryText">3. Artisanal Micro-Batch Roasting</h3>
+            <h3 className="font-serif text-2xl text-primaryText">3. Handcrafted Small-Batch Roasting</h3>
             <p className="text-secondaryText text-sm font-light leading-relaxed">
-              Industrial flash-roasting scorches the outer pellicle. Artisanal slow-roasting at 140°C over 45 minutes activates the Maillard reaction evenly, preserving vitamin E while yielding an audible crisp snap.
+              Industrial flash-roasting scorches the outer pellicle. Careful slow-roasting at 140°C over 45 minutes activates natural flavors evenly, preserving vitamin E while yielding an audible crisp snap.
             </p>
           </div>
         </section>
@@ -138,7 +138,7 @@ export default function BuyingGuidesHub() {
                 <tr>
                   <td className="p-4 sm:p-6 font-medium text-primaryText">Packaging Integrity</td>
                   <td className="p-4 sm:p-6">Polyethylene bags (permeable)</td>
-                  <td className="p-4 sm:p-6 bg-luxuryGold/5 font-semibold text-luxuryGold">Airtight Gold Foil & Solid Wood Chests</td>
+                  <td className="p-4 sm:p-6 bg-luxuryGold/5 font-semibold text-luxuryGold">Airtight Gold Foil & Solid Wooden Boxes</td>
                 </tr>
               </tbody>
             </table>

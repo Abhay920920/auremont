@@ -23,7 +23,7 @@ export default function OrderHistoryTab({ orders, loadingOrders }: OrderHistoryT
       { label: "Order Placed", done: true },
       { label: "Harvest Selection", done: s !== "placed" },
       { label: "Velvet Packing", done: s === "packed" || s === "shipped" || s === "delivered" },
-      { label: "Vault Dispatch", done: s === "shipped" || s === "delivered" },
+      { label: "Dispatched", done: s === "shipped" || s === "delivered" },
       { label: "Delivered", done: s === "delivered" },
     ];
   };
@@ -97,9 +97,9 @@ export default function OrderHistoryTab({ orders, loadingOrders }: OrderHistoryT
       ) : orders.length === 0 ? (
         <div className="py-16 text-center border border-dashed border-divider bg-secondaryBg rounded-card flex flex-col items-center justify-center space-y-4">
           <Package className="text-mutedText" size={44} strokeWidth={1} />
-          <h3 className="font-serif text-2xl text-primaryText">No Vault Orders Found</h3>
+          <h3 className="font-serif text-2xl text-primaryText">No Orders Found</h3>
           <p className="text-secondaryText text-xs sm:text-sm font-light max-w-sm">
-            Discover our California reserve editions and experience bespoke vault dispatch.
+            Discover our California reserve editions and enjoy complimentary express delivery.
           </p>
           <button onClick={() => router.push("/shop")} className="luxury-button">
             Explore Reserve Collection
@@ -180,9 +180,9 @@ export default function OrderHistoryTab({ orders, loadingOrders }: OrderHistoryT
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-1 text-[10px] uppercase tracking-ultra text-mutedText">
                       <span className="flex items-center gap-1.5 text-secondaryText">
                         <Truck size={14} className="text-luxuryGold" />
-                        Vault Dispatch Progress
+                        Delivery Tracking Progress
                       </span>
-                      <span className="text-luxuryGold">Guaranteed Courier Dispatch</span>
+                      <span className="text-luxuryGold">Express Courier Delivery</span>
                     </div>
 
                     <div className="w-full overflow-x-auto pb-2 scrollbar-hide">

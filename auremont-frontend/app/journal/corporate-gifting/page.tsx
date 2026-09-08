@@ -68,10 +68,10 @@ export default function CorporateGiftingHub() {
             Corporate Advisory • Strategic B2B Gifting
           </span>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-serif text-primaryText tracking-tight leading-tight">
-            The Executive Protocol: <span className="text-luxuryGold italic">Corporate Dry Fruit Gifting</span>
+            The Executive Protocol: <span className="text-luxuryGold italic">Luxury Corporate Nut Gifting</span>
           </h1>
           <p className="text-secondaryText text-lg font-light leading-relaxed max-w-2xl mx-auto">
-            How forward-thinking enterprises use bespoke gourmet almond hampers to cement multi-million-dollar client relationships and express genuine executive gratitude.
+            How forward-thinking enterprises use custom luxury almond hampers to cement multi-million-dollar client relationships and express genuine executive gratitude.
           </p>
         </header>
 

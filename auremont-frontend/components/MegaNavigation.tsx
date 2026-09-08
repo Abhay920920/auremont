@@ -34,14 +34,14 @@ export default function MegaNavigation({ isOpen, onMouseLeave }: { isOpen: boole
                  <li><Link href="/shop?category=assortments" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-lg block">Multi-Nut Royal Reserves</Link></li>
                  <li><Link href="/shop?category=raw" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-lg block">Raw Botanical Harvests</Link></li>
                  <li><Link href="/shop?category=roasted" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-lg block">Slow-Roasted Sea Salt</Link></li>
-                 <li><Link href="/shop?category=gift" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-lg block">Mahogany Gift Chests</Link></li>
+                 <li><Link href="/shop?category=gift" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-lg block">Mahogany Gift Boxes</Link></li>
                  <li><Link href="/corporate-gifts" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-lg block">Corporate Gifting Suite</Link></li>
                </ul>
              </div>
              <div className="col-span-2">
-               <h4 className="text-[11px] uppercase tracking-widest text-secondaryText mb-5">Bespoke & Story</h4>
+               <h4 className="text-[11px] uppercase tracking-widest text-secondaryText mb-5">Gifting & Heritage</h4>
                <ul className="space-y-3">
-                 <li><Link href="/custom-gift-box" className="text-luxuryGold hover:underline transition-colors font-serif text-base block font-medium">Bespoke Box Builder</Link></li>
+                 <li><Link href="/custom-gift-box" className="text-luxuryGold hover:underline transition-colors font-serif text-base block font-medium">Custom Gift Box Builder</Link></li>
                  <li><Link href="/about" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-base block">Our Heritage</Link></li>
                  <li><Link href="/pairing" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-base block">Pairing Guide</Link></li>
                  <li><Link href="/journal" className="text-primaryText hover:text-luxuryGold transition-colors font-serif text-base block">Journal & Stories</Link></li>

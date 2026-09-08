@@ -18,7 +18,7 @@ export default function FeaturedCollections({ products }: { products?: any[] }) 
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-10 md:mb-16">
           <div className="max-w-xl text-left">
             <h4 className="text-luxuryGold uppercase tracking-superwide text-xs mb-2.5 sm:mb-3">
-              Curated Selection
+              Curated Collections
             </h4>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-primaryText tracking-tight">
               Signature Creations

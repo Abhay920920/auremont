@@ -59,15 +59,15 @@ export default function ReserveTierCard({ orderCount = 5 }: { orderCount?: numbe
         <div className="p-4 bg-background border border-divider rounded-card space-y-2">
           <div className="flex items-center gap-2 text-luxuryGold">
             <Sparkles size={16} />
-            <span className="text-[10px] uppercase tracking-ultra font-medium">10% Privilege</span>
+            <span className="text-[10px] uppercase tracking-ultra font-medium">10% Member Discount</span>
           </div>
-          <p className="text-xs text-secondaryText font-light">Automatic 10% privilege discount on all reserve orders.</p>
+          <p className="text-xs text-secondaryText font-light">Automatic 10% VIP member discount on all reserve orders.</p>
         </div>
 
         <div className="p-4 bg-background border border-divider rounded-card space-y-2">
           <div className="flex items-center gap-2 text-luxuryGold">
             <Gift size={16} />
-            <span className="text-[10px] uppercase tracking-ultra font-medium">Bespoke Engraving</span>
+            <span className="text-[10px] uppercase tracking-ultra font-medium">Custom Engraving</span>
           </div>
           <p className="text-xs text-secondaryText font-light">Complimentary laser engraving on all mahogany gift boxes.</p>
         </div>
@@ -75,9 +75,9 @@ export default function ReserveTierCard({ orderCount = 5 }: { orderCount?: numbe
         <div className="p-4 bg-background border border-divider rounded-card space-y-2">
           <div className="flex items-center gap-2 text-luxuryGold">
             <ShieldCheck size={16} />
-            <span className="text-[10px] uppercase tracking-ultra font-medium">Vault Dispatch</span>
+            <span className="text-[10px] uppercase tracking-ultra font-medium">Priority Delivery</span>
           </div>
-          <p className="text-xs text-secondaryText font-light">Priority insured vault dispatch within 12 hours.</p>
+          <p className="text-xs text-secondaryText font-light">Priority insured express delivery within 12 hours.</p>
         </div>
       </div>
     </div>

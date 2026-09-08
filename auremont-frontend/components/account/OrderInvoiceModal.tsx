@@ -110,7 +110,7 @@ export default function OrderInvoiceModal({
                   <CheckCircle size={14} /> {order.paymentStatus?.toUpperCase() || 'PAID'} (Razorpay Verified)
                 </div>
                 <p className="text-[10px] text-mutedText">HSN Code: 08021200 (Almonds)</p>
-                <p className="text-[10px] text-mutedText">Courier: Insured Vault Dispatch</p>
+                <p className="text-[10px] text-mutedText">Courier: Insured Express Delivery</p>
               </div>
             </div>
 
@@ -152,8 +152,8 @@ export default function OrderInvoiceModal({
                   <span className="text-primaryText">₹{tax.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between border-b border-divider pb-1">
-                  <span className="text-mutedText">Vault Dispatch Fee</span>
-                  <span className="text-emerald-400">COMPLIMENTARY</span>
+                  <span className="text-mutedText">Delivery Fee</span>
+                  <span className="text-emerald-400">FREE</span>
                 </div>
                 <div className="flex justify-between font-serif text-lg font-bold text-luxuryGold pt-1">
                   <span>Grand Total</span>

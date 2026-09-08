@@ -99,7 +99,7 @@ export default function ProductInfo({ product, reviews, avgRating }: { product: 
         )}
         {product.salePrice && (
           <span className="bg-luxuryGold/15 text-luxuryGold border border-luxuryGold/30 text-[10px] px-2.5 py-1 uppercase tracking-widest font-mono">
-            Bespoke Offer
+            Special Offer
           </span>
         )}
       </div>
@@ -129,10 +129,10 @@ export default function ProductInfo({ product, reviews, avgRating }: { product: 
         </span>
         <span className="text-xs tracking-wider uppercase text-zinc-300 font-medium">
           {product.stockQty > 10 
-            ? 'In Stock — Guaranteed Vault Dispatch' 
+            ? 'In Stock — Ships Within 24 Hours' 
             : product.stockQty > 0 
-            ? `Bespoke Allocation — Only ${product.stockQty} Units Remaining` 
-            : 'Vault Depleted — Inquire Concierge'}
+            ? `Only ${product.stockQty} Units Left in Stock` 
+            : 'Out of Stock — Check Back Soon'}
         </span>
       </div>
 

@@ -161,11 +161,11 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
             {/* Footer */}
             {user && items.length > 0 && (
               <div className="border-t border-divider p-6 pb-safe-bottom bg-secondaryBg space-y-4 flex-shrink-0">
-                {/* Bespoke Laser Engraving & Gift Option */}
+                {/* Custom Laser Engraving & Gift Option */}
                 <div className="p-3 bg-background border border-luxuryGold/20 rounded-card space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] uppercase tracking-ultra text-luxuryGold font-medium">Bespoke Concierge Options</span>
-                    <span className="text-[9px] uppercase tracking-ultra text-mutedText">Complimentary</span>
+                    <span className="text-[10px] uppercase tracking-ultra text-luxuryGold font-medium">Custom Gift Options</span>
+                    <span className="text-[9px] uppercase tracking-ultra text-mutedText">Included Free</span>
                   </div>
                   <input 
                     type="text" 
@@ -179,18 +179,18 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
                   <span className="font-serif text-2xl text-luxuryGold">{formatPrice(subtotal)}</span>
                 </div>
                 <p className="text-[10px] text-mutedText text-center font-light">
-                  Complimentary Vault Dispatch & Insured Shipping applied at checkout.
+                  Free Express Delivery & Insured Shipping applied at checkout.
                 </p>
                 <Link 
                   href="/checkout" 
                   onClick={onClose}
                   className="luxury-button w-full flex justify-center py-4 text-xs tracking-ultra"
                 >
-                  Proceed to Concierge Checkout
+                  Continue to Checkout
                 </Link>
                 <div className="text-center">
                   <Link href="/cart" onClick={onClose} className="text-[10px] uppercase tracking-ultra text-secondaryText hover:text-primaryText transition-all p-1 inline-block">
-                    View Complete Vault Cart
+                    View Complete Cart
                   </Link>
                 </div>
               </div>

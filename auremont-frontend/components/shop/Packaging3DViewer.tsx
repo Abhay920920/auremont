@@ -106,7 +106,7 @@ export default function Packaging3DViewer({ isOpen, onClose, defaultText = "RARE
                 {/* Header */}
                 <div className="flex justify-between items-start border-b border-divider pb-4">
                   <div>
-                    <span className="text-[9px] uppercase tracking-ultra text-luxuryGold font-medium">Bespoke 3D Studio</span>
+                    <span className="text-[9px] uppercase tracking-ultra text-luxuryGold font-medium">3D Packaging Studio</span>
                     <h3 className="font-serif text-2xl text-primaryText">Packaging Inspector</h3>
                   </div>
                   <button onClick={onClose} className="p-1 text-secondaryText hover:text-luxuryGold transition-colors">
@@ -117,7 +117,7 @@ export default function Packaging3DViewer({ isOpen, onClose, defaultText = "RARE
                 {/* Material Switcher */}
                 <div className="space-y-3">
                   <label className="text-[10px] uppercase tracking-ultra text-secondaryText flex items-center gap-1.5 font-medium">
-                    <Layers size={13} className="text-luxuryGold" /> Select Vessel Material
+                    <Layers size={13} className="text-luxuryGold" /> Select Packaging Material
                   </label>
                   <div className="flex flex-col gap-3">
                     <button 

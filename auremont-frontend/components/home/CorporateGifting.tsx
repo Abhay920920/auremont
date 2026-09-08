@@ -29,7 +29,7 @@ export default function CorporateGifting() {
           
           <div className="absolute bottom-8 left-8 right-8">
             <span className="text-[9px] uppercase tracking-ultra text-luxuryGold font-medium bg-background/80 px-3.5 py-1 border border-luxuryGold/30 rounded-full inline-block mb-2 backdrop-blur-md">
-              Bespoke Engraving & Velvet Packaging
+              Custom Engraving & Velvet Packaging
             </span>
             <p className="text-sm font-serif text-primaryText">The Heirloom Executive Collection</p>
           </div>
@@ -46,16 +46,16 @@ export default function CorporateGifting() {
           >
             <div className="flex items-center gap-2 text-luxuryGold">
               <Briefcase size={16} />
-              <span className="text-[10px] uppercase tracking-ultra font-medium">B2B & Bespoke Executive Curations</span>
+              <span className="text-[10px] uppercase tracking-ultra font-medium">B2B & Executive Gift Sets</span>
             </div>
 
             <h2 className="text-3xl sm:text-5xl lg:text-6xl font-serif text-primaryText leading-[1.05] tracking-tight">
               Executive <br className="hidden sm:inline" />
-              <span className="text-luxuryGold italic font-light">Bespoke Gifting</span>
+              <span className="text-luxuryGold italic font-light">Corporate Gifting</span>
             </h2>
 
             <p className="text-secondaryText text-xs sm:text-base font-light leading-relaxed max-w-md">
-              Leave a lasting mark of distinction with clients, executives, and partners. Our dedicated concierge team provides custom laser-engraved wooden vessels, velvet lining, and global fulfillment.
+              Strengthen business relationships with clients, executives, and partners. Our dedicated team provides custom laser-engraved wooden boxes, velvet lining, and express delivery across India.
             </p>
 
             <div className="pt-4 flex flex-col sm:flex-row items-center gap-4">

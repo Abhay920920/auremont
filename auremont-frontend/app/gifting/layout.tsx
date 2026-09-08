@@ -4,8 +4,8 @@ import JsonLd from '@/components/JsonLd';
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in';
 
 export const metadata: Metadata = {
-  title: 'The Art of Luxury Nut Gifting & Curated Hampers | RARE NUTS',
-  description: 'Discover the art of gifting with RARE NUTS. Explore our signature mahogany chests, gold foil window pouches, and festive hampers curated with supreme California almonds and artisanal dry fruits.',
+  title: 'The Art of Luxury Nut Gifting & Gift Hampers | RARE NUTS',
+  description: 'Discover the art of gifting with RARE NUTS. Explore our signature mahogany gift boxes, gold foil window pouches, and festive hampers filled with supreme California almonds and fine specialty nuts.',
   keywords: [
     'luxury nut gifts',
     'premium dry fruit gifting',
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'The Art of Luxury Nut Gifting | RARE NUTS',
-    description: 'Explore signature mahogany chests and festive hampers curated with supreme California almonds and artisanal dry fruits.',
+    description: 'Explore signature mahogany gift boxes and festive hampers filled with supreme California almonds and fine specialty nuts.',
     url: `${siteUrl}/gifting`,
     siteName: 'RARE NUTS',
     images: [{ url: '/images/luxury-gift-box-unboxing.png', width: 1200, height: 630, alt: 'RARE NUTS Luxury Gifting' }],
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'The Art of Luxury Nut Gifting | RARE NUTS',
-    description: 'Explore signature mahogany chests and festive hampers curated with supreme California almonds.',
+    description: 'Explore signature mahogany gift boxes and festive hampers crafted with supreme California almonds.',
     images: ['/images/luxury-gift-box-unboxing.png'],
   },
 };

@@ -20,23 +20,23 @@ export default function BrandStory() {
     },
     {
       year: "2004",
-      title: "The Roasting Vault",
-      subtitle: "Artisanal Wood Convection",
-      narrative: "Rejecting industrial gas roasting, our master roasters pioneered a low-temperature convection method utilizing cured, reclaimed almond wood. This patient micro-batch discipline gently coaxes out delicate caramelized nuances while locking in essential botanical oils and heart-healthy antioxidants.",
-      highlight: "Micro-Batch Craft"
+      title: "The Roasting Craft",
+      subtitle: "Slow-Roasting Mastery",
+      narrative: "Rejecting industrial gas roasting, our roasters pioneered a low-temperature method using cured, seasoned almond wood. This patient small-batch discipline gently brings out delicate roasted flavors while locking in essential natural oils and heart-healthy nutrients.",
+      highlight: "Small-Batch Craft"
     },
     {
       year: "2018",
-      title: "Haute Gifting & Presentation",
-      subtitle: "Heirloom Chests & Velvet Liners",
-      narrative: "Believing that true luxury engages all five senses, RARE NUTS unveiled its signature presentation suite. Solid polished mahogany boxes, brass mortise-and-tenon joints, and midnight velvet inlays turned fine almond confectionery into the premier host gift and corporate gesture.",
-      highlight: "Bespoke Packaging"
+      title: "Luxury Gifting & Presentation",
+      subtitle: "Heirloom Boxes & Velvet Liners",
+      narrative: "Believing that true luxury engages all senses, RARE NUTS unveiled its signature gift collection. Solid polished mahogany boxes, brass joints, and velvet inlays turned fine almonds into the premier host gift and corporate gesture.",
+      highlight: "Custom Gift Boxes"
     },
     {
       year: "Present",
-      title: "The Global Distinction",
-      subtitle: "From Orchard to Palate",
-      narrative: "Today, RARE NUTS stands at the pinnacle of luxury nut gastronomy. From Michelin-starred culinary partnerships to private collectors across Mumbai, London, Dubai, and New York, our commitment remains unbroken: unhurried provenance, pure ingredients, and timeless elegance.",
+      title: "The Global Standard",
+      subtitle: "From Orchard to Your Table",
+      narrative: "Today, RARE NUTS stands as a benchmark of fine botanical nuts. Across Mumbai, Delhi, London, Dubai, and New York, our commitment remains steadfast: authentic origin, pure ingredients, and timeless elegance.",
       highlight: "RARE NUTS"
     }
   ];
@@ -140,7 +140,7 @@ export default function BrandStory() {
             <div className="w-full aspect-[4/3] relative rounded-card border border-divider overflow-hidden group shadow-2xl">
               <Image 
                 src="/images/roasted-almonds-jar.png" 
-                alt="RARE NUTS Artisanal Roasting Atelier" 
+                alt="RARE NUTS Wood Roasting Facility" 
                 fill 
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover group-hover:scale-105 transition-transform duration-[2.5s]"

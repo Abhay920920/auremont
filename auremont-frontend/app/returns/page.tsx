@@ -42,8 +42,8 @@ export default function ReturnsPage() {
     },
     {
       num: "03",
-      title: "Immediate White-Glove Resolution",
-      desc: "Our client care team will dispatch an expedited complimentary replacement via Next-Day Air or issue an instant refund to your original payment method."
+      title: "Immediate Care & Resolution",
+      desc: "Our customer care team will arrange a complimentary express replacement via Next-Day Delivery or issue an instant refund to your original payment method."
     }
   ];
 
@@ -118,14 +118,14 @@ export default function ReturnsPage() {
             <div className="p-6 bg-secondaryBg/60 border border-divider rounded-card space-y-3">
               <h3 className="font-serif text-lg text-primaryText text-luxuryGold">Transit Damage & Seal Tampering</h3>
               <p>
-                In the rare event that courier transit results in shattered glass, dented presentation chests, or broken wax seals, please photograph the parcel exterior and affected merchandise before discarding packaging. We will dispatch an identical replacement package immediately via Priority Express.
+                In the rare event that courier transit results in damaged jars, dented gift boxes, or broken seals, please take a photo of the parcel and affected item before discarding packaging. We will dispatch a complimentary replacement immediately via Priority Express.
               </p>
             </div>
 
             <div className="p-6 bg-secondaryBg/60 border border-divider rounded-card space-y-3">
-              <h3 className="font-serif text-lg text-primaryText text-luxuryGold">Custom Corporate & Bespoke Engraved Orders</h3>
+              <h3 className="font-serif text-lg text-primaryText text-luxuryGold">Custom Corporate & Personalized Orders</h3>
               <p>
-                Heirloom gift boxes personalized with laser-engraved names, custom corporate brass plaques, or bespoke ribbon colors are handcrafted specifically for you and cannot be returned for change of mind. However, our full quality guarantee still applies: if any personalized merchandise arrives defective or damaged, we will remanufacture and replace it without delay.
+                Gift boxes personalized with laser-engraved names, custom company logos, or custom ribbon colors are crafted specifically for you and cannot be returned for change of mind. However, our full quality guarantee still applies: if any personalized item arrives defective or damaged, we will replace it without delay.
               </p>
             </div>
 

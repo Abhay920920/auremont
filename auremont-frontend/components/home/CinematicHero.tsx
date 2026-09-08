@@ -71,7 +71,7 @@ export default function CinematicHero() {
 
             <p className="text-sm sm:text-base lg:text-lg text-secondaryText font-light max-w-xl leading-relaxed tracking-wide">
               <span className="text-luxuryGold font-serif italic block text-lg mb-1">Exceptional by Nature. Distinct by Choice.</span>
-              Hand-selected California Almonds, Royal Mangalore King Cashews, Persian Pistachios & Kashmiri Walnuts, slow-roasted to peak aromatic crispness and presented in bespoke velvet-lined mahogany vessels.
+              Hand-selected California Almonds, Royal Mangalore King Cashews, Persian Pistachios & Kashmiri Walnuts, slow-roasted to peak crispness and presented in velvet-lined mahogany gift boxes.
             </p>
 
             <motion.div

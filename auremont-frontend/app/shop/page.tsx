@@ -6,22 +6,22 @@ import BreadcrumbSchema from '@/components/seo/BreadcrumbSchema';
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in';
 
 export const metadata: Metadata = {
-  title: 'Shop All Reserve Harvests & Confections | RARE NUTS',
-  description: 'Discover the Royal Botanical Collection — single-origin California almonds, slow-roasted sea salt reserves, and artisanal gift sets.',
+  title: 'Shop All Reserve Harvests & Gift Sets | RARE NUTS',
+  description: 'Discover the Royal Botanical Collection — single-origin California almonds, slow-roasted sea salt reserves, and handcrafted gift sets.',
   alternates: {
     canonical: `${siteUrl}/shop`,
   },
   openGraph: {
-    title: 'Shop All Reserve Harvests & Confections | RARE NUTS',
-    description: 'Single-origin California Nonpareil almonds and artisanal wood-convection roasts.',
+    title: 'Shop All Reserve Harvests & Gift Sets | RARE NUTS',
+    description: 'Single-origin California Nonpareil almonds and slow-roasted nuts.',
     url: `${siteUrl}/shop`,
     siteName: 'RARE NUTS',
     images: [{ url: `${siteUrl}/images/og-rarenuts.png`, width: 1200, height: 630 }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Shop All Reserve Harvests & Confections | RARE NUTS',
-    description: 'Single-origin California Nonpareil almonds and artisanal wood-convection roasts.',
+    title: 'Shop All Reserve Harvests & Gift Sets | RARE NUTS',
+    description: 'Single-origin California Nonpareil almonds and slow-roasted nuts.',
     images: [`${siteUrl}/images/og-rarenuts.png`],
   },
 };

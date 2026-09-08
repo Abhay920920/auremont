@@ -86,7 +86,7 @@ export default function MobileNavDrawer({ isOpen, onClose }: { isOpen: boolean; 
                   </li>
                   <li>
                     <Link href="/custom-gift-box" onClick={onClose} className="flex justify-between items-center text-luxuryGold font-serif text-lg font-medium">
-                      Bespoke Gift Box Builder <ChevronRight size={16} className="text-luxuryGold" />
+                      Custom Gift Box Builder <ChevronRight size={16} className="text-luxuryGold" />
                     </Link>
                   </li>
                 </ul>

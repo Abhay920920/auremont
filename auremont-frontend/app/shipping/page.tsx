@@ -8,22 +8,22 @@ import Link from 'next/link';
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rarenuts.in';
 
 export const metadata: Metadata = {
-  title: "White-Glove Shipping & Dispatch | RARE NUTS Luxury Almonds",
-  description: "Learn about our climate-shield thermal packaging, domestic express shipping in India, and insured DHL worldwide priority delivery.",
+  title: "Shipping & Delivery Information | RARE NUTS",
+  description: "Learn about our protective climate packaging, express delivery across India, and insured DHL worldwide priority delivery.",
   alternates: {
     canonical: `${siteUrl}/shipping`,
   },
   openGraph: {
-    title: "White-Glove Shipping & Dispatch | RARE NUTS",
-    description: "Insured express delivery, climate-shield packaging, and international dispatch.",
+    title: "Shipping & Delivery Information | RARE NUTS",
+    description: "Insured express delivery, protective climate packaging, and international shipping.",
     url: `${siteUrl}/shipping`,
     siteName: "RARE NUTS",
     images: [{ url: `${siteUrl}/images/og-rarenuts.png`, width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "White-Glove Shipping & Dispatch | RARE NUTS",
-    description: "Insured express delivery and climate-shield packaging.",
+    title: "Shipping & Delivery Information | RARE NUTS",
+    description: "Insured express delivery and protective climate packaging.",
     images: [`${siteUrl}/images/og-rarenuts.png`],
   },
 };
@@ -31,28 +31,28 @@ export const metadata: Metadata = {
 export default function ShippingPage() {
   const tiers = [
     {
-      title: "Complimentary Domestic Express",
+      title: "Complimentary Standard Delivery",
       time: "2 – 4 Business Days",
       price: "Complimentary on orders over ₹1,999",
-      description: "Dispatched via premium express couriers (Blue Dart Apex & Delhivery Express) across 24,000+ PIN codes in India. Tamper-evident security packaging included."
+      description: "Shipped via premium express couriers (Blue Dart & Delhivery Express) across 24,000+ PIN codes in India. Tamper-evident secure packaging included."
     },
     {
       title: "Metro Next-Day Air Priority",
       time: "1 Business Day",
       price: "₹350 flat rate (or complimentary over ₹5,000)",
-      description: "Guaranteed next-day air dispatch for orders placed before 1:00 PM IST to Mumbai, Delhi NCR, Bengaluru, Hyderabad, Chennai, and Kolkata."
+      description: "Guaranteed next-day delivery for orders placed before 1:00 PM IST to Mumbai, Delhi NCR, Bengaluru, Hyderabad, Chennai, and Kolkata."
     },
     {
       title: "Worldwide Express via DHL",
       time: "3 – 6 Business Days",
-      price: "Dynamically calculated at checkout",
-      description: "Insured door-to-door global express to the United States, United Kingdom, European Union, United Arab Emirates, Singapore, and 80+ nations."
+      price: "Calculated at checkout",
+      description: "Insured door-to-door global express to the United States, United Kingdom, European Union, United Arab Emirates, Singapore, and 80+ countries."
     }
   ];
 
   const breadcrumbItems = [
     { name: "Home", url: "/" },
-    { name: "Shipping & Dispatch", url: "/shipping" },
+    { name: "Shipping & Delivery", url: "/shipping" },
   ];
 
   return (
@@ -66,13 +66,13 @@ export default function ShippingPage() {
           <div className="text-center my-12 space-y-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-luxuryGold/25 bg-luxuryGold/5 text-luxuryGold text-[10px] uppercase tracking-ultra">
               <Truck size={12} />
-              <span>White-Glove Logistics Charter</span>
+              <span>Shipping & Delivery Guide</span>
             </div>
             <h1 className="text-4xl sm:text-6xl font-serif text-primaryText tracking-tight">
-              Shipping & <span className="text-luxuryGold italic">Dispatch</span>
+              Shipping & <span className="text-luxuryGold italic">Delivery</span>
             </h1>
             <p className="text-secondaryText text-base sm:text-lg font-light leading-relaxed max-w-2xl mx-auto">
-              Every RARE NUTS consignment is prepared by hand in our climate-regulated fulfillment atelier and protected by specialized botanical transit seals.
+              Every RARE NUTS order is carefully packed by hand in our temperature-controlled packaging facility and protected by secure freshness seals.
             </p>
           </div>
 
@@ -88,7 +88,7 @@ export default function ShippingPage() {
                 </div>
                 <div className="pt-3 border-t border-divider/60 flex items-center gap-2 text-mutedText text-[10px] uppercase tracking-wider">
                   <ShieldCheck size={12} className="text-luxuryGold" />
-                  <span>Fully Insured Dispatch</span>
+                  <span>Fully Insured Delivery</span>
                 </div>
               </div>
             ))}
@@ -140,17 +140,17 @@ export default function ShippingPage() {
               </ul>
             </div>
 
-            {/* Section 4: Dispatch Tracking */}
+            {/* Section 4: Order Tracking */}
             <div className="bg-surface/60 border border-divider rounded-card p-8 space-y-4">
               <div className="flex items-center gap-3 text-luxuryGold">
                 <Clock size={20} />
-                <h2 className="font-serif text-xl text-primaryText">Dispatch Tracking & Signature Deliveries</h2>
+                <h2 className="font-serif text-xl text-primaryText">Order Tracking & Delivery Confirmation</h2>
               </div>
               <p>
-                Upon dispatch from our Mumbai or California atelier, you will receive an immediate SMS and email notification featuring a direct live tracking link. Due to the high value of our heirloom presentation chests, high-tier orders require a recipient signature upon delivery.
+                Once your order ships from our Mumbai or California facility, you will receive an immediate SMS and email notification with a direct live tracking link. High-value gift box orders require a signature upon delivery.
               </p>
               <p>
-                If you require scheduled delivery for a specific anniversary, gala, or holiday date, simply note your requested arrival window in the order instructions at checkout or contact <a href="mailto:concierge@rarenuts.com" className="text-luxuryGold underline underline-offset-4">concierge@rarenuts.com</a>.
+                If you require scheduled delivery for a specific birthday, festival, or anniversary date, simply add a note at checkout or contact <a href="mailto:concierge@rarenuts.com" className="text-luxuryGold underline underline-offset-4">concierge@rarenuts.com</a>.
               </p>
             </div>
 

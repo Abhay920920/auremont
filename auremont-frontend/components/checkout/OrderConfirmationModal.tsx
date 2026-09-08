@@ -48,13 +48,13 @@ export default function OrderConfirmationModal({
 
           <div className="space-y-2">
             <span className="text-[10px] uppercase tracking-ultra text-luxuryGold font-mono block font-medium">
-              Vault Dispatch Confirmed
+              Order Placed Successfully
             </span>
             <h2 className="font-serif text-2xl md:text-3xl text-primaryText">
               Order Received
             </h2>
             <p className="text-secondaryText text-xs font-light max-w-xs mx-auto">
-              Your bespoke almond reserve order has been transferred to our temperature-controlled packing vault.
+              Your premium almond order has been placed and is being carefully packed for express delivery.
             </p>
           </div>
 
@@ -65,14 +65,14 @@ export default function OrderConfirmationModal({
               <span className="text-luxuryGold font-bold">{orderNumber || "ORD-2026-8941"}</span>
             </div>
             <div className="flex justify-between items-center border-b border-divider pb-2">
-              <span className="text-mutedText">Total Investment</span>
+              <span className="text-mutedText">Order Total</span>
               <span className="text-primaryText font-serif text-sm">{totalAmount}</span>
             </div>
             <div className="flex justify-between items-center pt-1 text-[10px] text-emerald-400">
               <span className="flex items-center gap-1">
-                <Package size={12} /> Dispatch Status
+                <Package size={12} /> Delivery Status
               </span>
-              <span>Vault Packing</span>
+              <span>Packing Your Order</span>
             </div>
           </div>
 

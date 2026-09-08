@@ -228,7 +228,7 @@ export default function OrderConfirmationPage() {
               Payment Verified
             </span>
             <span>·</span>
-            <span>Insured Vault Dispatch</span>
+            <span>Insured Express Delivery</span>
             <span>·</span>
             <span>RARE NUTS Quality Guarantee</span>
           </div>

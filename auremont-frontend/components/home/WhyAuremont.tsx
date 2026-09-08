@@ -13,17 +13,17 @@ export default function WhyAuremont() {
       metric: "Top 1% Global Crop"
     },
     {
-      badge: "ARTISANAL SLOW ROAST",
+      badge: "HANDCRAFTED SLOW ROAST",
       icon: <ShieldCheck size={28} strokeWidth={1.2} />,
-      title: "Cured Almond-Wood Slow Roast",
-      description: "Our roasting atelier employs slow convective roasting over reclaimed almond-wood embers. By avoiding flash-roasting, we preserve volatile aromatic nutrient oils while cultivating an unmatched, buttery crunch that resonates with every kernel.",
-      metric: "Small-Batch Micro Roasts"
+      title: "Almond-Wood Slow Roast",
+      description: "Our roastery uses slow dry roasting over seasoned almond wood. By avoiding high-heat frying, we preserve natural nutrient oils while cultivating a rich, buttery crunch with every kernel.",
+      metric: "Small-Batch Roasts"
     },
     {
-      badge: "VAULT SEAL · ZERO AIR EXPOSURE",
+      badge: "FRESHNESS SEAL · AIRTIGHT",
       icon: <Hexagon size={28} strokeWidth={1.2} />,
-      title: "Bespoke Heirloom Packaging",
-      description: "Hermetically sealed in UV-filtering double-walled amber glass jars, velvet-lined solid mahogany chests, and nitrogen-flushed embossed matte pouches to lock in garden-fresh vitality and prevent oxidative flavor degradation.",
+      title: "Keepsake Gift Packaging",
+      description: "Airtight sealed in UV-filtering amber glass jars, velvet-lined solid mahogany boxes, and nitrogen-sealed matte pouches to lock in garden-fresh flavor and protect delicate kernel oils.",
       metric: "100% Aroma Locked"
     }
   ];
