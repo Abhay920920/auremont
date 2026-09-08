@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { GetUser } from '../auth/get-user.decorator';
@@ -7,6 +8,7 @@ import { Roles } from '../auth/roles.decorator';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { AddressDto } from './dto/address.dto';
+import { DeleteAccountDto } from './dto/delete-account.dto';
 
 @Controller('users')
 export class UsersController {
@@ -28,6 +30,13 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   async changePassword(@GetUser() user: any, @Body() dto: ChangePasswordDto) {
     return this.usersService.changePassword(user.id, dto);
+  }
+
+  @Delete('me')
+  @UseGuards(JwtAuthGuard)
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
+  async deleteMyAccount(@GetUser() user: any, @Body() dto: DeleteAccountDto) {
+    return this.usersService.deleteMyAccount(user.id, dto);
   }
 
   // --- Addresses ---

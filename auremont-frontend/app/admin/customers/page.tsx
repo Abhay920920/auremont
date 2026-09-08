@@ -306,6 +306,10 @@ export default function AdminCustomersPage() {
                         <span className="inline-flex items-center gap-1.5 text-xs text-emerald-400 font-medium">
                           <UserCheck size={14} /> Active
                         </span>
+                      ) : c.status === 'inactive' ? (
+                        <span className="inline-flex items-center gap-1.5 text-xs text-zinc-400 font-medium">
+                          <UserX size={14} /> Inactive / Deleted
+                        </span>
                       ) : (
                         <span className="inline-flex items-center gap-1.5 text-xs text-red-400 font-medium">
                           <UserX size={14} /> Blocked

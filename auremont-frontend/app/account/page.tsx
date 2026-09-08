@@ -5,12 +5,14 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import api from "@/lib/axios";
 import { useWishlistStore } from "@/store/wishlistStore";
+import { useCartStore } from "@/store/cartStore";
 
 import AccountSidebar, { Tab } from "@/components/account/AccountSidebar";
 import OrderHistoryTab from "@/components/account/OrderHistoryTab";
 import ProfileTab from "@/components/account/ProfileTab";
 import AddressesTab from "@/components/account/AddressesTab";
 import WishlistTab from "@/components/account/WishlistTab";
+import DeleteAccountModal from "@/components/account/DeleteAccountModal";
 
 export default function AccountDashboard() {
   const { user, setUser, logout } = useAuthStore();
@@ -37,6 +39,11 @@ export default function AccountDashboard() {
   });
   const [addressMsg, setAddressMsg] = useState("");
   const [savingAddress, setSavingAddress] = useState(false);
+
+  // Account Deletion State
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -135,6 +142,28 @@ export default function AccountDashboard() {
       setProfileMsg(err.response?.data?.message || "Failed to update profile.");
     } finally {
       setUpdatingProfile(false);
+    }
+  };
+
+  const handleDeleteAccount = async (password: string | undefined, confirmText: string) => {
+    setDeletingAccount(true);
+    setDeleteError(null);
+    try {
+      await api.delete('/users/me', {
+        data: {
+          password: password || undefined,
+          confirmText,
+        },
+      });
+      useCartStore.getState().clearCart();
+      useWishlistStore.getState().clearWishlist();
+      logout();
+      router.push('/login?deleted=true');
+    } catch (err: any) {
+      const msg = err.response?.data?.message || 'Failed to delete account. Please try again.';
+      setDeleteError(Array.isArray(msg) ? msg.join(', ') : msg);
+    } finally {
+      setDeletingAccount(false);
     }
   };
 
@@ -243,6 +272,10 @@ export default function AccountDashboard() {
                 handleUpdateProfile={handleUpdateProfile}
                 updatingProfile={updatingProfile}
                 profileMsg={profileMsg}
+                onOpenDeleteModal={() => {
+                  setDeleteError(null);
+                  setShowDeleteModal(true);
+                }}
               />
             )}
 
@@ -272,6 +305,14 @@ export default function AccountDashboard() {
         </div>
 
       </div>
+
+      <DeleteAccountModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDeleteAccount}
+        loading={deletingAccount}
+        errorMessage={deleteError}
+      />
     </div>
   );
 }

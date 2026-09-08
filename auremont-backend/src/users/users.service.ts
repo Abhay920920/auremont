@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, BadRequestException, UnauthorizedExcepti
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { User } from '@prisma/client';
+import { DeleteAccountDto } from './dto/delete-account.dto';
 
 @Injectable()
 export class UsersService {
@@ -447,6 +448,155 @@ export class UsersService {
     return {
       message: `Successfully removed ${delResult.count} test customer(s)`,
       deletedCount: delResult.count,
+    };
+  }
+
+  async deleteMyAccount(userId: string, dto: DeleteAccountDto) {
+    if (!this.isValidUuid(userId)) {
+      throw new UnauthorizedException('Invalid user identity');
+    }
+
+    if (!dto || !dto.confirmText || dto.confirmText.trim().toUpperCase() !== 'DELETE') {
+      throw new BadRequestException('Please type "DELETE" to confirm permanent account deletion.');
+    }
+
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user || user.status === 'inactive' || user.email.startsWith('deleted_')) {
+      throw new NotFoundException('Account not found or already deleted.');
+    }
+
+    if (user.role === 'admin') {
+      throw new BadRequestException('Administrative accounts cannot be deleted through customer self-service.');
+    }
+
+    // Re-authentication check
+    if (user.passwordHash) {
+      if (!dto.password) {
+        throw new BadRequestException('Your current password is required to verify account deletion.');
+      }
+      const isPasswordValid = await bcrypt.compare(dto.password, user.passwordHash);
+      if (!isPasswordValid) {
+        throw new BadRequestException('Incorrect password. Please verify your credentials and try again.');
+      }
+    }
+
+    // Active order / financial operation check
+    const activeOrders = await this.prisma.order.findMany({
+      where: {
+        userId,
+        OR: [
+          { orderStatus: { in: ['placed', 'confirmed', 'packed', 'shipped'] } },
+          { paymentStatus: { in: ['pending', 'processing'] } },
+        ],
+      },
+      select: { id: true, orderNumber: true, orderStatus: true, paymentStatus: true },
+    });
+
+    if (activeOrders.length > 0) {
+      throw new BadRequestException(
+        'You cannot delete your account while you have active orders or in-progress payments. Please wait until your orders are delivered or cancelled.',
+      );
+    }
+
+    // Fetch all historical orders to determine if user row must be anonymized or hard-deleted
+    const historicalOrders = await this.prisma.order.findMany({
+      where: { userId },
+      select: { id: true, addressId: true },
+    });
+
+    const userCarts = await this.prisma.cart.findMany({
+      where: { userId },
+      select: { id: true },
+    });
+    const userCartIds = userCarts.map((c) => c.id);
+
+    await this.prisma.$transaction(
+      async (tx) => {
+        // 1. Purge active carts & cart items
+        if (userCartIds.length > 0) {
+          await tx.cartItem.deleteMany({ where: { cartId: { in: userCartIds } } });
+          await tx.cart.deleteMany({ where: { id: { in: userCartIds } } });
+        }
+        await tx.cart.deleteMany({ where: { userId } });
+
+        // 2. Purge personal wishlists, notifications, and standalone addresses
+        await tx.wishlist.deleteMany({ where: { userId } });
+        await tx.notification.deleteMany({ where: { userId } });
+        // 3. Disassociate user reference in audit logs
+        await tx.auditLog.updateMany({
+          where: { userId },
+          data: { userId: null },
+        });
+
+        if (historicalOrders.length === 0) {
+          // No financial history exists: Full permanent deletion of addresses, reviews, and user
+          await tx.address.deleteMany({ where: { userId } });
+          await tx.review.deleteMany({ where: { userId } });
+          await tx.user.delete({ where: { id: userId } });
+        } else {
+          // Historical orders exist: Redact PII to preserve financial & audit integrity
+          const linkedAddressIds = historicalOrders
+            .map((o) => o.addressId)
+            .filter((id): id is string => Boolean(id));
+
+          if (linkedAddressIds.length > 0) {
+            await tx.address.deleteMany({
+              where: {
+                userId,
+                id: { notIn: linkedAddressIds },
+              },
+            });
+            await tx.address.updateMany({
+              where: { id: { in: linkedAddressIds } },
+              data: {
+                fullName: 'Deleted Customer',
+                phone: '0000000000',
+                addressLine1: '[Redacted for Privacy]',
+                addressLine2: null,
+              },
+            });
+          } else {
+            await tx.address.deleteMany({ where: { userId } });
+          }
+
+          // Anonymize the user record so orders remain referentially intact
+          await tx.user.update({
+            where: { id: userId },
+            data: {
+              firstName: 'Deleted',
+              lastName: 'Customer',
+              email: `deleted_${userId}@anonymized.invalid`,
+              phone: null,
+              passwordHash: null,
+              googleId: null,
+              role: 'customer',
+              status: 'inactive',
+              emailVerified: false,
+              refreshToken: null,
+              resetToken: null,
+              resetTokenExpiry: null,
+            },
+          });
+        }
+
+        // 4. Record system audit event without sensitive personal data
+        await tx.auditLog.create({
+          data: {
+            action: 'ACCOUNT_DELETED',
+            entity: 'User',
+            entityId: userId,
+            userId: null,
+          },
+        });
+      },
+      { timeout: 15000 },
+    );
+
+    this.clearUsersCache();
+
+    return {
+      success: true,
+      message: 'Your account has been deleted successfully.',
     };
   }
 }

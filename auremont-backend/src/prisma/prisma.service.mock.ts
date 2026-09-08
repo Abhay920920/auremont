@@ -64,11 +64,17 @@ export const createMockPrismaService = () => {
         if ('in' in val && Array.isArray(val.in)) {
           return val.in.includes(itemVal);
         }
+        if ('notIn' in val && Array.isArray(val.notIn)) {
+          return !val.notIn.includes(itemVal);
+        }
         if ('not' in val) {
           return itemVal !== val.not;
         }
         if ('some' in val) {
           return Array.isArray(itemVal) && itemVal.length > 0;
+        }
+        if ('none' in val) {
+          return !itemVal || (Array.isArray(itemVal) && itemVal.length === 0);
         }
       }
       if (itemVal instanceof Date && val instanceof Date) {
@@ -164,16 +170,14 @@ export const createMockPrismaService = () => {
     deleteMany: jest.fn(async ({ where }: { where: any } = { where: {} }) => {
       const list = mockDb[tableName] || [];
       const before = list.length;
-      mockDb[tableName] = list.filter(
-        (i) => !Object.entries(where).every(([k, v]) => i[k] === v)
-      );
+      mockDb[tableName] = list.filter((i) => !matchWhere(i, where));
       return { count: before - mockDb[tableName].length };
     }),
 
     count: jest.fn(async ({ where }: any = {}) => {
       let list = mockDb[tableName] || [];
       if (where) {
-        list = list.filter((item) => Object.entries(where).every(([k, v]) => item[k] === v));
+        list = list.filter((item) => matchWhere(item, where));
       }
       return list.length;
     }),
@@ -193,8 +197,7 @@ export const createMockPrismaService = () => {
       const list = mockDb[tableName] || [];
       let count = 0;
       list.forEach((item) => {
-        const matches = Object.entries(where).every(([k, v]) => item[k] === v);
-        if (matches) {
+        if (matchWhere(item, where)) {
           Object.assign(item, data);
           count += 1;
         }

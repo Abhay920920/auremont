@@ -12,6 +12,7 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const redirect = searchParams?.get('redirect');
   const reason = searchParams?.get('reason');
+  const deleted = searchParams?.get('deleted');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -92,6 +93,19 @@ function LoginForm() {
             <span className="leading-snug">
               Please sign in or create an account first to reserve items and activate your personal cart.
             </span>
+          </div>
+        )}
+
+        {/* Account Deletion Confirmation Notice */}
+        {deleted === 'true' && (
+          <div className="mb-6 p-4 bg-red-950/20 border border-red-500/30 text-xs space-y-1.5 rounded-sm animate-fade-in">
+            <div className="flex items-center gap-2 text-red-400 font-medium">
+              <ShieldCheck size={16} className="flex-shrink-0" />
+              <span className="uppercase tracking-wider text-[11px]">Account Deleted</span>
+            </div>
+            <p className="text-secondaryText leading-relaxed">
+              Your customer account has been permanently deleted and personal data anonymized in accordance with our data privacy policy.
+            </p>
           </div>
         )}
 
