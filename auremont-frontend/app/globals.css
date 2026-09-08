@@ -147,7 +147,19 @@ select:-webkit-autofill:active {
   .luxury-button-outline {
     @apply uppercase tracking-widest text-xs font-semibold px-8 py-4 bg-transparent border border-divider text-primaryText hover:border-luxuryGold hover:text-luxuryGold active:scale-95 transition-all duration-300;
   }
-  
+
+  /* Standardized 44px Touch Target for Mobile Ergonomics */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
+  }
+
+  /* Universal Centered, Scrollable Modal Architecture */
+  .luxury-modal-overlay {
+    @apply fixed inset-0 z-[120] bg-black/85 backdrop-blur-md overflow-y-auto;
+  }
+  .luxury-modal-center {
+    @apply min-h-full flex items-center justify-center p-3.5 sm:p-6 md:p-8 py-8 sm:py-12 text-center;
+  }
   .luxury-link {
     @apply relative after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-0 after:h-[1px] after:bg-luxuryGold hover:after:w-full after:transition-all after:duration-300;
   }

@@ -93,9 +93,9 @@ export default function Header() {
             <button
               onClick={() => setIsMobileNavOpen(true)}
               aria-label="Menu"
-              className="w-10 h-10 flex items-center justify-start text-primaryText hover:text-luxuryGold transition-colors"
+              className="min-w-[44px] min-h-[44px] flex items-center justify-start text-primaryText hover:text-luxuryGold transition-colors cursor-pointer"
             >
-              <Menu size={20} />
+              <Menu size={22} />
             </button>
           </div>
 
@@ -117,7 +117,7 @@ export default function Header() {
 
           {/* Nav Right */}
           <div
-            className="flex flex-1 gap-2 sm:gap-5 items-center justify-end text-[13px] tracking-widest uppercase text-primaryText font-medium"
+            className="flex flex-1 gap-1 sm:gap-4 items-center justify-end text-[13px] tracking-widest uppercase text-primaryText font-medium"
             onMouseEnter={() => setIsMegaNavOpen(false)}
           >
             {/* Currency Dropdown (Desktop Only) */}
@@ -125,7 +125,7 @@ export default function Header() {
               <select
                 value={mounted ? currency : "INR"}
                 onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
-                className="bg-secondaryBg/90 border border-luxuryGold/30 text-luxuryGold text-[10px] uppercase tracking-ultra px-2 py-1 rounded-full outline-none cursor-pointer hover:border-luxuryGold transition-colors"
+                className="bg-secondaryBg/90 border border-luxuryGold/30 text-luxuryGold text-[10px] uppercase tracking-ultra px-2.5 py-1.5 rounded-full outline-none cursor-pointer hover:border-luxuryGold transition-colors"
               >
                 <option value="INR" className="bg-background text-primaryText">INR ₹</option>
                 <option value="USD" className="bg-background text-primaryText">USD $</option>
@@ -136,10 +136,10 @@ export default function Header() {
 
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="w-9 h-9 flex items-center justify-center hover:text-luxuryGold transition-colors"
+              className="min-w-[44px] min-h-[44px] flex items-center justify-center hover:text-luxuryGold transition-colors cursor-pointer"
               aria-label="Search"
             >
-              <Search size={18} />
+              <Search size={19} />
             </button>
 
             <div className="hidden md:block">
@@ -160,18 +160,18 @@ export default function Header() {
 
             <button
               onClick={() => setIsCartOpen(true)}
-              className="w-9 h-9 flex items-center justify-end md:justify-center luxury-link pb-1 md:w-auto md:h-auto md:gap-1.5"
+              className="min-w-[44px] min-h-[44px] flex items-center justify-end md:justify-center luxury-link pb-1 md:w-auto md:h-auto md:gap-1.5 cursor-pointer"
               aria-label="Cart"
             >
               <span className="hidden md:inline">Cart</span>
-              <span className="md:hidden relative">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <span className="md:hidden relative flex items-center justify-center">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
                   <path d="M3 6h18"/>
                   <path d="M16 10a4 4 0 0 1-8 0"/>
                 </svg>
                 {mounted && (items?.length || 0) > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-luxuryGold text-background text-[9px] w-4 h-4 flex items-center justify-center rounded-full font-bold">
+                  <span className="absolute -top-1 -right-1 bg-luxuryGold text-background text-[9px] w-4 h-4 flex items-center justify-center rounded-full font-bold">
                     {items.length}
                   </span>
                 )}

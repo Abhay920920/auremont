@@ -15,10 +15,14 @@ export default function SearchDrawer({ isOpen, onClose }: { isOpen: boolean; onC
   const [hasFetched, setHasFetched] = useState(false);
 
   useEffect(() => {
-    if (isOpen && inputRef.current) {
+    if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 100);
       setQuery("");
+      document.body.style.overflow = "hidden";
     }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
   }, [isOpen]);
 
   useEffect(() => {
@@ -57,7 +61,7 @@ export default function SearchDrawer({ isOpen, onClose }: { isOpen: boolean; onC
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[70]"
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[90]"
             onClick={onClose}
           />
           <motion.div 
@@ -65,7 +69,7 @@ export default function SearchDrawer({ isOpen, onClose }: { isOpen: boolean; onC
             animate={{ y: 0 }}
             exit={{ y: "-100%" }}
             transition={{ type: "tween", ease: [0.25, 1, 0.5, 1], duration: 0.5 }}
-            className="fixed top-0 left-0 w-full bg-background border-b border-divider z-[80] shadow-2xl pt-safe-top pb-8 px-6 md:px-12 max-h-[90vh] overflow-y-auto custom-scrollbar"
+            className="fixed top-0 left-0 w-full bg-background border-b border-divider z-[100] shadow-2xl pt-safe-top pb-8 px-6 md:px-12 max-h-[90vh] overflow-y-auto custom-scrollbar"
           >
             <div className="max-w-[1200px] mx-auto relative mt-8">
               <button 

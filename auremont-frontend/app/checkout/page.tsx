@@ -501,83 +501,91 @@ export default function CheckoutPage() {
 
       {/* ── CONFIRMED overlay ─────────────────────────────────────────────────── */}
       {paymentState === "CONFIRMED" && confirmedOrder && (
-        <div className="fixed inset-0 bg-background/90 backdrop-blur-md z-50 flex items-center justify-center animate-fade-in">
-          <div className="bg-secondaryBg border border-luxuryGold p-12 text-center max-w-md w-full space-y-6">
-            <div className="w-16 h-16 rounded-full bg-background border border-luxuryGold flex items-center justify-center mx-auto mb-8">
-              <ShieldCheck className="w-8 h-8 text-luxuryGold" strokeWidth={1.5} />
+        <div className="fixed inset-0 z-[120] bg-black/85 backdrop-blur-md overflow-y-auto animate-fade-in">
+          <div className="min-h-full flex items-center justify-center p-4 py-8 text-center">
+            <div className="bg-secondaryBg border border-luxuryGold p-8 sm:p-12 text-center max-w-md w-full space-y-6 shadow-[0_25px_80px_rgba(0,0,0,0.95)] rounded-card my-auto">
+              <div className="w-16 h-16 rounded-full bg-background border border-luxuryGold flex items-center justify-center mx-auto mb-6">
+                <ShieldCheck className="w-8 h-8 text-luxuryGold" strokeWidth={1.5} />
+              </div>
+              <h2 className="font-serif text-3xl text-primaryText">Order Confirmed</h2>
+              <p className="text-secondaryText text-sm">
+                Order <span className="font-mono text-primaryText">#{confirmedOrder.orderNumber}</span>
+              </p>
+              <p className="text-luxuryGold font-serif text-2xl" suppressHydrationWarning>
+                {formatPrice(confirmedOrder.total)}
+              </p>
+              <p className="text-mutedText text-xs uppercase tracking-widest pt-2">
+                Payment verified · Redirecting...
+              </p>
             </div>
-            <h2 className="font-serif text-3xl text-primaryText">Order Confirmed</h2>
-            <p className="text-secondaryText text-sm">
-              Order <span className="font-mono text-primaryText">#{confirmedOrder.orderNumber}</span>
-            </p>
-            <p className="text-luxuryGold font-serif text-2xl" suppressHydrationWarning>
-              {formatPrice(confirmedOrder.total)}
-            </p>
-            <p className="text-mutedText text-xs uppercase tracking-widest pt-2">
-              Payment verified · Redirecting...
-            </p>
           </div>
         </div>
       )}
 
       {/* ── VERIFYING overlay ─────────────────────────────────────────────────── */}
       {(paymentState === "VERIFYING" || paymentState === "PAYMENT_PENDING" || paymentState === "ORDER_CREATING") && (
-        <div className="fixed inset-0 bg-background/90 backdrop-blur-md z-50 flex items-center justify-center animate-fade-in">
-          <div className="text-center space-y-6 max-w-xs">
-            <div className="w-12 h-12 border border-luxuryGold border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-primaryText font-serif text-xl tracking-widest uppercase">
-              {paymentState === "ORDER_CREATING"
-                ? "Preparing Your Order..."
-                : paymentState === "VERIFYING"
-                ? "Verifying your payment…"
-                : "Connecting to Secure Gateway"}
-            </p>
-            <p className="text-secondaryText text-xs">
-              {paymentState === "VERIFYING"
-                ? "Payment processing… Please do not close or refresh this window."
-                : stateMessage || "Securing order details with the gateway."}
-            </p>
+        <div className="fixed inset-0 z-[120] bg-black/85 backdrop-blur-md overflow-y-auto animate-fade-in">
+          <div className="min-h-full flex items-center justify-center p-4 py-8 text-center">
+            <div className="bg-secondaryBg border border-divider p-8 sm:p-10 text-center space-y-6 max-w-sm w-full rounded-card shadow-[0_25px_80px_rgba(0,0,0,0.95)] my-auto">
+              <div className="w-12 h-12 border border-luxuryGold border-t-transparent rounded-full animate-spin mx-auto" />
+              <p className="text-primaryText font-serif text-xl tracking-widest uppercase">
+                {paymentState === "ORDER_CREATING"
+                  ? "Preparing Your Order..."
+                  : paymentState === "VERIFYING"
+                  ? "Verifying your payment…"
+                  : "Connecting to Secure Gateway"}
+              </p>
+              <p className="text-secondaryText text-xs leading-relaxed">
+                {paymentState === "VERIFYING"
+                  ? "Payment processing… Please do not close or refresh this window."
+                  : stateMessage || "Securing order details with the gateway."}
+              </p>
+            </div>
           </div>
         </div>
       )}
 
       {/* ── UNKNOWN overlay (polling) ─────────────────────────────────────────── */}
       {paymentState === "UNKNOWN" && (
-        <div className="fixed inset-0 bg-background/90 backdrop-blur-md z-50 flex items-center justify-center animate-fade-in">
-          <div className="bg-secondaryBg border border-divider p-12 text-center max-w-md w-full space-y-6">
-            <Clock className="w-10 h-10 text-amber-400 mx-auto" />
-            <h2 className="font-serif text-2xl text-primaryText">Payment Verification In Progress</h2>
-            <p className="text-secondaryText text-sm leading-relaxed">{stateMessage}</p>
-            <button
-              onClick={() => router.push(user ? "/account" : "/shop")}
-              className="luxury-button-outline text-xs px-6 py-2"
-            >
-              {user ? "Go to My Orders" : "Continue Shopping"}
-            </button>
+        <div className="fixed inset-0 z-[120] bg-black/85 backdrop-blur-md overflow-y-auto animate-fade-in">
+          <div className="min-h-full flex items-center justify-center p-4 py-8 text-center">
+            <div className="bg-secondaryBg border border-divider p-8 sm:p-12 text-center max-w-md w-full space-y-6 shadow-[0_25px_80px_rgba(0,0,0,0.95)] rounded-card my-auto">
+              <Clock className="w-10 h-10 text-amber-400 mx-auto" />
+              <h2 className="font-serif text-2xl text-primaryText">Payment Verification In Progress</h2>
+              <p className="text-secondaryText text-sm leading-relaxed">{stateMessage}</p>
+              <button
+                onClick={() => router.push(user ? "/account" : "/shop")}
+                className="luxury-button-outline text-xs px-6 py-2.5 w-full sm:w-auto"
+              >
+                {user ? "Go to My Orders" : "Continue Shopping"}
+              </button>
+            </div>
           </div>
         </div>
       )}
 
       {/* ── FAILED overlay ────────────────────────────────────────────────────── */}
       {paymentState === "FAILED" && (
-        <div className="fixed inset-0 bg-background/90 backdrop-blur-md z-50 flex items-center justify-center animate-fade-in">
-          <div className="bg-secondaryBg border border-error/30 p-12 text-center max-w-md w-full space-y-6">
-            <AlertCircle className="w-10 h-10 text-error mx-auto" />
-            <h2 className="font-serif text-2xl text-primaryText">Payment Could Not Be Verified</h2>
-            <p className="text-secondaryText text-sm leading-relaxed">{stateMessage || "Payment could not be verified. Your order has not been charged."}</p>
-            <div className="flex gap-3 justify-center pt-2">
-              <button
-                onClick={() => { setPaymentState("IDLE"); setError(""); verificationAttemptedRef.current = false; }}
-                className="luxury-button text-xs px-6 py-2"
-              >
-                Try Again
-              </button>
-              <button
-                onClick={() => router.push(user ? "/account" : "/shop")}
-                className="luxury-button-outline text-xs px-6 py-2"
-              >
-                My Orders
-              </button>
+        <div className="fixed inset-0 z-[120] bg-black/85 backdrop-blur-md overflow-y-auto animate-fade-in">
+          <div className="min-h-full flex items-center justify-center p-4 py-8 text-center">
+            <div className="bg-secondaryBg border border-error/30 p-8 sm:p-12 text-center max-w-md w-full space-y-6 shadow-[0_25px_80px_rgba(0,0,0,0.95)] rounded-card my-auto">
+              <AlertCircle className="w-10 h-10 text-error mx-auto" />
+              <h2 className="font-serif text-2xl text-primaryText">Payment Could Not Be Verified</h2>
+              <p className="text-secondaryText text-sm leading-relaxed">{stateMessage || "Payment could not be verified. Your order has not been charged."}</p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+                <button
+                  onClick={() => { setPaymentState("IDLE"); setError(""); verificationAttemptedRef.current = false; }}
+                  className="luxury-button text-xs px-6 py-2.5"
+                >
+                  Try Again
+                </button>
+                <button
+                  onClick={() => router.push(user ? "/account" : "/shop")}
+                  className="luxury-button-outline text-xs px-6 py-2.5"
+                >
+                  My Orders
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -585,26 +593,28 @@ export default function CheckoutPage() {
 
       {/* ── CANCELLED overlay ─────────────────────────────────────────────────── */}
       {paymentState === "CANCELLED" && (
-        <div className="fixed inset-0 bg-background/90 backdrop-blur-md z-50 flex items-center justify-center animate-fade-in">
-          <div className="bg-secondaryBg border border-divider p-12 text-center max-w-md w-full space-y-6">
-            <AlertCircle className="w-10 h-10 text-amber-400 mx-auto" />
-            <h2 className="font-serif text-2xl text-primaryText">Payment Cancelled</h2>
-            <p className="text-secondaryText text-sm leading-relaxed">
-              You cancelled the payment. Your order is saved — you can retry from your account.
-            </p>
-            <div className="flex gap-3 justify-center pt-2">
-              <button
-                onClick={() => { setPaymentState("IDLE"); verificationAttemptedRef.current = false; }}
-                className="luxury-button text-xs px-6 py-2"
-              >
-                Retry Payment
-              </button>
-              <button
-                onClick={() => router.push(user ? "/account" : "/shop")}
-                className="luxury-button-outline text-xs px-6 py-2"
-              >
-                My Orders
-              </button>
+        <div className="fixed inset-0 z-[120] bg-black/85 backdrop-blur-md overflow-y-auto animate-fade-in">
+          <div className="min-h-full flex items-center justify-center p-4 py-8 text-center">
+            <div className="bg-secondaryBg border border-divider p-8 sm:p-12 text-center max-w-md w-full space-y-6 shadow-[0_25px_80px_rgba(0,0,0,0.95)] rounded-card my-auto">
+              <AlertCircle className="w-10 h-10 text-amber-400 mx-auto" />
+              <h2 className="font-serif text-2xl text-primaryText">Payment Cancelled</h2>
+              <p className="text-secondaryText text-sm leading-relaxed">
+                You cancelled the payment. Your order is saved — you can retry from your account.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+                <button
+                  onClick={() => { setPaymentState("IDLE"); verificationAttemptedRef.current = false; }}
+                  className="luxury-button text-xs px-6 py-2.5"
+                >
+                  Retry Payment
+                </button>
+                <button
+                  onClick={() => router.push(user ? "/account" : "/shop")}
+                  className="luxury-button-outline text-xs px-6 py-2.5"
+                >
+                  My Orders
+                </button>
+              </div>
             </div>
           </div>
         </div>

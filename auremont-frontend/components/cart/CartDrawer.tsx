@@ -17,9 +17,15 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
   const { formatPrice } = useCurrencyStore();
 
   useEffect(() => {
-    if (isOpen && user) {
-      fetchCart();
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+      if (user) {
+        fetchCart();
+      }
     }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
   }, [isOpen, user, fetchCart]);
 
   const subtotal = items.reduce((sum, item) => sum + (item.quantity * Number(item.unitPrice)), 0);
@@ -34,7 +40,7 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/75 backdrop-blur-sm z-[90]"
           />
 
           {/* Drawer */}
@@ -43,7 +49,7 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "tween", duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-y-0 right-0 w-full max-w-md bg-background border-l border-divider z-50 flex flex-col shadow-2xl"
+            className="fixed inset-y-0 right-0 w-full max-w-md bg-background border-l border-divider z-[100] flex flex-col shadow-2xl"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-6 pt-safe-top border-b border-divider flex-shrink-0">

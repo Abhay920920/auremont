@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        'xs': '360px',
+      },
       colors: {
         // Core Ultra Luxury Palette
         background: '#050505', // Deep matte black

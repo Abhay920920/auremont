@@ -75,7 +75,7 @@ export default function ProductCard({ product }: { product: Product }) {
       <div className="flex flex-col items-center text-center flex-grow justify-between pt-1">
         <div className="w-full px-1">
           <Link href={`/shop/${product.slug}`} data-testid={`product-title-link-${product.slug}`}>
-            <h3 className="font-serif text-sm sm:text-lg md:text-xl text-primaryText mb-1 sm:mb-1.5 group-hover:text-luxuryGold transition-colors line-clamp-2 leading-snug">
+            <h3 className="font-serif text-sm sm:text-lg md:text-xl text-primaryText mb-1 sm:mb-1.5 group-hover:text-luxuryGold transition-colors line-clamp-2 leading-snug min-h-[2.5rem] sm:min-h-[3rem] flex items-center justify-center">
               {product.name}
             </h3>
           </Link>
@@ -85,16 +85,16 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
         
         <div className="w-full px-1">
-          <span suppressHydrationWarning className="font-light font-serif text-sm sm:text-lg text-luxuryGold block mb-2.5 sm:mb-3">
+          <span suppressHydrationWarning className="font-light font-serif text-sm sm:text-lg text-luxuryGold block mb-2 sm:mb-3">
             {formatPrice(product.price)}
           </span>
           
-          {/* Mobile Quick Add Button */}
+          {/* Mobile Quick Add Button - 44px Ergonomic Touch Target */}
           <div className="md:hidden w-full">
             <AddToCartButton 
               productId={product.id} 
               product={product} 
-              className="luxury-button w-full text-[10px] sm:text-xs py-2.5 px-2 tracking-wider font-mono h-9 flex items-center justify-center rounded-sm" 
+              className="luxury-button w-full text-[10px] sm:text-xs py-2.5 px-2 tracking-wider font-mono h-11 flex items-center justify-center rounded-sm cursor-pointer shadow-sm" 
             />
           </div>
         </div>

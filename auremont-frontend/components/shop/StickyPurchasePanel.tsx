@@ -68,21 +68,21 @@ export default function StickyPurchasePanel({ product }: { product: any }) {
                   addWishlist(user.id, product.id);
                 }
               }}
-              className={`h-10 w-10 border rounded-btn flex items-center justify-center transition-colors ${
+              className={`h-11 w-11 min-h-[44px] min-w-[44px] border rounded-btn flex items-center justify-center transition-colors cursor-pointer ${
                 isWishlisted 
                   ? 'border-luxuryGold bg-luxuryGold/10 text-luxuryGold' 
                   : 'border-divider text-secondaryText hover:text-luxuryGold'
               }`}
               aria-label="Wishlist"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill={isWishlisted ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill={isWishlisted ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.5">
                 <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
               </svg>
             </button>
             <AddToCartButton
               productId={product.id}
               product={product}
-              className="bg-luxuryGold hover:bg-goldHover text-background font-medium text-xs tracking-wider uppercase h-10 px-5 rounded-btn transition-colors duration-300"
+              className="bg-luxuryGold hover:bg-goldHover text-background font-medium text-xs tracking-wider uppercase h-11 min-h-[44px] px-5 rounded-btn transition-colors duration-300 flex items-center justify-center cursor-pointer shadow-sm"
             />
           </div>
         </div>

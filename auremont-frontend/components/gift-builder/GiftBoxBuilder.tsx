@@ -241,7 +241,7 @@ export default function GiftBoxBuilder() {
         <div className="w-full lg:w-1/2 space-y-10 animate-fade-in">
           
           {/* Step Progress Bar */}
-          <div className="flex justify-between items-center border-b border-divider pb-6">
+          <div className="flex justify-between items-center border-b border-divider pb-4 sm:pb-6">
             {[
               { step: 1, label: "Box Vessel" },
               { step: 2, label: "Fillings" },
@@ -251,7 +251,7 @@ export default function GiftBoxBuilder() {
               <button
                 key={s.step}
                 onClick={() => setCurrentStep(s.step)}
-                className={`flex items-center gap-2 text-xs uppercase tracking-widest transition-colors ${
+                className={`min-h-[44px] px-1 sm:px-2 flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs uppercase tracking-wider sm:tracking-widest transition-colors cursor-pointer ${
                   currentStep === s.step ? 'text-luxuryGold font-medium' : 'text-mutedText hover:text-primaryText'
                 }`}
               >
@@ -278,11 +278,11 @@ export default function GiftBoxBuilder() {
                   <div 
                     key={box.id}
                     onClick={() => setSelectedBox(box)}
-                    className={`p-6 border rounded-card cursor-pointer transition-all flex gap-6 items-center bg-secondaryBg ${
+                    className={`p-4 sm:p-6 border rounded-card cursor-pointer transition-all flex gap-4 sm:gap-6 items-center bg-secondaryBg ${
                       selectedBox.id === box.id ? 'border-luxuryGold shadow-[0_0_20px_rgba(212,175,55,0.2)]' : 'border-divider hover:border-luxuryGold/40'
                     }`}
                   >
-                    <div className="w-20 h-24 relative flex-shrink-0 border border-divider">
+                    <div className="w-16 h-20 sm:w-20 sm:h-24 relative flex-shrink-0 border border-divider">
                       <Image src={box.image} alt={box.name} fill className="object-cover" />
                     </div>
                     <div className="flex-grow space-y-1">

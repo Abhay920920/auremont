@@ -67,6 +67,15 @@ export default function ProductDetailClient({ initialProduct, slug: propSlug }: 
     load();
   }, [slug, initialProduct]);
 
+  useEffect(() => {
+    if (isReviewDrawerOpen) {
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isReviewDrawerOpen]);
+
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) { router.push('/login'); return; }
@@ -208,69 +217,85 @@ export default function ProductDetailClient({ initialProduct, slug: propSlug }: 
 
             {/* Sliding Verified Review Drawer Modal */}
             {isReviewDrawerOpen && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-                <div className="bg-background border border-luxuryGold/40 rounded-card p-6 md:p-8 max-w-lg w-full space-y-6 shadow-2xl relative animate-scale-up">
-                  <div className="flex justify-between items-center border-b border-divider pb-4">
-                    <h3 className="font-serif text-2xl text-primaryText flex items-center gap-2">
-                      Review Experience
-                      <Star size={18} className="text-luxuryGold fill-luxuryGold" />
-                    </h3>
-                    <button onClick={() => setIsReviewDrawerOpen(false)} className="text-secondaryText hover:text-luxuryGold text-xl font-mono">✕</button>
-                  </div>
-
-                  {reviewSuccess ? (
-                    <div className="p-6 bg-luxuryGold/10 border border-luxuryGold/30 text-luxuryGold text-sm text-center space-y-4">
-                      <p className="font-serif text-lg">Thank You!</p>
-                      <p className="text-xs font-light text-secondaryText">Your verified review has been submitted and published.</p>
-                      <button onClick={() => { setReviewSuccess(false); setIsReviewDrawerOpen(false); }} className="luxury-button text-xs py-2 px-6">Done</button>
-                    </div>
-                  ) : (
-                    <form onSubmit={handleSubmitReview} className="space-y-5">
-                      {reviewError && <p className="text-error text-xs">{reviewError}</p>}
-                      
-                      <div className="space-y-2">
-                        <label className="text-xs uppercase tracking-widest font-mono text-secondaryText block">Overall Rating</label>
-                        <div className="flex gap-3 bg-secondaryBg p-3 rounded-card border border-divider justify-center">
-                          {[1, 2, 3, 4, 5].map(star => (
-                            <button key={star} type="button" onClick={() => setReviewForm(p => ({ ...p, rating: star }))}
-                              className={`text-3xl transition-transform hover:scale-125 ${star <= reviewForm.rating ? 'text-luxuryGold' : 'text-divider'}`}>★</button>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <label className="text-xs uppercase tracking-widest font-mono text-secondaryText block">Headline Title</label>
-                        <input
-                          type="text"
-                          required
-                          className="w-full bg-secondaryBg border border-divider rounded-card px-4 py-3 text-xs text-primaryText focus:outline-none focus:border-luxuryGold transition-colors"
-                          value={reviewForm.title}
-                          onChange={e => setReviewForm(p => ({ ...p, title: e.target.value }))}
-                          placeholder="Summarize your experience..."
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <label className="text-xs uppercase tracking-widest font-mono text-secondaryText block">Detailed Comments</label>
-                        <textarea
-                          required
-                          rows={4}
-                          className="w-full bg-secondaryBg border border-divider rounded-card px-4 py-3 text-xs text-primaryText focus:outline-none focus:border-luxuryGold transition-colors resize-none"
-                          value={reviewForm.review}
-                          onChange={e => setReviewForm(p => ({ ...p, review: e.target.value }))}
-                          placeholder="Describe the aroma, crunch, packaging, and overall impression..."
-                        />
-                      </div>
-
-                      <button
-                        type="submit"
-                        disabled={submittingReview}
-                        className="luxury-button w-full text-xs py-4"
+              <div 
+                className="fixed inset-0 z-[120] bg-black/85 backdrop-blur-md overflow-y-auto"
+                onClick={(e) => {
+                  if (e.target === e.currentTarget) setIsReviewDrawerOpen(false);
+                }}
+              >
+                <div className="min-h-full flex items-center justify-center p-3.5 sm:p-6 md:p-8 py-8 sm:py-12 text-center">
+                  <div 
+                    className="bg-background border border-luxuryGold/40 rounded-card p-5 sm:p-8 max-w-lg w-full space-y-6 shadow-[0_25px_80px_rgba(0,0,0,0.95)] relative text-left my-auto animate-scale-up"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="flex justify-between items-center border-b border-divider pb-4">
+                      <h3 className="font-serif text-xl sm:text-2xl text-primaryText flex items-center gap-2">
+                        Review Experience
+                        <Star size={18} className="text-luxuryGold fill-luxuryGold" />
+                      </h3>
+                      <button 
+                        onClick={() => setIsReviewDrawerOpen(false)} 
+                        className="text-secondaryText hover:text-luxuryGold p-2 text-xl font-mono cursor-pointer"
+                        aria-label="Close review dialog"
                       >
-                        {submittingReview ? 'Publishing Review...' : 'Publish Verified Review'}
+                        ✕
                       </button>
-                    </form>
-                  )}
+                    </div>
+
+                    {reviewSuccess ? (
+                      <div className="p-6 bg-luxuryGold/10 border border-luxuryGold/30 text-luxuryGold text-sm text-center space-y-4">
+                        <p className="font-serif text-lg">Thank You!</p>
+                        <p className="text-xs font-light text-secondaryText">Your verified review has been submitted and published.</p>
+                        <button onClick={() => { setReviewSuccess(false); setIsReviewDrawerOpen(false); }} className="luxury-button text-xs py-2.5 px-6 cursor-pointer">Done</button>
+                      </div>
+                    ) : (
+                      <form onSubmit={handleSubmitReview} className="space-y-5">
+                        {reviewError && <p className="text-error text-xs">{reviewError}</p>}
+                        
+                        <div className="space-y-2">
+                          <label className="text-xs uppercase tracking-widest font-mono text-secondaryText block">Overall Rating</label>
+                          <div className="flex gap-3 bg-secondaryBg p-3 rounded-card border border-divider justify-center">
+                            {[1, 2, 3, 4, 5].map(star => (
+                              <button key={star} type="button" onClick={() => setReviewForm(p => ({ ...p, rating: star }))}
+                                className={`text-3xl transition-transform hover:scale-125 cursor-pointer ${star <= reviewForm.rating ? 'text-luxuryGold' : 'text-divider'}`}>★</button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="text-xs uppercase tracking-widest font-mono text-secondaryText block">Headline Title</label>
+                          <input
+                            type="text"
+                            required
+                            className="w-full bg-secondaryBg border border-divider rounded-card px-4 py-3 text-xs sm:text-sm text-primaryText focus:outline-none focus:border-luxuryGold transition-colors"
+                            value={reviewForm.title}
+                            onChange={e => setReviewForm(p => ({ ...p, title: e.target.value }))}
+                            placeholder="Summarize your experience..."
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="text-xs uppercase tracking-widest font-mono text-secondaryText block">Detailed Comments</label>
+                          <textarea
+                            required
+                            rows={4}
+                            className="w-full bg-secondaryBg border border-divider rounded-card px-4 py-3 text-xs sm:text-sm text-primaryText focus:outline-none focus:border-luxuryGold transition-colors resize-none"
+                            value={reviewForm.review}
+                            onChange={e => setReviewForm(p => ({ ...p, review: e.target.value }))}
+                            placeholder="Describe the aroma, crunch, packaging, and overall impression..."
+                          />
+                        </div>
+
+                        <button
+                          type="submit"
+                          disabled={submittingReview}
+                          className="luxury-button w-full text-xs py-3.5 sm:py-4 cursor-pointer"
+                        >
+                          {submittingReview ? 'Publishing Review...' : 'Publish Verified Review'}
+                        </button>
+                      </form>
+                    )}
+                  </div>
                 </div>
               </div>
             )}

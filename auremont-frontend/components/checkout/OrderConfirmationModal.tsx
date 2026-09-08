@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle, ShieldCheck, Download, X, ArrowRight, Package } from "lucide-react";
 import Link from "next/link";
@@ -16,18 +17,34 @@ export default function OrderConfirmationModal({
   orderNumber: string;
   totalAmount: string;
 }) {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="bg-background border border-luxuryGold/40 rounded-card p-6 md:p-8 max-w-md w-full space-y-6 shadow-[0_25px_80px_rgba(0,0,0,0.95)] text-center relative overflow-hidden"
-        >
+      <div 
+        className="fixed inset-0 z-[120] bg-black/85 backdrop-blur-md overflow-y-auto"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) onClose();
+        }}
+      >
+        <div className="min-h-full flex items-center justify-center p-3.5 sm:p-6 py-8 sm:py-12 text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="bg-background border border-luxuryGold/40 rounded-card p-6 md:p-8 max-w-md w-full space-y-6 shadow-[0_25px_80px_rgba(0,0,0,0.95)] text-center relative overflow-hidden my-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
           {/* Top Decorative Gold Foil Header */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-luxuryGold via-goldHover to-goldDark" />
 
@@ -100,6 +117,7 @@ export default function OrderConfirmationModal({
             <ShieldCheck size={12} className="text-luxuryGold" /> OWASP Level 3 Cryptographic Encryption
           </div>
         </motion.div>
+        </div>
       </div>
     </AnimatePresence>
   );

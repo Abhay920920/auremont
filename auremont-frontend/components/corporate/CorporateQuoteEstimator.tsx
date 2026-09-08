@@ -253,7 +253,7 @@ export default function CorporateQuoteEstimator() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-[10px] uppercase tracking-widest text-secondaryText font-medium block mb-1">
                     Contact Name *

@@ -36,7 +36,7 @@ export default function OrderInvoiceModal({
   return (
     <AnimatePresence>
       <div 
-        className="fixed inset-0 z-[100] bg-black/85 backdrop-blur-md overflow-y-auto flex items-start justify-center p-4 sm:p-6 md:p-8 pt-16 sm:pt-20 md:pt-24 pb-12"
+        className="fixed inset-0 z-[120] bg-black/85 backdrop-blur-md overflow-y-auto flex items-start justify-center p-4 sm:p-6 md:p-8 pt-16 sm:pt-20 md:pt-24 pb-12"
         onClick={(e) => {
           if (e.target === e.currentTarget) onClose();
         }}
