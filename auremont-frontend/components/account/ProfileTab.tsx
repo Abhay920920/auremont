@@ -77,14 +77,14 @@ export default function ProfileTab({
       </form>
 
       {/* Danger Zone: Account Deletion */}
-      <div className="p-6 border border-red-500/20 bg-red-950/10 rounded-card space-y-4">
+      <div className="p-5 sm:p-6 border border-red-500/20 bg-red-950/10 rounded-card space-y-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <h3 className="text-sm font-medium text-primaryText flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-red-400" />
+              <span className="w-2 h-2 rounded-full bg-red-400 flex-shrink-0" />
               Account Privacy & Deletion
             </h3>
-            <p className="text-xs text-secondaryText mt-1 max-w-lg">
+            <p className="text-xs text-secondaryText mt-1 max-w-lg leading-relaxed">
               Permanently revoke account credentials and anonymize personal customer data in accordance with our data privacy policy.
             </p>
           </div>
@@ -92,7 +92,7 @@ export default function ProfileTab({
             <button
               type="button"
               onClick={onOpenDeleteModal}
-              className="px-4 py-2.5 border border-red-500/30 hover:border-red-500/60 bg-red-900/10 hover:bg-red-900/20 text-red-300 text-[11px] uppercase tracking-wider rounded-sm transition-colors flex-shrink-0 self-start sm:self-center"
+              className="w-full sm:w-auto px-4 py-2.5 border border-red-500/30 hover:border-red-500/60 bg-red-900/10 hover:bg-red-900/20 text-red-300 hover:text-red-200 text-[11px] uppercase tracking-wider rounded-sm transition-colors flex-shrink-0 text-center self-stretch sm:self-center font-medium cursor-pointer"
             >
               Delete My Account
             </button>
