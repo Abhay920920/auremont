@@ -33,13 +33,6 @@ export default function ProductCard({ product }: { product: Product }) {
             className="object-cover group-hover:scale-110 transition-transform duration-[1.5s] ease-[cubic-bezier(0.25,1,0.5,1)]"
           />
         </Link>
-        
-        {/* RARE NUTS Authenticity Tag */}
-        <div className="absolute top-2 left-2 sm:top-4 sm:left-4 z-20 pointer-events-none">
-          <span className="text-[9px] uppercase tracking-ultra text-luxuryGold font-medium bg-background/80 backdrop-blur-md px-2.5 py-1 border border-luxuryGold/30 rounded-full inline-block">
-            @RARENUTS
-          </span>
-        </div>
 
         {/* Wishlist Heart */}
         <div className="absolute top-2 right-2 sm:top-4 sm:right-4 z-20">

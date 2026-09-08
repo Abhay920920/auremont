@@ -26,7 +26,7 @@ export default function LifestyleGallery() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: idx * 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="relative min-w-[250px] md:min-w-[350px] aspect-square flex-shrink-0 group cursor-pointer"
+            className="relative min-w-[250px] md:min-w-[350px] aspect-square flex-shrink-0 group cursor-pointer overflow-hidden border border-divider/50 bg-secondaryBg"
           >
             <Image 
               src={src} 
@@ -35,9 +35,6 @@ export default function LifestyleGallery() {
               sizes="(max-width: 768px) 250px, 350px"
               className="object-cover group-hover:scale-105 transition-transform duration-700" 
             />
-            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-              <span className="text-luxuryGold font-serif text-2xl">@RareNuts</span>
-            </div>
           </motion.div>
         ))}
       </div>
