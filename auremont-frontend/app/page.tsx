@@ -1,13 +1,17 @@
+import dynamic from "next/dynamic";
 import CinematicHero from "@/components/home/CinematicHero";
 import FeaturedCollections from "@/components/home/FeaturedCollections";
 import BestSellers from "@/components/home/BestSellers";
-import WhyAuremont from "@/components/home/WhyAuremont";
-import PackagingShowcase from "@/components/home/PackagingShowcase";
-import BrandStory from "@/components/home/BrandStory";
-import Testimonials from "@/components/home/Testimonials";
-import CorporateGifting from "@/components/home/CorporateGifting";
-import HealthHighlights from "@/components/home/HealthHighlights";
-import LifestyleGallery from "@/components/home/LifestyleGallery";
+
+// Below-the-fold sections: dynamically imported to split JS bundle
+// Each section uses framer-motion; deferring them reduces initial main-thread evaluation
+const WhyAuremont = dynamic(() => import("@/components/home/WhyAuremont"));
+const PackagingShowcase = dynamic(() => import("@/components/home/PackagingShowcase"));
+const BrandStory = dynamic(() => import("@/components/home/BrandStory"));
+const Testimonials = dynamic(() => import("@/components/home/Testimonials"));
+const CorporateGifting = dynamic(() => import("@/components/home/CorporateGifting"));
+const HealthHighlights = dynamic(() => import("@/components/home/HealthHighlights"));
+const LifestyleGallery = dynamic(() => import("@/components/home/LifestyleGallery"));
 
 const FALLBACK_PRODUCTS = [
   {

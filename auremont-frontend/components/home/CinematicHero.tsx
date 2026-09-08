@@ -96,13 +96,14 @@ export default function CinematicHero() {
             </motion.div>
           </motion.div>
 
-          {/* RIGHT: Photography Showcase Frame */}
+          {/* RIGHT: Photography Showcase Frame
+              The image wrapper intentionally starts visible (no initial opacity:0).
+              Only the parallax transform (imageX/Y) is applied via motion, NOT initial visibility.
+              This allows the browser to paint the LCP image immediately on hydration,
+              rather than waiting for the framer-motion animation sequence to complete. */}
           <div className="lg:col-span-5 flex justify-center lg:justify-end">
             <motion.div 
               style={{ x: imageX, y: imageY }}
-              initial={{ opacity: 0, scale: 0.92, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
               className="relative w-full max-w-[360px] sm:max-w-md lg:max-w-lg aspect-[4/5] rounded-card border border-luxuryGold/40 bg-surface/50 backdrop-blur-md overflow-hidden shadow-[0_25px_70px_rgba(0,0,0,0.9)] group"
             >
               <Image 
@@ -110,7 +111,7 @@ export default function CinematicHero() {
                 alt="RARE NUTS Royal Almonds Wooden Vessel" 
                 fill 
                 priority
-                sizes="(max-width: 768px) 100vw, 50vw"
+                sizes="(max-width: 640px) 92vw, (max-width: 1024px) 50vw, 42vw"
                 className="object-cover object-center filter brightness-105 contrast-105 transition-transform duration-[2s] group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-85" />

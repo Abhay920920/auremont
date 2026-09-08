@@ -1,12 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Cormorant_Garamond } from "next/font/google";
-import Script from "next/script";
 import { Suspense } from "react";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const cormorant = Cormorant_Garamond({ 
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "600"],
   subsets: ["latin"],
   variable: "--font-cormorant-garamond",
   display: "swap"
@@ -95,7 +94,7 @@ export default function RootLayout({
           <FilmGrain />
         </div>
         <ClientSecurityGuards />
-        <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
+        {/* Razorpay is loaded on-demand inside /checkout — not globally */}
         <CustomCursor />
         <StorefrontWrapper>
           <TransitionProvider>

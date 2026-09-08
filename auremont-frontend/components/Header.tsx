@@ -125,6 +125,7 @@ export default function Header() {
               <select
                 value={mounted ? currency : "INR"}
                 onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
+                aria-label="Select currency"
                 className="bg-secondaryBg/90 border border-luxuryGold/30 text-luxuryGold text-[10px] uppercase tracking-ultra px-2.5 py-1.5 rounded-full outline-none cursor-pointer hover:border-luxuryGold transition-colors"
               >
                 <option value="INR" className="bg-background text-primaryText">INR ₹</option>

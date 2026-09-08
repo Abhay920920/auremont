@@ -80,7 +80,7 @@ export default function PackagingShowcase() {
                 src={item.image} 
                 alt={item.title} 
                 fill 
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                sizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 30vw"
                 className="object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-[1.5s] filter brightness-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent flex flex-col justify-end p-6 sm:p-8">

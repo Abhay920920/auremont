@@ -21,7 +21,7 @@ const config: Config = {
         // Typography Tokens
         primaryText: '#FAF9F5', // Soft warm ivory
         secondaryText: '#A3A3A6', // Muted editorial gray
-        mutedText: '#666668',   // Subtle caption gray
+        mutedText: '#808082',   // Subtle caption gray — raised from #666668 to meet WCAG AA (5.1:1)
         
         // Brand Accents
         luxuryGold: '#D4AF37', // Champagne Gold

@@ -84,6 +84,9 @@ const nextConfig = {
     // Tuned breakpoints for product cards (250px, 400px) and hero images
     deviceSizes: [375, 640, 750, 828, 1080, 1200, 1920],
     imageSizes: [64, 128, 256, 384],
+    // Cache optimized images for 30 days to avoid repeated processing overhead
+    minimumCacheTTL: 2592000,
+    contentDispositionType: 'inline',
     remotePatterns: [
       {
         protocol: 'https',

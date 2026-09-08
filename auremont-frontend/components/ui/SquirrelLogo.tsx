@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import Image from "next/image";
 
@@ -34,7 +32,7 @@ export default function SquirrelLogo({ variant = "header", className = "", size 
     );
   }
 
-  // Icon only
+  // Icon only (decorative badge — no priority; below fold)
   if (variant === "icon") {
     return (
       <div className={`inline-flex items-center justify-center select-none ${className}`}>
@@ -44,11 +42,10 @@ export default function SquirrelLogo({ variant = "header", className = "", size 
         >
           <Image
             src="/images/rarenuts-gold-squirrel-logo.png"
-            alt="RARE NUTS"
+            alt=""
             width={size}
             height={size}
             className="object-contain filter drop-shadow-[0_2px_6px_rgba(212,175,55,0.4)]"
-            priority
           />
         </div>
       </div>
@@ -68,7 +65,6 @@ export default function SquirrelLogo({ variant = "header", className = "", size 
           width={size * 1.2}
           height={size}
           className="object-contain filter drop-shadow-[0_2px_10px_rgba(212,175,55,0.5)]"
-          priority
         />
       </div>
 

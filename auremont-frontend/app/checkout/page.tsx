@@ -344,13 +344,36 @@ export default function CheckoutPage() {
     }, 3000);
   };
 
-  const openRazorpayModal = (paymentSession: any, createdOrderId: string) => {
+  const openRazorpayModal = async (paymentSession: any, createdOrderId: string) => {
     const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
 
     if (!keyId) {
       setPaymentState("FAILED");
       setStateMessage("Payment gateway is temporarily unconfigured. Please contact concierge or try again later.");
       return;
+    }
+
+    // ── Load Razorpay checkout.js on demand (not globally) ─────────────────────
+    // The script is NOT in layout.tsx — it loads only when payment is actually triggered.
+    if (!window.Razorpay) {
+      try {
+        await new Promise<void>((resolve, reject) => {
+          const existing = document.querySelector(
+            'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
+          );
+          if (existing) { resolve(); return; }
+          const script = document.createElement("script");
+          script.src = "https://checkout.razorpay.com/v1/checkout.js";
+          script.async = true;
+          script.onload = () => resolve();
+          script.onerror = () => reject(new Error("Razorpay script failed to load"));
+          document.head.appendChild(script);
+        });
+      } catch {
+        setPaymentState("FAILED");
+        setStateMessage("Payment gateway script is unavailable. Please refresh and try again.");
+        return;
+      }
     }
 
     // ── Live Razorpay modal ────────────────────────────────────────────────────
@@ -439,11 +462,8 @@ export default function CheckoutPage() {
 
       setPaymentState("PAYMENT_PENDING");
 
-      if (paymentSession?.razorpayOrderId && window.Razorpay) {
-        openRazorpayModal(paymentSession, createdOrderId);
-      } else if (paymentSession?.razorpayOrderId) {
-        setPaymentState("FAILED");
-        setStateMessage("Payment gateway script is unavailable. Please refresh and try again.");
+      if (paymentSession?.razorpayOrderId) {
+        await openRazorpayModal(paymentSession, createdOrderId);
       } else {
         setPaymentState("FAILED");
         setStateMessage("Payment session unavailable. Please check your orders.");

@@ -120,7 +120,7 @@ export default function BestSellers({ products = [] }: { products?: Product[] })
                       alt={product.name} 
                       fill 
                       className="object-cover group-hover:scale-105 transition-transform duration-[1.8s] filter brightness-105"
-                      sizes="(max-width: 768px) 280px, 340px"
+                      sizes="(max-width: 640px) 280px, (max-width: 1024px) 320px, 340px"
                     />
                   </Link>
 

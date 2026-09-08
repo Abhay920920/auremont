@@ -17,9 +17,9 @@ export default function FeaturedCollections({ products }: { products?: any[] }) 
         {/* Section Header: Clean Left-Aligned on Mobile, Spaced on Desktop */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-10 md:mb-16">
           <div className="max-w-xl text-left">
-            <h4 className="text-luxuryGold uppercase tracking-superwide text-xs mb-2.5 sm:mb-3">
+            <p className="text-luxuryGold uppercase tracking-superwide text-xs mb-2.5 sm:mb-3">
               Curated Collections
-            </h4>
+            </p>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-primaryText tracking-tight">
               Signature Creations
             </h2>
@@ -45,7 +45,7 @@ export default function FeaturedCollections({ products }: { products?: any[] }) 
                     src={product.thumbnailUrl || '/images/california-almonds-250g.png'} 
                     alt={product.name} 
                     fill 
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 33vw"
+                    sizes="(max-width: 767px) 90vw, (max-width: 1199px) 44vw, 30vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-[1.2s] ease-[cubic-bezier(0.25,1,0.5,1)]"
                   />
                 </Link>
