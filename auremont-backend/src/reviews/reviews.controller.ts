@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Patch, Delete, Query, UseGuards, ForbiddenException } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Patch, Delete, Query, UseGuards, ForbiddenException, ParseUUIDPipe } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -20,13 +20,13 @@ export class ReviewsController {
   }
 
   @Get('product/:productId')
-  async getProductReviews(@Param('productId') productId: string) {
+  async getProductReviews(@Param('productId', new ParseUUIDPipe()) productId: string) {
     return this.reviewsService.getProductReviews(productId);
   }
 
   @Get('user/:userId')
   @UseGuards(JwtAuthGuard)
-  async getUserReviews(@Param('userId') userId: string, @GetUser() user: any) {
+  async getUserReviews(@Param('userId', new ParseUUIDPipe()) userId: string, @GetUser() user: any) {
     if (user.id !== userId && user.role !== 'admin') {
       throw new ForbiddenException('You do not have permission to view these reviews');
     }
@@ -45,14 +45,14 @@ export class ReviewsController {
   @Patch(':id/moderate')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
-  async moderateReview(@Param('id') id: string, @Body() dto: ModerateReviewDto, @GetUser() user: any) {
+  async moderateReview(@Param('id', new ParseUUIDPipe()) id: string, @Body() dto: ModerateReviewDto, @GetUser() user: any) {
     return this.reviewsService.moderateReview(id, dto, user.id);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
-  async deleteReview(@Param('id') id: string, @GetUser() user: any) {
+  async deleteReview(@Param('id', new ParseUUIDPipe()) id: string, @GetUser() user: any) {
     return this.reviewsService.deleteReview(id, user.id);
   }
 }

@@ -2,6 +2,7 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 import { PrismaService } from '../prisma/prisma.service';
 import * as crypto from 'crypto';
 import { structuredLogger } from '../common/structured-logger.service';
+import { assertValidUuid } from '../common/uuid-validator';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Razorpay = require('razorpay');
@@ -47,6 +48,7 @@ export class PaymentsService {
    * to poll /orders/:id/payment-status without authentication.
    */
   generateOrderToken(orderId: string): string {
+    assertValidUuid(orderId, 'order id');
     const secret = process.env.ORDER_TOKEN_SECRET || process.env.JWT_SECRET;
     if (!secret && (process.env.NODE_ENV === 'production' || (process.env.NODE_ENV as string) === 'staging')) {
       throw new Error('ORDER_TOKEN_SECRET or JWT_SECRET must be defined in production/staging environments');
@@ -59,6 +61,7 @@ export class PaymentsService {
   }
 
   verifyOrderToken(orderId: string, token: string): boolean {
+    assertValidUuid(orderId, 'order id');
     const expected = this.generateOrderToken(orderId);
     // Constant-time comparison to prevent timing attacks
     try {
@@ -74,6 +77,7 @@ export class PaymentsService {
    * All amounts stored in paise (integer) internally to avoid floating-point errors.
    */
   async createRazorpayOrder(orderId: string, amount: number, currency: string = 'INR') {
+    assertValidUuid(orderId, 'order id');
     // Store in paise (integer) — never use floats for money
     const amountPaise = Math.round(amount * 100);
 
@@ -385,11 +389,22 @@ export class PaymentsService {
     signature: string,
     internalOrderId?: string,
   ) {
+    if (typeof razorpayOrderId !== 'string' || typeof razorpayPaymentId !== 'string' || typeof signature !== 'string') {
+      throw new BadRequestException({
+        code: 'INVALID_PARAMETERS',
+        message: 'Payment verification parameters must be valid scalar strings.',
+      });
+    }
+
     if (!razorpayOrderId || !razorpayPaymentId || !signature) {
       throw new BadRequestException({
         code: 'MISSING_PARAMETERS',
         message: 'Payment verification requires razorpayOrderId, razorpayPaymentId, and signature.',
       });
+    }
+
+    if (internalOrderId !== undefined && internalOrderId !== null && internalOrderId !== '') {
+      assertValidUuid(internalOrderId, 'internal order id');
     }
 
     const secret = process.env.RAZORPAY_KEY_SECRET;
@@ -437,6 +452,9 @@ export class PaymentsService {
         message: `No order found for paymentRef ${razorpayOrderId}`,
       });
     }
+
+    // Enforce invariant that resolved order id is a scalar UUID
+    assertValidUuid(orderRef.id, 'order id');
 
     // Cross-verify with internal order ID if provided
     if (internalOrderId && orderRef.id !== internalOrderId) {

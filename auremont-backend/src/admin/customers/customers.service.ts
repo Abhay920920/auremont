@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UserStatus } from '@prisma/client';
+import { assertValidUuid } from '../../common/uuid-validator';
 
 @Injectable()
 export class AdminCustomersService {
@@ -12,11 +13,12 @@ export class AdminCustomersService {
     const skip = (safePage - 1) * safeLimit;
 
     const where: any = { role: 'customer' };
-    if (search) {
+    if (typeof search === 'string' && search.trim() !== '') {
+      const sanitized = search.trim();
       where.OR = [
-        { firstName: { contains: search, mode: 'insensitive' } },
-        { lastName: { contains: search, mode: 'insensitive' } },
-        { email: { contains: search, mode: 'insensitive' } },
+        { firstName: { contains: sanitized, mode: 'insensitive' } },
+        { lastName: { contains: sanitized, mode: 'insensitive' } },
+        { email: { contains: sanitized, mode: 'insensitive' } },
       ];
     }
 
@@ -59,6 +61,7 @@ export class AdminCustomersService {
   }
 
   async findOne(id: string) {
+    assertValidUuid(id, 'customer id');
     const user = await this.prisma.user.findUnique({
       where: { id, role: 'customer' },
       include: {
@@ -106,6 +109,8 @@ export class AdminCustomersService {
   }
 
   async updateStatus(id: string, status: UserStatus, adminId: string) {
+    assertValidUuid(id, 'customer id');
+    if (adminId) assertValidUuid(adminId, 'admin id');
     const user = await this.prisma.user.findUnique({ where: { id, role: 'customer' } });
     if (!user) {
       throw new NotFoundException(`Customer with ID ${id} not found`);

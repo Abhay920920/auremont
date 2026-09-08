@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { User } from '@prisma/client';
 import { DeleteAccountDto } from './dto/delete-account.dto';
+import { assertValidUuid } from '../common/uuid-validator';
 
 @Injectable()
 export class UsersService {
@@ -175,6 +176,7 @@ export class UsersService {
   }
 
   async addAddress(userId: string, data: any) {
+    assertValidUuid(userId, 'user id');
     const count = await this.prisma.address.count({ where: { userId, orders: { none: {} } } });
     const isDefault = count === 0 || data.isDefault;
 
@@ -195,6 +197,8 @@ export class UsersService {
   }
 
   async updateAddress(userId: string, addressId: string, data: any) {
+    assertValidUuid(userId, 'user id');
+    assertValidUuid(addressId, 'address id');
     const address = await this.prisma.address.findFirst({ where: { id: addressId, userId, orders: { none: {} } } });
     if (!address) throw new NotFoundException('Address not found');
 
@@ -212,6 +216,8 @@ export class UsersService {
   }
 
   async setDefaultAddress(userId: string, addressId: string) {
+    assertValidUuid(userId, 'user id');
+    assertValidUuid(addressId, 'address id');
     const address = await this.prisma.address.findFirst({ where: { id: addressId, userId, orders: { none: {} } } });
     if (!address) throw new NotFoundException('Address not found');
 
@@ -227,6 +233,8 @@ export class UsersService {
   }
 
   async deleteAddress(userId: string, addressId: string) {
+    assertValidUuid(userId, 'user id');
+    assertValidUuid(addressId, 'address id');
     const address = await this.prisma.address.findFirst({ where: { id: addressId, userId, orders: { none: {} } } });
     if (!address) throw new NotFoundException('Address not found');
 
@@ -298,8 +306,12 @@ export class UsersService {
   }
 
   async deleteUserAdmin(id: string, adminUserId?: string) {
-    if (adminUserId && id === adminUserId) {
-      throw new BadRequestException('Cannot delete your own account');
+    assertValidUuid(id, 'customer id');
+    if (adminUserId) {
+      assertValidUuid(adminUserId, 'admin user id');
+      if (id === adminUserId) {
+        throw new BadRequestException('Cannot delete your own account');
+      }
     }
     const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException('User not found');
@@ -336,6 +348,7 @@ export class UsersService {
   }
 
   async getUserDetailAdmin(id: string) {
+    assertValidUuid(id, 'customer id');
     const user = await this.prisma.user.findUnique({
       where: { id },
       include: {

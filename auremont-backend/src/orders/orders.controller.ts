@@ -103,7 +103,7 @@ export class OrdersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   async updateOrderStatus(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateOrderStatusDto,
     @GetUser() user: any
   ) {
@@ -129,7 +129,7 @@ export class AdminOrdersController {
 
   @Patch(':id/status')
   async updateOrderStatus(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateOrderStatusDto,
     @GetUser() user: any
   ) {
@@ -138,7 +138,7 @@ export class AdminOrdersController {
 
   @Patch(':id/payment')
   async updatePaymentStatus(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body('status') status: any,
     @GetUser() user: any
   ) {

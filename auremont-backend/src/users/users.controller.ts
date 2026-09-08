@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, UseGuards, ParseUUIDPipe } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -55,19 +55,19 @@ export class UsersController {
 
   @Patch('me/addresses/:id')
   @UseGuards(JwtAuthGuard)
-  async updateAddress(@GetUser() user: any, @Param('id') id: string, @Body() dto: AddressDto) {
+  async updateAddress(@GetUser() user: any, @Param('id', new ParseUUIDPipe()) id: string, @Body() dto: AddressDto) {
     return this.usersService.updateAddress(user.id, id, dto);
   }
 
   @Patch('me/addresses/:id/default')
   @UseGuards(JwtAuthGuard)
-  async setDefaultAddress(@GetUser() user: any, @Param('id') id: string) {
+  async setDefaultAddress(@GetUser() user: any, @Param('id', new ParseUUIDPipe()) id: string) {
     return this.usersService.setDefaultAddress(user.id, id);
   }
 
   @Delete('me/addresses/:id')
   @UseGuards(JwtAuthGuard)
-  async deleteAddress(@GetUser() user: any, @Param('id') id: string) {
+  async deleteAddress(@GetUser() user: any, @Param('id', new ParseUUIDPipe()) id: string) {
     return this.usersService.deleteAddress(user.id, id);
   }
 
@@ -90,14 +90,14 @@ export class UsersController {
   @Get('admin/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
-  async getUserDetail(@Param('id') id: string) {
+  async getUserDetail(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.usersService.getUserDetailAdmin(id);
   }
 
   @Delete('admin/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
-  async deleteUser(@GetUser() admin: any, @Param('id') id: string) {
+  async deleteUser(@GetUser() admin: any, @Param('id', new ParseUUIDPipe()) id: string) {
     return this.usersService.deleteUserAdmin(id, admin?.id);
   }
 }

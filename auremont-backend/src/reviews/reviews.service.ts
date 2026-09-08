@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
-import { Review } from '@prisma/client';
+import { Review, ReviewStatus } from '@prisma/client';
 import { ModerateReviewDto } from './dto/moderate-review.dto';
+import { assertValidUuid } from '../common/uuid-validator';
 
 @Injectable()
 export class ReviewsService {
@@ -45,6 +46,8 @@ export class ReviewsService {
     title?: string;
     review?: string;
   }): Promise<Review> {
+    assertValidUuid(data.userId, 'user id');
+    assertValidUuid(data.productId, 'product id');
     this.clearCache();
 
     // Check if user has a confirmed/paid order containing this product
@@ -74,6 +77,7 @@ export class ReviewsService {
   }
 
   async getProductReviews(productId: string): Promise<Review[]> {
+    assertValidUuid(productId, 'product id');
     const cacheKey = `reviews:product:${productId}`;
     const cached = this.getCached(cacheKey);
     if (cached) return cached;
@@ -101,6 +105,7 @@ export class ReviewsService {
   }
 
   async getUserReviews(userId: string): Promise<Review[]> {
+    assertValidUuid(userId, 'user id');
     return this.prisma.review.findMany({
       where: { userId },
       include: {
@@ -113,13 +118,18 @@ export class ReviewsService {
   // ── ADMIN ──────────────────────────────────────────────────────────────────
 
   async getAllReviews(status?: string): Promise<Review[]> {
+    if (status !== undefined && status !== null && status !== '') {
+      if (typeof status !== 'string' || !['pending', 'approved', 'rejected'].includes(status)) {
+        throw new BadRequestException('Invalid review status filter parameter');
+      }
+    }
     const cacheKey = `reviews:admin:all:${status || 'any'}`;
     const cached = this.getCached(cacheKey);
     if (cached) return cached;
     if (this.inflight.has(cacheKey)) return this.inflight.get(cacheKey);
 
     const fetchPromise = (async () => {
-      const where = status ? { status: status as any } : {};
+      const where = status ? { status: status as ReviewStatus } : {};
       const list = await this.prisma.review.findMany({
         where,
         include: {
@@ -139,6 +149,8 @@ export class ReviewsService {
   }
 
   async moderateReview(id: string, dto: ModerateReviewDto, adminId: string): Promise<Review> {
+    assertValidUuid(id, 'review id');
+    assertValidUuid(adminId, 'admin id');
     const review = await this.prisma.review.findUnique({ where: { id } });
     if (!review) throw new NotFoundException('Review not found');
 
@@ -153,6 +165,8 @@ export class ReviewsService {
   }
 
   async deleteReview(id: string, adminId: string): Promise<{ message: string }> {
+    assertValidUuid(id, 'review id');
+    assertValidUuid(adminId, 'admin id');
     const review = await this.prisma.review.findUnique({ where: { id } });
     if (!review) throw new NotFoundException('Review not found');
 

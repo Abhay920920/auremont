@@ -1,12 +1,14 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { Wishlist } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { assertValidUuid } from '../common/uuid-validator';
 
 @Injectable()
 export class WishlistService {
   constructor(private prisma: PrismaService) {}
 
   async getWishlist(userId: string): Promise<Wishlist[]> {
+    assertValidUuid(userId, 'user id');
     return this.prisma.wishlist.findMany({
       where: { userId },
       include: { product: true },
@@ -15,6 +17,8 @@ export class WishlistService {
   }
 
   async addProduct(userId: string, productId: string): Promise<Wishlist> {
+    assertValidUuid(userId, 'user id');
+    assertValidUuid(productId, 'product id');
     const existing = await this.prisma.wishlist.findFirst({
       where: { userId, productId }
     });
@@ -33,6 +37,8 @@ export class WishlistService {
   }
 
   async removeProduct(userId: string, productId: string): Promise<void> {
+    assertValidUuid(userId, 'user id');
+    assertValidUuid(productId, 'product id');
     const existing = await this.prisma.wishlist.findFirst({
       where: { userId, productId }
     });

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, Patch, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Param, Query, Patch, Body, UseGuards, Request, ParseUUIDPipe } from '@nestjs/common';
 import { AdminCustomersService } from './customers.service';
 import { AdminAuthGuard, Roles } from '../auth/admin-auth.guard';
 import { UserStatus } from '@prisma/client';
@@ -15,23 +15,24 @@ export class AdminCustomersController {
     @Query('limit') limit?: string,
     @Query('search') search?: string,
   ) {
+    const cleanSearch = typeof search === 'string' ? search.trim() : undefined;
     return this.customersService.findAll(
       page ? parseInt(page, 10) : 1,
       limit ? parseInt(limit, 10) : 10,
-      search,
+      cleanSearch,
     );
   }
 
   @Get(':id')
   @Roles('SUPER_ADMIN', 'ADMIN', 'SUPPORT')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.customersService.findOne(id);
   }
 
   @Patch(':id/status')
   @Roles('SUPER_ADMIN', 'ADMIN')
   updateStatus(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body('status') status: UserStatus,
     @Request() req: any,
   ) {
