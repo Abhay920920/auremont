@@ -38,7 +38,7 @@ To address vulnerabilities in nested dependencies, package lock overrides are co
 ```json
   "overrides": {
     "formidable": "3.5.3",
-    "multer": "2.2.0",
+    "multer": "2.3.0",
     "file-type": "21.3.2",
     "qs": "6.15.2",
     "body-parser": "1.20.6",

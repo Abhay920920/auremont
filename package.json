@@ -77,7 +77,7 @@
   "overrides": {
     "ajv": "6.15.0",
     "formidable": "3.5.3",
-    "multer": "2.2.0",
+    "multer": "2.3.0",
     "file-type": "21.3.2",
     "qs": "6.16.0",
     "body-parser": "1.20.6",
