@@ -130,10 +130,14 @@ export class PaymentsService {
       }
 
       // Save the razorpay order id to our database as paymentRef
-      this.prisma.order.update({
-        where: { id: orderId },
-        data: { paymentRef: rpOrder.id },
-      }).catch((err: any) => console.error('paymentRef update failed:', err?.message));
+      try {
+        await this.prisma.order.update({
+          where: { id: orderId },
+          data: { paymentRef: rpOrder.id },
+        });
+      } catch (err: any) {
+        console.error('paymentRef update failed:', err?.message);
+      }
 
       return {
         paymentProvider: 'razorpay',
