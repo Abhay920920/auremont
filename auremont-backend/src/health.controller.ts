@@ -4,6 +4,7 @@ import { Response } from 'express';
 import { PrismaService } from './prisma/prisma.service';
 import { NotificationsService } from './notifications/notifications.service';
 import { AlertService } from './common/alert.service';
+import { metricsService } from './common/metrics.service';
 
 @Controller()
 @SkipThrottle()
@@ -203,6 +204,17 @@ export class HealthController {
       timestamp: new Date().toISOString(),
       drill,
       message: 'Non-destructive synthetic monitoring drill completed successfully',
+    };
+  }
+
+  @Get('health/metrics')
+  @Get('metrics')
+  @HttpCode(HttpStatus.OK)
+  getMetrics() {
+    const summary = metricsService.getMetricsSummary();
+    return {
+      status: 'ok',
+      ...summary,
     };
   }
 }

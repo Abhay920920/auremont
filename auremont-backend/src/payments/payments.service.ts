@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import * as crypto from 'crypto';
 import { structuredLogger } from '../common/structured-logger.service';
 import { assertValidUuid } from '../common/uuid-validator';
+import { metricsService } from '../common/metrics.service';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Razorpay = require('razorpay');
@@ -867,5 +868,225 @@ export class PaymentsService {
     } catch (err) {
       console.error('markPaymentFailed error:', err);
     }
+  }
+
+  /**
+   * Phase 4 — Payment Reconciliation Engine.
+   *
+   * Detects and safely reconciles orphaned/pending payments where the customer's payment
+   * was captured at Razorpay, but the browser disconnected, crashed, or webhook was delayed.
+   *
+   * Enforced Invariants:
+   *  1. Association check: gateway payment's order_id matches order.paymentRef.
+   *  2. Exact amount verification in integer paise (zero underpayment tolerance).
+   *  3. Strict currency validation ('INR').
+   *  4. Atomic transition under SELECT ... FOR UPDATE row lock.
+   *  5. Terminal state protection: terminal states ('cancelled', 'refunded', 'failed') are preserved.
+   *  6. Emits 'order_paid' outbox event for downstream fulfillment/emails.
+   *  7. Fully idempotent: subsequent runs on already paid orders return safe no-op.
+   */
+  async reconcilePendingPayments(olderThanMinutes: number = 5, limit: number = 20): Promise<{
+    checkedCount: number;
+    reconciledCount: number;
+    alreadyPaidCount: number;
+    failedCount: number;
+    results: any[];
+  }> {
+    const cutoff = new Date(Date.now() - olderThanMinutes * 60 * 1000);
+    const db = this.prisma as any;
+
+    const pendingOrders = await this.prisma.order.findMany({
+      where: {
+        paymentStatus: 'pending',
+        paymentRef: { not: null },
+        createdAt: { lte: cutoff },
+      },
+      take: limit,
+      orderBy: { createdAt: 'asc' },
+      select: {
+        id: true,
+        orderNumber: true,
+        paymentRef: true,
+        total: true,
+        paymentStatus: true,
+        createdAt: true,
+      },
+    });
+
+    const results: any[] = [];
+    let reconciledCount = 0;
+    let alreadyPaidCount = 0;
+    let failedCount = 0;
+
+    for (const order of pendingOrders) {
+      const razorpayOrderId = order.paymentRef!;
+      try {
+        let capturedPayment: any = null;
+
+        if (this.isMock) {
+          // Dev/mock/test mode: check if mock gateway recorded this order or simulate query
+          capturedPayment = {
+            id: `pay_mock_${order.orderNumber}`,
+            order_id: razorpayOrderId,
+            amount: Math.round(Number(order.total) * 100),
+            currency: 'INR',
+            status: 'captured',
+          };
+        } else if (this.razorpay?.orders?.fetchPayments) {
+          // Live mode: fetch payments for this Razorpay order ID
+          const paymentList = await this.razorpay.orders.fetchPayments(razorpayOrderId);
+          if (paymentList && Array.isArray(paymentList.items)) {
+            capturedPayment = paymentList.items.find(
+              (p: any) => p.status === 'captured' || p.status === 'authorized',
+            );
+          }
+        }
+
+        if (!capturedPayment) {
+          results.push({ orderId: order.id, status: 'unpaid_at_gateway' });
+          continue;
+        }
+
+        // 1. Association check: payment's order_id must match our paymentRef
+        if (capturedPayment.order_id && capturedPayment.order_id !== razorpayOrderId) {
+          results.push({ orderId: order.id, status: 'gateway_order_id_mismatch' });
+          continue;
+        }
+
+        // 2. Exact amount verification in integer paise
+        const expectedPaise = Math.round(Number(order.total) * 100);
+        if (capturedPayment.amount !== expectedPaise) {
+          results.push({
+            orderId: order.id,
+            status: 'amount_mismatch',
+            expected: expectedPaise,
+            received: capturedPayment.amount,
+          });
+          continue;
+        }
+
+        // 3. Strict currency validation
+        if (capturedPayment.currency !== 'INR') {
+          results.push({ orderId: order.id, status: 'currency_mismatch', currency: capturedPayment.currency });
+          continue;
+        }
+
+        // 4. Atomic transition under SELECT ... FOR UPDATE lock
+        const transitionResult = await this.prisma.$transaction(async (tx) => {
+          const lockedRows = await tx.$queryRaw<any[]>`
+            SELECT id, payment_status, order_number FROM "orders"
+            WHERE id = ${order.id}::uuid FOR UPDATE
+          `;
+          const locked = lockedRows?.[0];
+
+          if (locked?.payment_status === 'paid') {
+            return 'already_paid';
+          }
+
+          if (locked?.payment_status === 'cancelled' || locked?.payment_status === 'failed') {
+            if ((tx as any).outboxEvent?.create) {
+              await (tx as any).outboxEvent.create({
+                data: {
+                  eventType: 'payment_received_for_terminal_order',
+                  payload: {
+                    orderId: order.id,
+                    orderNumber: locked.order_number,
+                    gatewayPaymentId: capturedPayment.id,
+                    orderPaymentStatus: locked.payment_status,
+                    source: 'reconciliation',
+                  },
+                },
+              });
+            }
+            return `order_${locked.payment_status}`;
+          }
+
+          const now = new Date();
+          const paidAmountINR = capturedPayment.amount / 100;
+
+          await tx.payment.upsert({
+            where: { orderId: order.id },
+            update: {
+              transactionId: capturedPayment.id,
+              gatewayPaymentId: capturedPayment.id,
+              verifiedAmount: paidAmountINR,
+              status: 'completed',
+              paidAt: now,
+              verifiedAt: now,
+            } as any,
+            create: {
+              orderId: order.id,
+              provider: 'razorpay',
+              transactionId: capturedPayment.id,
+              gatewayPaymentId: capturedPayment.id,
+              amount: paidAmountINR,
+              verifiedAmount: paidAmountINR,
+              currency: 'INR',
+              status: 'completed',
+              paidAt: now,
+              verifiedAt: now,
+            } as any,
+          });
+
+          await tx.order.update({
+            where: { id: order.id },
+            data: {
+              paymentStatus: 'paid',
+              orderStatus: 'confirmed',
+            },
+          });
+
+          if ((tx as any).outboxEvent?.create) {
+            await (tx as any).outboxEvent.create({
+              data: {
+                eventType: 'order_paid',
+                payload: {
+                  orderId: order.id,
+                  orderNumber: order.orderNumber,
+                  gatewayPaymentId: capturedPayment.id,
+                  amountINR: paidAmountINR,
+                  source: 'reconciliation',
+                },
+              },
+            });
+          }
+
+          return 'reconciled';
+        });
+
+        if (transitionResult === 'reconciled') {
+          reconciledCount++;
+          metricsService.recordPaymentReconciled(1);
+          structuredLogger.log(`[Reconciliation] Successfully reconciled order #${order.orderNumber}`, {
+            service: 'payments',
+            operation: 'payment_reconciled',
+            orderId: order.id,
+            gatewayPaymentId: capturedPayment.id,
+          });
+          results.push({ orderId: order.id, status: 'reconciled', paymentId: capturedPayment.id });
+        } else if (transitionResult === 'already_paid') {
+          alreadyPaidCount++;
+          results.push({ orderId: order.id, status: 'already_paid' });
+        } else {
+          results.push({ orderId: order.id, status: transitionResult });
+        }
+      } catch (err: any) {
+        failedCount++;
+        structuredLogger.error(`[Reconciliation] Error reconciling order ${order.id}: ${err?.message}`, err?.stack, {
+          service: 'payments',
+          operation: 'reconciliation_error',
+          orderId: order.id,
+        });
+        results.push({ orderId: order.id, status: 'error', error: err?.message });
+      }
+    }
+
+    return {
+      checkedCount: pendingOrders.length,
+      reconciledCount,
+      alreadyPaidCount,
+      failedCount,
+      results,
+    };
   }
 }

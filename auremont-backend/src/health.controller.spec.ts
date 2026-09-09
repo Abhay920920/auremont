@@ -92,5 +92,14 @@ describe('HealthController (Observability & Production Hardening)', () => {
     expect(res.drill.success).toBe(true);
     expect(res.drill.firedAlert.type).toBe('TEST_ALERT');
   });
+
+  it('should return operational metrics summary from getMetrics', () => {
+    const metrics = controller.getMetrics();
+    expect(metrics.status).toBe('ok');
+    expect(metrics).toHaveProperty('http');
+    expect(metrics).toHaveProperty('checkout');
+    expect(metrics).toHaveProperty('payments');
+    expect(metrics).toHaveProperty('database');
+  });
 });
 

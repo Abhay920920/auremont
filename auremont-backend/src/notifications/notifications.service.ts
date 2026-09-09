@@ -71,9 +71,38 @@ export class NotificationsService implements OnModuleInit, OnModuleDestroy {
    *   - Idempotency checks verify DB state (e.g. order.paymentStatus === 'paid')
    *     before dispatching any side effects.
    *   - Retries: up to 3 attempts with exponential backoff before dead-lettering to 'failed'.
+  /**
+   * Recovers stale outbox events left in 'processing' state due to sudden crash.
+   * If an event has been in 'processing' for more than 5 minutes:
+   *  - If retry_count >= 2, transition to 'failed' (dead letter)
+   *  - Else increment retry_count and transition back to 'pending'
    */
+  async recoverStaleProcessingEvents(staleMinutes = 5): Promise<number> {
+    try {
+      if (!(this.prisma as any).$executeRaw) return 0;
+      const recovered = await this.prisma.$executeRaw`
+        UPDATE "outbox_events"
+        SET status = CASE WHEN "retry_count" >= 2 THEN 'failed' ELSE 'pending' END,
+            "retry_count" = "retry_count" + 1,
+            error = 'Auto-recovered from abandoned processing state'
+        WHERE status = 'processing'
+          AND "created_at" < NOW() - INTERVAL '5 minutes'
+      `;
+      if (Number(recovered) > 0) {
+        this.logger.warn(`[OutboxRecovery] Reclaimed ${recovered} abandoned outbox event(s)`);
+      }
+      return Number(recovered);
+    } catch (err: any) {
+      this.logger.error(`[OutboxRecovery] Stale recovery check failed: ${err?.message}`);
+      return 0;
+    }
+  }
+
   async processPendingOutboxEvents() {
     const db = this.prisma as any;
+
+    // Step 0: Auto-recover any events abandoned by crashed worker instances
+    await this.recoverStaleProcessingEvents(5);
 
     // Step 1: Atomically claim up to 10 pending events with SKIP LOCKED in a single query
     let claimedEvents: any[] = [];

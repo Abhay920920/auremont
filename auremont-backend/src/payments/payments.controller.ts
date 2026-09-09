@@ -29,5 +29,14 @@ export class PaymentsController {
       dto.order_id,
     );
   }
+
+  @Post('reconcile')
+  @HttpCode(200)
+  @Throttle({ default: { limit: 10, ttl: 60000 } })
+  async reconcilePayments(@Body() body?: { olderThanMinutes?: number; limit?: number }) {
+    const olderThan = typeof body?.olderThanMinutes === 'number' ? body.olderThanMinutes : 5;
+    const maxOrders = typeof body?.limit === 'number' ? body.limit : 20;
+    return this.paymentsService.reconcilePendingPayments(olderThan, maxOrders);
+  }
 }
 

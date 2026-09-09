@@ -2,6 +2,7 @@ import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nes
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { structuredLogger } from './structured-logger.service';
+import { metricsService } from './metrics.service';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
@@ -34,6 +35,7 @@ export class LoggingInterceptor implements NestInterceptor {
 
           const durationMs = Math.round((Number(process.hrtime.bigint() - start) / 1e6) * 100) / 100;
           const statusCode = res.statusCode || 200;
+          metricsService.recordHttpRequest(method, url, statusCode, durationMs);
 
           const logContext = {
             service: 'auremont-api',
@@ -61,6 +63,7 @@ export class LoggingInterceptor implements NestInterceptor {
 
           const durationMs = Math.round((Number(process.hrtime.bigint() - start) / 1e6) * 100) / 100;
           const statusCode = err?.status || err?.statusCode || 500;
+          metricsService.recordHttpRequest(method, url, statusCode, durationMs);
 
           structuredLogger.error(
             `HTTP ${method} ${url} ${statusCode} - ${err?.message || 'Error'}`,

@@ -41,4 +41,20 @@ describe('NotificationsService', () => {
     expect(result.length).toBe(1);
     expect(result[0].userId).toBe('user-001');
   });
+
+  it('should return operational visibility metrics for outbox queue', async () => {
+    const metrics = await service.getOutboxMetrics();
+    expect(metrics).toBeDefined();
+    expect(metrics.status).toBeDefined();
+    expect(typeof metrics.pendingCount).toBe('number');
+    expect(typeof metrics.processingCount).toBe('number');
+    expect(typeof metrics.failedCount).toBe('number');
+  });
+
+  it('should execute recoverStaleProcessingEvents without error', async () => {
+    prismaMock.$executeRaw = jest.fn().mockResolvedValue(2);
+    const recovered = await service.recoverStaleProcessingEvents(5);
+    expect(recovered).toBe(2);
+    expect(prismaMock.$executeRaw).toHaveBeenCalled();
+  });
 });
