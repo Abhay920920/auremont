@@ -18,7 +18,8 @@ export default function Pagination({
       <button 
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="w-11 h-11 border border-divider flex items-center justify-center text-primaryText hover:border-luxuryGold hover:text-luxuryGold disabled:opacity-30 disabled:hover:border-divider disabled:hover:text-primaryText transition-colors"
+        aria-label="Previous page"
+        className="w-11 h-11 border border-divider flex items-center justify-center text-primaryText hover:border-luxuryGold hover:text-luxuryGold disabled:opacity-30 disabled:hover:border-divider disabled:hover:text-primaryText transition-colors cursor-pointer disabled:cursor-not-allowed"
       >
         <ChevronLeft size={16} />
       </button>
@@ -26,12 +27,15 @@ export default function Pagination({
       <div className="flex gap-2 font-serif text-lg text-secondaryText">
         {[...Array(totalPages)].map((_, i) => {
           const page = i + 1;
+          const isActive = currentPage === page;
           return (
             <button
               key={page}
               onClick={() => onPageChange(page)}
-              className={`w-11 h-11 flex items-center justify-center transition-colors ${
-                currentPage === page ? 'text-luxuryGold' : 'hover:text-primaryText'
+              aria-label={`Go to page ${page}`}
+              aria-current={isActive ? "page" : undefined}
+              className={`w-11 h-11 flex items-center justify-center transition-colors cursor-pointer ${
+                isActive ? 'text-luxuryGold font-bold border border-luxuryGold/40' : 'hover:text-primaryText'
               }`}
             >
               {page}
@@ -43,7 +47,8 @@ export default function Pagination({
       <button 
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="w-11 h-11 border border-divider flex items-center justify-center text-primaryText hover:border-luxuryGold hover:text-luxuryGold disabled:opacity-30 disabled:hover:border-divider disabled:hover:text-primaryText transition-colors"
+        aria-label="Next page"
+        className="w-11 h-11 border border-divider flex items-center justify-center text-primaryText hover:border-luxuryGold hover:text-luxuryGold disabled:opacity-30 disabled:hover:border-divider disabled:hover:text-primaryText transition-colors cursor-pointer disabled:cursor-not-allowed"
       >
         <ChevronRight size={16} />
       </button>

@@ -120,7 +120,7 @@ export default function CorporateQuoteEstimator() {
           {/* Quantity Slider & Counter */}
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <label className="text-xs uppercase tracking-widest text-secondaryText font-medium">
+              <label htmlFor="corporate-quantity" className="text-xs uppercase tracking-widest text-secondaryText font-medium">
                 2. Order Volume (Units)
               </label>
               <span className="font-serif text-xl text-luxuryGold font-bold">
@@ -128,11 +128,13 @@ export default function CorporateQuoteEstimator() {
               </span>
             </div>
             <input
+              id="corporate-quantity"
               type="range"
               min={25}
               max={1000}
               step={25}
               value={quantity}
+              aria-label="Order Volume in Units"
               onChange={(e) => setQuantity(Number(e.target.value))}
               className="w-full accent-luxuryGold bg-secondaryBg h-2 rounded-lg cursor-pointer"
             />
@@ -240,10 +242,11 @@ export default function CorporateQuoteEstimator() {
               )}
 
               <div>
-                <label className="text-[10px] uppercase tracking-widest text-secondaryText font-medium block mb-1">
+                <label htmlFor="corporate-company" className="text-[10px] uppercase tracking-widest text-secondaryText font-medium block mb-1">
                   Company Name *
                 </label>
                 <input
+                  id="corporate-company"
                   type="text"
                   required
                   value={companyName}
@@ -255,10 +258,11 @@ export default function CorporateQuoteEstimator() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[10px] uppercase tracking-widest text-secondaryText font-medium block mb-1">
+                  <label htmlFor="corporate-contact-name" className="text-[10px] uppercase tracking-widest text-secondaryText font-medium block mb-1">
                     Contact Name *
                   </label>
                   <input
+                    id="corporate-contact-name"
                     type="text"
                     required
                     value={contactName}
@@ -268,10 +272,11 @@ export default function CorporateQuoteEstimator() {
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] uppercase tracking-widest text-secondaryText font-medium block mb-1">
+                  <label htmlFor="corporate-work-email" className="text-[10px] uppercase tracking-widest text-secondaryText font-medium block mb-1">
                     Work Email *
                   </label>
                   <input
+                    id="corporate-work-email"
                     type="email"
                     required
                     value={email}
@@ -283,10 +288,11 @@ export default function CorporateQuoteEstimator() {
               </div>
 
               <div>
-                <label className="text-[10px] uppercase tracking-widest text-secondaryText font-medium block mb-1">
+                <label htmlFor="corporate-phone" className="text-[10px] uppercase tracking-widest text-secondaryText font-medium block mb-1">
                   Phone Number
                 </label>
                 <input
+                  id="corporate-phone"
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
@@ -296,10 +302,11 @@ export default function CorporateQuoteEstimator() {
               </div>
 
               <div>
-                <label className="text-[10px] uppercase tracking-widest text-secondaryText font-medium block mb-1">
+                <label htmlFor="corporate-notes" className="text-[10px] uppercase tracking-widest text-secondaryText font-medium block mb-1">
                   Additional Delivery / Branding Notes
                 </label>
                 <textarea
+                  id="corporate-notes"
                   rows={3}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}

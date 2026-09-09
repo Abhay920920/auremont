@@ -15,16 +15,19 @@ export default function ProductGrid({ products }: { products: any[] }) {
 
   return (
     <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6 md:gap-10">
-      {products.map((product, idx) => (
-        <motion.div
-          key={product.id}
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: idx * 0.05, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <ProductCard product={product} />
-        </motion.div>
-      ))}
+      {products.map((product, idx) => {
+        const isAboveFold = idx < 2;
+        return (
+          <motion.div
+            key={product.id}
+            initial={isAboveFold ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={isAboveFold ? { duration: 0.2 } : { duration: 0.5, delay: (idx - 1) * 0.04, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <ProductCard product={product} priority={idx === 0} />
+          </motion.div>
+        );
+      })}
     </div>
   );
 }

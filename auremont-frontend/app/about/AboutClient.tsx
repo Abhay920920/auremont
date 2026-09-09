@@ -33,7 +33,7 @@ export default function AboutClient() {
           <div className="absolute inset-0 bg-black/60 z-10" />
           <div className="relative w-full h-full">
             <Image 
-              src="/images/our_story_orchard.png" 
+              src="/images/our_story_orchard.webp" 
               alt="RARE NUTS California Almond Orchards" 
               fill
               className="object-cover"
@@ -135,7 +135,7 @@ export default function AboutClient() {
           <motion.div variants={fadeUp} className="order-1 md:order-2">
             <div className="relative aspect-[4/5] w-full rounded-card overflow-hidden shadow-2xl border border-divider group">
               <Image 
-                src="/images/our_story_orchard.png" 
+                src="/images/our_story_orchard.webp" 
                 alt="California Almond Orchard under Mediterranean Sun" 
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-1000"
@@ -162,7 +162,7 @@ export default function AboutClient() {
           <motion.div variants={fadeUp} className="order-1">
             <div className="relative aspect-[4/5] w-full rounded-card overflow-hidden shadow-2xl border border-divider group">
               <Image 
-                src="/images/our_story_craftsmanship.png" 
+                src="/images/our_story_craftsmanship.webp" 
                 alt="Artisanal Convective Almond Roasting" 
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-1000"
@@ -251,7 +251,7 @@ export default function AboutClient() {
           <motion.div variants={fadeUp} className="order-1 md:order-2">
             <div className="relative aspect-square w-full rounded-card overflow-hidden shadow-2xl border border-divider group">
               <Image 
-                src="/images/our_story_sustainability.png" 
+                src="/images/our_story_sustainability.webp" 
                 alt="Sustainable Agroforestry and Solar Orchards" 
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-1000"
@@ -272,9 +272,9 @@ export default function AboutClient() {
         >
           <SquirrelLogo size={80} variant="full" />
           <div className="max-w-xl space-y-3">
-            <h3 className="font-serif text-2xl sm:text-3xl text-primaryText">
+            <h2 className="font-serif text-2xl sm:text-3xl text-primaryText">
               The Seal of RARE NUTS
-            </h3>
+            </h2>
             <p className="text-secondaryText text-sm sm:text-base font-light italic leading-relaxed">
               &ldquo;Every kernel that bears our emblem has passed through twenty hands, four sorting grades, and one unyielding standard: perfection or nothing.&rdquo;
             </p>

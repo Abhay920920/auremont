@@ -78,7 +78,7 @@ export default function ShopClient({
       {/* Header Section */}
       <div className="site-container mb-8 sm:mb-12 md:mb-16">
         <div className="flex flex-col items-center text-center max-w-3xl mx-auto">
-          <h4 className="text-luxuryGold uppercase tracking-superwide text-xs mb-3 sm:mb-4">The Master Reserve</h4>
+          <span className="block text-luxuryGold uppercase tracking-superwide text-xs mb-3 sm:mb-4 font-mono">The Master Reserve</span>
           <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif text-primaryText mb-4 sm:mb-6">
             The Royal Botanical Collection
           </h1>

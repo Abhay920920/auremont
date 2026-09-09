@@ -25,7 +25,10 @@ export default function SortDropdown({ onSort }: { onSort: (val: string) => void
     <div className="relative">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 text-xs uppercase tracking-widest text-primaryText py-2 md:py-0 md:pb-1 border-b border-primaryText/30 hover:border-luxuryGold transition-colors"
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
+        aria-label="Sort products by"
+        className="flex items-center gap-2 text-xs uppercase tracking-widest text-primaryText py-2 md:py-0 md:pb-1 border-b border-primaryText/30 hover:border-luxuryGold transition-colors cursor-pointer"
       >
         <span>Sort by: {selected}</span>
         <ChevronDown size={14} className={`transform transition-transform ${isOpen ? 'rotate-180' : ''}`} />

@@ -29,9 +29,10 @@ export default function CorporateGiftsClient() {
       {/* Featured Hero Banner */}
       <section className="w-full h-[350px] md:h-[500px] rounded-card border border-luxuryGold/30 my-12 relative overflow-hidden shadow-2xl">
         <Image 
-          src="/images/royal-almonds-wooden-box.png"
+          src="/images/royal-almonds-wooden-box.webp"
           alt="RARE NUTS Executive Corporate Gifting Mahogany Chest"
           fill
+          sizes="(max-width: 1200px) 100vw, 1200px"
           className="object-cover filter brightness-90"
           priority
         />

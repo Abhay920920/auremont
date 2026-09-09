@@ -23,12 +23,14 @@ export default function FilterSidebar({
 
   return (
     <div className="w-full">
-      <h3 className="text-[11px] uppercase tracking-widest text-primaryText font-medium mb-8 pb-4 border-b border-divider">Filters</h3>
+      <h2 className="text-[11px] uppercase tracking-widest text-primaryText font-medium mb-8 pb-4 border-b border-divider">Filters</h2>
       
       <div className="mb-8">
         <button 
           onClick={() => setIsOpen(!isOpen)}
-          className="flex w-full justify-between items-center text-primaryText mb-4 py-2"
+          aria-expanded={isOpen}
+          aria-label="Toggle collection filters"
+          className="flex w-full justify-between items-center text-primaryText mb-4 py-2 cursor-pointer"
         >
           <span className="font-serif text-xl">Collection</span>
           {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}

@@ -14,22 +14,32 @@ interface Product {
   thumbnailUrl: string;
 }
 
-export default function ProductCard({ product }: { product: Product }) {
+interface ProductCardProps {
+  product: Product;
+  priority?: boolean;
+}
+
+export default function ProductCard({ product, priority = false }: ProductCardProps) {
   const { user } = useAuthStore();
   const { items: wishlistItems, addWishlist, removeWishlist } = useWishlistStore();
   const { formatPrice } = useCurrencyStore();
   
   const isWishlisted = wishlistItems.some(item => item.productId === product.id);
+  const rawImage = product.thumbnailUrl || '/images/california-almonds-250g.png';
+  const displayImage = (rawImage.endsWith('.png') && !rawImage.startsWith('http')) 
+    ? rawImage.replace(/\.png$/, '.webp') 
+    : rawImage;
 
   return (
     <div className="group cursor-pointer flex flex-col h-full">
       <div className="w-full aspect-[4/5] relative bg-secondaryBg overflow-hidden mb-3 sm:mb-8 border border-divider">
         <Link data-testid={`product-link-${product.slug}`} href={`/shop/${product.slug}`} className="block absolute inset-0 z-10">
           <Image 
-            src={product.thumbnailUrl || '/images/california-almonds-250g.png'} 
+            src={displayImage} 
             alt={product.name} 
             fill 
-            sizes="(max-width: 640px) 90vw, (max-width: 1024px) 46vw, 30vw"
+            priority={priority}
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover group-hover:scale-110 transition-transform duration-[1.5s] ease-[cubic-bezier(0.25,1,0.5,1)]"
           />
         </Link>

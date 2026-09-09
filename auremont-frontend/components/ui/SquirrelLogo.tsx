@@ -10,16 +10,17 @@ interface SquirrelLogoProps {
 export default function SquirrelLogo({ variant = "header", className = "", size = 32 }: SquirrelLogoProps) {
   // Compact Header variant - emblem + single line brand name, no tagline
   if (variant === "header") {
+    const headerWidth = Math.round(size * 1.15);
     return (
       <div className={`inline-flex flex-col items-center justify-center select-none ${className}`}>
         <div 
           className="relative flex items-center justify-center transition-transform duration-300 hover:scale-105"
-          style={{ width: size * 1.15, height: size }}
+          style={{ width: headerWidth, height: size }}
         >
           <Image
-            src="/images/rarenuts-gold-squirrel-logo.png"
+            src="/images/rarenuts-gold-squirrel-logo-header.webp"
             alt="RARE NUTS"
-            width={size * 1.15}
+            width={headerWidth}
             height={size}
             className="object-contain filter drop-shadow-[0_2px_6px_rgba(212,175,55,0.4)]"
             priority
@@ -41,7 +42,7 @@ export default function SquirrelLogo({ variant = "header", className = "", size 
           style={{ width: size, height: size }}
         >
           <Image
-            src="/images/rarenuts-gold-squirrel-logo.png"
+            src="/images/rarenuts-gold-squirrel-logo.webp"
             alt=""
             width={size}
             height={size}
@@ -53,16 +54,17 @@ export default function SquirrelLogo({ variant = "header", className = "", size 
   }
 
   // Full variant (Emblem + Brand Name + Tagline) for Splash, Footer, Hero, Admin
+  const fullWidth = Math.round(size * 1.2);
   return (
     <div className={`inline-flex flex-col items-center select-none ${className}`}>
       <div 
         className="relative flex items-center justify-center transition-transform duration-300 hover:scale-105"
-        style={{ width: size * 1.2, height: size }}
+        style={{ width: fullWidth, height: size }}
       >
         <Image
-          src="/images/rarenuts-gold-squirrel-logo.png"
+          src="/images/rarenuts-gold-squirrel-logo.webp"
           alt="RARE NUTS Luxury Almonds"
-          width={size * 1.2}
+          width={fullWidth}
           height={size}
           className="object-contain filter drop-shadow-[0_2px_10px_rgba(212,175,55,0.5)]"
         />
