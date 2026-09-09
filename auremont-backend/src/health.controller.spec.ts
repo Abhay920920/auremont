@@ -106,14 +106,15 @@ describe('HealthController (Observability & Production Hardening)', () => {
   describe('Production Access Control Boundary', () => {
     const originalEnv = process.env.NODE_ENV;
     const testKey = 'test_internal_production_metrics_key_999';
+    const env = process.env as Record<string, string | undefined>;
 
     afterEach(() => {
-      process.env.NODE_ENV = originalEnv;
+      env.NODE_ENV = originalEnv;
       delete process.env.INTERNAL_METRICS_KEY;
     });
 
     it('should keep /health, /health/liveness, and /health/readiness fully public in production', async () => {
-      process.env.NODE_ENV = 'production';
+      env.NODE_ENV = 'production';
       process.env.INTERNAL_METRICS_KEY = testKey;
 
       expect(controller.getHealth().status).toBe('ok');
@@ -123,7 +124,7 @@ describe('HealthController (Observability & Production Hardening)', () => {
     });
 
     it('should deny unauthorized access to /health/outbox and /health/metrics in production', async () => {
-      process.env.NODE_ENV = 'production';
+      env.NODE_ENV = 'production';
       process.env.INTERNAL_METRICS_KEY = testKey;
 
       // Without headers or with wrong token
@@ -134,7 +135,7 @@ describe('HealthController (Observability & Production Hardening)', () => {
     });
 
     it('should permit authorized access to internal endpoints in production with valid key', async () => {
-      process.env.NODE_ENV = 'production';
+      env.NODE_ENV = 'production';
       process.env.INTERNAL_METRICS_KEY = testKey;
 
       const validHeaders = { 'x-internal-key': testKey };
