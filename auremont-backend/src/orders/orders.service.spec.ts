@@ -4,7 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { PaymentsService } from '../payments/payments.service';
 import { AuditService } from '../audit/audit.service';
 import { NotificationsService } from '../notifications/notifications.service';
-import { NotFoundException, BadRequestException } from '@nestjs/common';
+import { NotFoundException, BadRequestException, ServiceUnavailableException } from '@nestjs/common';
 
 describe('OrdersService Unit Tests', () => {
   let service: OrdersService;
@@ -144,6 +144,37 @@ describe('OrdersService Unit Tests', () => {
           address: { fullName: 'Jane', phone: '123', addressLine1: 'A', city: 'B', state: 'C', postalCode: '1', country: 'India' },
         }),
       ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should reject with 503 ServiceUnavailableException when admission control capacity is exceeded', async () => {
+      // Artificially saturate inflight semaphore to MAX_CONCURRENT_CHECKOUTS
+      (service as any).activeInflightCheckouts = 20;
+
+      await expect(
+        service.createOrder({
+          userId: 'user-1234',
+          cartId: 'cart-1234',
+          address: { fullName: 'Jane', phone: '123', addressLine1: 'A', city: 'B', state: 'C', postalCode: '1', country: 'India' },
+        }),
+      ).rejects.toThrow(ServiceUnavailableException);
+
+      expect(service.getInflightCheckoutCount()).toBe(20);
+    });
+
+    it('should properly recycle inflight slot after checkout failure', async () => {
+      (service as any).activeInflightCheckouts = 0;
+      mockPrismaService.cart.findUnique.mockResolvedValue(null); // Will throw NotFoundException
+
+      await expect(
+        service.createOrder({
+          userId: 'user-1234',
+          cartId: 'non-existent-cart',
+          address: { fullName: 'Jane', phone: '123', addressLine1: 'A', city: 'B', state: 'C', postalCode: '1', country: 'India' },
+        }),
+      ).rejects.toThrow(NotFoundException);
+
+      // Inflight counter must be safely restored to 0 via finally block
+      expect(service.getInflightCheckoutCount()).toBe(0);
     });
   });
 });

@@ -6,6 +6,7 @@ import {
   BadRequestException,
   ForbiddenException,
   ConflictException,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../audit/audit.service';
@@ -26,6 +27,17 @@ export class OrdersService {
   private adminOrdersCache = new Map<string, { data: any; expiresAt: number }>();
   private adminOrdersInflight = new Map<string, Promise<any>>();
   private readonly ADMIN_ORDERS_TTL_MS = 15000;
+
+  // Phase 7 — Checkout Admission Control Semaphore
+  // Protects Neon connection pool (limit 25) from saturation and connection queuing.
+  // When concurrent transactional checkouts reach capacity (20), fail FAST with 503 + Retry-After
+  // instead of allowing 500 requests to stall for 60 seconds.
+  private activeInflightCheckouts = 0;
+  private readonly MAX_CONCURRENT_CHECKOUTS = Number(process.env.MAX_CONCURRENT_CHECKOUTS) || 20;
+
+  getInflightCheckoutCount(): number {
+    return this.activeInflightCheckouts;
+  }
 
   invalidateAdminOrders() {
     this.adminOrdersCache.clear();
@@ -92,6 +104,46 @@ export class OrdersService {
   }
 
   async createOrder(data: {
+    userId?: string;
+    guestEmail?: string;
+    cartId: string;
+    couponId?: string;
+    idempotencyKey?: string;
+    address: {
+      fullName: string;
+      phone: string;
+      addressLine1: string;
+      addressLine2?: string;
+      city: string;
+      state: string;
+      postalCode: string;
+      country: string;
+    };
+  }, timings: Record<string, number> = {}): Promise<Order & { payment?: any }> {
+    // ── Phase 7 Admission Control Gate ──
+    if (this.activeInflightCheckouts >= this.MAX_CONCURRENT_CHECKOUTS) {
+      structuredLogger.warn('[AdmissionControl] Checkout capacity exceeded, shedding load with 503', {
+        service: 'orders',
+        operation: 'admission_control_shed',
+        activeInflightCheckouts: this.activeInflightCheckouts,
+        maxConcurrent: this.MAX_CONCURRENT_CHECKOUTS,
+      });
+      throw new ServiceUnavailableException({
+        code: 'CHECKOUT_CAPACITY_EXCEEDED',
+        message: 'High checkout volume in progress. Please retry in a moment.',
+        retryAfterSeconds: 2,
+      });
+    }
+
+    this.activeInflightCheckouts++;
+    try {
+      return await this.executeCreateOrder(data, timings);
+    } finally {
+      this.activeInflightCheckouts--;
+    }
+  }
+
+  private async executeCreateOrder(data: {
     userId?: string;
     guestEmail?: string;
     cartId: string;

@@ -72,4 +72,70 @@ describe('AlertService', () => {
     expect(drill.firedAlert.status).toBe('RESOLVED'); // Resolved right after firing in drill
     expect(drill.resolvedAlert).toBeDefined();
   });
+
+  it('should suppress duplicate alerts during rate limit window (Storm Prevention)', async () => {
+    const alert1 = await service.dispatchAlert(
+      'HIGH_5XX_RATE',
+      'ERROR',
+      'High 5xx Spike',
+      '5xx error count exceeded threshold',
+    );
+
+    const alert2 = await service.dispatchAlert(
+      'HIGH_5XX_RATE',
+      'ERROR',
+      'High 5xx Spike 2',
+      'Second spike within 60s',
+    );
+
+    // Duplicate alert within window must return the existing firing alert and suppress re-firing
+    expect(alert2.id).toBe(alert1.id);
+    const status = service.getAlertStatus();
+    expect(status.activeAlertCount).toBe(1);
+  });
+
+  it('should survive external webhook failure without throwing or blocking caller', async () => {
+    process.env.ALERT_WEBHOOK_URL = 'https://fake-hooks.slack.com/services/FAIL/WEBHOOK';
+    // Mock postWebhook to simulate 500 error from external alert webhook
+    jest.spyOn(service as any, 'postWebhook').mockRejectedValue(new Error('Webhook responded with HTTP 500'));
+
+    let threw = false;
+    let alert: any;
+    try {
+      alert = await service.dispatchAlert(
+        'PAYMENT_FAILURE',
+        'CRITICAL',
+        'Payment Gateway Failure',
+        'Razorpay API unavailable',
+      );
+    } catch {
+      threw = true;
+    }
+
+    expect(threw).toBe(false);
+    expect(alert).toBeDefined();
+    expect(alert.status).toBe('FIRING');
+    // STRUCTURED_LOGS still delivered even if external webhook fails
+    expect(alert.channelDelivered).toContain('STRUCTURED_LOGS');
+    expect(alert.channelDelivered).not.toContain('EXTERNAL_WEBHOOK');
+
+    delete process.env.ALERT_WEBHOOK_URL;
+  });
+
+  it('should survive external webhook timeout without blocking caller', async () => {
+    process.env.ALERT_WEBHOOK_URL = 'https://fake-hooks.slack.com/services/TIMEOUT';
+    jest.spyOn(service as any, 'postWebhook').mockRejectedValue(new Error('Connection timed out'));
+
+    const alert = await service.dispatchAlert(
+      'CHECKOUT_ANOMALY',
+      'WARNING',
+      'Checkout Anomaly',
+      'High conflict rate',
+    );
+
+    expect(alert).toBeDefined();
+    expect(alert.status).toBe('FIRING');
+
+    delete process.env.ALERT_WEBHOOK_URL;
+  });
 });

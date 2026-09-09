@@ -64,6 +64,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
         message = respObj.message || 'Request failed';
         errorCode = respObj.code || this.mapStatusToErrorCode(status, respObj);
         details = respObj.error || respObj.errors || respObj.details;
+        if (respObj.retryAfterSeconds && typeof response.setHeader === 'function') {
+          response.setHeader('Retry-After', String(respObj.retryAfterSeconds));
+        }
       }
     } else if (isPrismaError) {
       // Prisma error taxonomy mapping
@@ -71,6 +74,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
         status = HttpStatus.SERVICE_UNAVAILABLE;
         errorCode = ErrorCategory.DATABASE_TIMEOUT;
         message = 'Database service temporarily unavailable under heavy load. Please retry in a moment.';
+        if (typeof response.setHeader === 'function') {
+          response.setHeader('Retry-After', '2');
+        }
       } else if (prismaCode === 'P2002') {
         status = HttpStatus.CONFLICT;
         errorCode = ErrorCategory.CONFLICT;

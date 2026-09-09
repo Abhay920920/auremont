@@ -12,6 +12,7 @@ const INDEXES = [
   { name: 'carts_user_id_status_idx', sql: 'CREATE INDEX IF NOT EXISTS "carts_user_id_status_idx" ON "carts"("user_id", "status");' },
   { name: 'orders_user_id_created_at_idx', sql: 'CREATE INDEX IF NOT EXISTS "orders_user_id_created_at_idx" ON "orders"("user_id", "created_at" DESC);' },
   { name: 'orders_payment_status_idx', sql: 'CREATE INDEX IF NOT EXISTS "orders_payment_status_idx" ON "orders"("payment_status");' },
+  { name: 'orders_payment_ref_idx', sql: 'CREATE INDEX IF NOT EXISTS "orders_payment_ref_idx" ON "orders"("payment_ref");' },
   { name: 'inventory_logs_product_id_idx', sql: 'CREATE INDEX IF NOT EXISTS "inventory_logs_product_id_idx" ON "inventory_logs"("product_id");' },
   { name: 'inventory_logs_reference_id_idx', sql: 'CREATE INDEX IF NOT EXISTS "inventory_logs_reference_id_idx" ON "inventory_logs"("reference_id");' },
   { name: 'products_stock_qty_non_negative', sql: 'DO $$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = \'products_stock_qty_non_negative\') THEN ALTER TABLE "products" ADD CONSTRAINT "products_stock_qty_non_negative" CHECK ("stock_qty" >= 0); END IF; END $$;' },

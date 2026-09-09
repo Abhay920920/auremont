@@ -330,6 +330,7 @@ model Order {
   @@index([createdAt])
   @@index([orderStatus])
   @@index([paymentStatus])
+  @@index([paymentRef])
   @@index([userId, createdAt(sort: Desc)])
   @@map("orders")
 }
