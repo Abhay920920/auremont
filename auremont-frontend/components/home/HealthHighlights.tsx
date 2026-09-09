@@ -25,7 +25,7 @@ export default function HealthHighlights() {
   return (
     <section className="w-full py-24 md:py-super bg-background">
       <div className="site-container text-center">
-        <h4 className="text-luxuryGold uppercase tracking-superwide text-xs mb-16">Nourishment</h4>
+        <p className="text-luxuryGold uppercase tracking-superwide text-xs mb-16">Nourishment</p>
         <h2 className="text-4xl md:text-5xl font-serif text-primaryText mb-20">The Essence of Vitality</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">

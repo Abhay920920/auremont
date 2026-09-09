@@ -24,7 +24,7 @@ export default function Testimonials() {
   return (
     <section className="w-full py-24 md:py-super bg-background border-y border-divider relative">
       <div className="site-container text-center">
-        <h4 className="text-luxuryGold uppercase tracking-superwide text-xs mb-16">The Verdict</h4>
+        <h2 className="text-luxuryGold uppercase tracking-superwide text-xs mb-16">The Verdict</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {testimonials.map((t, idx) => (
@@ -41,7 +41,7 @@ export default function Testimonials() {
                 {t.quote}
               </p>
               <div>
-                <h5 className="text-[11px] uppercase tracking-widest text-primaryText font-medium mb-1">{t.author}</h5>
+                <p className="text-[11px] uppercase tracking-widest text-primaryText font-medium mb-1">{t.author}</p>
                 <p className="text-xs text-secondaryText">{t.title}</p>
               </div>
             </motion.div>
