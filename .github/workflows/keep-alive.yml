@@ -6,6 +6,10 @@ on:
     - cron: '*/5 * * * *'
   workflow_dispatch:
 
+# Least-privilege default: all jobs start with read-only token access
+permissions:
+  contents: read
+
 jobs:
   ping-health:
     name: Ping Production Health & Prevent Sleep

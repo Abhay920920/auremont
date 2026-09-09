@@ -17,6 +17,10 @@ const SENSITIVE_KEYS = new Set([
   'razorpay_signature',
   'cvv',
   'cardnumber',
+  'api_key',
+  'apikey',
+  'private_key',
+  'privatekey',
 ]);
 
 export function redactSensitiveData(obj: any, depth = 0): any {

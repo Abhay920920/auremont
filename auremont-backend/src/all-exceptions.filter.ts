@@ -34,8 +34,10 @@ export class AllExceptionsFilter implements ExceptionFilter {
       (request as any).requestId ||
       `req_${crypto.randomBytes(8).toString('hex')}`;
 
-    response.setHeader('X-Request-ID', requestId);
-    response.setHeader('x-correlation-id', requestId);
+    if (typeof response.setHeader === 'function') {
+      response.setHeader('X-Request-ID', requestId);
+      response.setHeader('x-correlation-id', requestId);
+    }
 
     const isHttp = exception instanceof HttpException;
     const isDev = process.env.NODE_ENV !== 'production';

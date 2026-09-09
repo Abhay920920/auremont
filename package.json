@@ -85,6 +85,7 @@
     "picomatch": "4.0.4",
     "tmp": "0.2.6",
     "webpack": "5.104.1",
-    "postcss": "8.5.23"
+    "postcss": "8.5.23",
+    "js-yaml": "^4.1.0"
   }
 }
