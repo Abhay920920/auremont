@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { UnauthorizedException } from '@nestjs/common';
 import { HealthController } from './health.controller';
 import { PrismaService } from './prisma/prisma.service';
 import { NotificationsService } from './notifications/notifications.service';
@@ -100,6 +101,49 @@ describe('HealthController (Observability & Production Hardening)', () => {
     expect(metrics).toHaveProperty('checkout');
     expect(metrics).toHaveProperty('payments');
     expect(metrics).toHaveProperty('database');
+  });
+
+  describe('Production Access Control Boundary', () => {
+    const originalEnv = process.env.NODE_ENV;
+    const testKey = 'test_internal_production_metrics_key_999';
+
+    afterEach(() => {
+      process.env.NODE_ENV = originalEnv;
+      delete process.env.INTERNAL_METRICS_KEY;
+    });
+
+    it('should keep /health, /health/liveness, and /health/readiness fully public in production', async () => {
+      process.env.NODE_ENV = 'production';
+      process.env.INTERNAL_METRICS_KEY = testKey;
+
+      expect(controller.getHealth().status).toBe('ok');
+      expect(controller.getLiveness().status).toBe('alive');
+      const readiness = await controller.getReadiness();
+      expect(readiness.status).toBe('ready');
+    });
+
+    it('should deny unauthorized access to /health/outbox and /health/metrics in production', async () => {
+      process.env.NODE_ENV = 'production';
+      process.env.INTERNAL_METRICS_KEY = testKey;
+
+      // Without headers or with wrong token
+      await expect(controller.getOutboxHealth({})).rejects.toThrow(UnauthorizedException);
+      expect(() => controller.getMetrics({})).toThrow(UnauthorizedException);
+      expect(() => controller.getAlerts({})).toThrow(UnauthorizedException);
+      await expect(controller.testAlert({})).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should permit authorized access to internal endpoints in production with valid key', async () => {
+      process.env.NODE_ENV = 'production';
+      process.env.INTERNAL_METRICS_KEY = testKey;
+
+      const validHeaders = { 'x-internal-key': testKey };
+      const outbox = await controller.getOutboxHealth(validHeaders);
+      expect(outbox.status).toBe('healthy');
+
+      const metrics = controller.getMetrics(validHeaders);
+      expect(metrics.status).toBe('ok');
+    });
   });
 });
 

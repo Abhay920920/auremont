@@ -1,4 +1,4 @@
-import { Controller, Get, Post, HttpCode, HttpStatus, ServiceUnavailableException, Headers, Res } from '@nestjs/common';
+import { Controller, Get, Post, HttpCode, HttpStatus, ServiceUnavailableException, UnauthorizedException, Headers, Res } from '@nestjs/common';
 import { SkipThrottle } from '@nestjs/throttler';
 import { Response } from 'express';
 import { PrismaService } from './prisma/prisma.service';
@@ -158,9 +158,27 @@ export class HealthController {
     }
   }
 
+  private assertInternalAccess(headers?: Record<string, any>) {
+    if (process.env.NODE_ENV !== 'production') return;
+    const internalKey = process.env.INTERNAL_METRICS_KEY || process.env.JWT_SECRET;
+    if (!internalKey) return;
+    const authHeader = headers?.['authorization'] || '';
+    const token =
+      headers?.['x-internal-key'] ||
+      headers?.['x-metrics-key'] ||
+      (authHeader.startsWith('Bearer ') ? authHeader.substring(7) : null);
+    if (!token || token !== internalKey) {
+      throw new UnauthorizedException({
+        code: 'PROTECTED_INTERNAL_ENDPOINT',
+        message: 'This operational endpoint requires internal authorization.',
+      });
+    }
+  }
+
   @Get('health/outbox')
   @HttpCode(HttpStatus.OK)
-  async getOutboxHealth() {
+  async getOutboxHealth(@Headers() headers?: Record<string, any>) {
+    this.assertInternalAccess(headers);
     const metrics = await this.notifications.getOutboxMetrics();
     return {
       status: metrics.status,
@@ -171,7 +189,8 @@ export class HealthController {
 
   @Get('health/detailed')
   @HttpCode(HttpStatus.OK)
-  async getDetailedHealth() {
+  async getDetailedHealth(@Headers() headers?: Record<string, any>) {
+    this.assertInternalAccess(headers);
     const readiness = await this.getReadiness();
     const outbox = await this.notifications.getOutboxMetrics();
     const poolConfig = this.prisma.getPoolConfig();
@@ -186,7 +205,8 @@ export class HealthController {
 
   @Get('health/alerts')
   @HttpCode(HttpStatus.OK)
-  getAlerts() {
+  getAlerts(@Headers() headers?: Record<string, any>) {
+    this.assertInternalAccess(headers);
     return {
       status: 'ok',
       timestamp: new Date().toISOString(),
@@ -197,7 +217,8 @@ export class HealthController {
   @Get('health/alerts/test')
   @Post('health/alerts/test')
   @HttpCode(HttpStatus.OK)
-  async testAlert() {
+  async testAlert(@Headers() headers?: Record<string, any>) {
+    this.assertInternalAccess(headers);
     const drill = await this.alerts.testAlertPipeline();
     return {
       status: 'ok',
@@ -210,7 +231,8 @@ export class HealthController {
   @Get('health/metrics')
   @Get('metrics')
   @HttpCode(HttpStatus.OK)
-  getMetrics() {
+  getMetrics(@Headers() headers?: Record<string, any>) {
+    this.assertInternalAccess(headers);
     const summary = metricsService.getMetricsSummary();
     return {
       status: 'ok',
